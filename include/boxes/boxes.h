@@ -1,11 +1,11 @@
 
 #include <string>
 
-using namespace std;
+namespace Boxes {
+	class Boxes {
+		public:
+			Boxes();
 
-class Boxes {
-	public:
-		Boxes();
-
-		string version_string() const;
-};
+			std::string version_string() const;
+	};
+}
