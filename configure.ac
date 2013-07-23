@@ -35,7 +35,7 @@ AC_PATH_PROG([M4], [m4])
 # This makes sure pkg.m4 is available.
 m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
 
-PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4.5])
+PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4])
 
 AC_CONFIG_FILES([
 	Makefile
