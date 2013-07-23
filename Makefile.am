@@ -8,6 +8,11 @@ noinst_LTLIBRARIES =
 
 bin_PROGRAMS = boxes
 
+include_HEADERS = \
+	include/boxes.h
+
+pkginclude_HEADERS =
+
 #- boxes ----------------------------------------------------------------------
 
 boxes_SOURCES = \
@@ -29,3 +34,6 @@ libboxes_la_CXXFLAGS = \
 
 libboxes_la_LIBADD = \
 	$(OPENCV_LIBS)
+
+pkginclude_HEADERS += \
+	include/boxes/boxes.h
