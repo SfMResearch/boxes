@@ -1,3 +1,3 @@
 #!/bin/sh
 
-autoreconf --force --install
+autoreconf --force --install -I m4

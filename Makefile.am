@@ -3,6 +3,8 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include
 
+ACLOCAL_AMFLAGS = -I m4
+
 lib_LTLIBRARIES =
 noinst_LTLIBRARIES =
 
