@@ -45,5 +45,12 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	while (optind < argc) {
+		std::string filename = argv[optind++];
+
+		std::cout << "Reading image file " << filename << "..." << std::endl;
+		boxes.img_read(filename);
+	}
+
 	exit(0);
 }
