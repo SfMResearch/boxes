@@ -29,7 +29,8 @@ lib_LTLIBRARIES += \
 	libboxes.la
 
 libboxes_la_SOURCES = \
-	src/lib/boxes.cc
+	src/lib/boxes.cc \
+	src/lib/image.cc
 
 libboxes_la_CXXFLAGS = \
 	$(OPENCV_CXXCFLAGS)
@@ -38,4 +39,5 @@ libboxes_la_LIBADD = \
 	$(OPENCV_LIBS)
 
 pkginclude_HEADERS += \
-	include/boxes/boxes.h
+	include/boxes/boxes.h \
+	include/boxes/image.h

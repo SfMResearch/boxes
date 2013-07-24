@@ -1,9 +1,12 @@
 
 #include <list>
 #include <opencv2/opencv.hpp>
+#include <string>
 #include <tuple>
+#include <vector>
 
 #include <boxes/boxes.h>
+#include <boxes/image.h>
 
 namespace Boxes {
 
@@ -11,6 +14,49 @@ namespace Boxes {
 	 * Contructor.
 	 */
 	Boxes::Boxes() {
+	}
+
+	unsigned int Boxes::img_read(const std::string filename) {
+		BoxesImage *image = new BoxesImage(filename);
+		this->images.push_back(image);
+
+		return this->images.size() - 1;
+	}
+
+	BoxesImage* Boxes::img_get(unsigned int index) {
+		if (this->images.size() <= index)
+			return NULL;
+
+		std::list<BoxesImage*>::iterator i = this->images.begin();
+
+		// Move the i pointer index steps forward.
+		if (index > 0)
+			std::next(i, index);
+
+		return *i;
+	}
+
+	std::vector<cv::DMatch> Boxes::calc_matches(unsigned int index1, unsigned int index2) {
+		// Images must not be the same.
+		assert(index1 != index2);
+
+		// Get the two images from the list of loaded images.
+		BoxesImage* image1 = this->img_get(index1);
+		assert(image1);
+
+		BoxesImage* image2 = this->img_get(index2);
+		assert(image2);
+
+		cv::Mat* descriptors1 = image1->get_descriptors();
+		cv::Mat* descriptors2 = image2->get_descriptors();
+
+		std::vector<cv::DMatch> matches;
+
+		// Create matcher
+		cv::BFMatcher matcher = cv::BFMatcher(cv::NORM_L2);
+		matcher.match(*descriptors1, *descriptors2, matches);
+
+		return matches;
 	}
 
 	/*
