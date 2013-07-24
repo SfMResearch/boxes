@@ -1,4 +1,7 @@
 
+#ifndef BOXES_BOXES_H
+#define BOXES_BOXES_H
+
 #include <string>
 
 namespace Boxes {
@@ -9,3 +12,5 @@ namespace Boxes {
 			std::string version_string() const;
 	};
 }
+
+#endif
