@@ -45,9 +45,29 @@ namespace Boxes {
 		cv::Mat* descriptors1 = this->image1->get_descriptors();
 		cv::Mat* descriptors2 = this->image2->get_descriptors();
 
+		// Remove any stale matches that might be in here.
+		this->matches.clear();
+
 		// Create matcher
 		cv::BFMatcher matcher = cv::BFMatcher(cv::NORM_L2);
-		matcher.match(*descriptors1, *descriptors2, this->matches);
+
+		// Match.
+		std::vector<std::vector<cv::DMatch>> matches;
+		matcher.knnMatch(*descriptors1, *descriptors2, matches, 2);
+
+		for (std::vector<std::vector<cv::DMatch>>::iterator m = matches.begin(); m != matches.end(); ++m) {
+			if (m->size() >= 2) {
+				cv::DMatch* match1 = &m->at(0);
+				cv::DMatch* match2 = &m->at(1);
+
+				if (match1->distance > match2->distance * 0.8)
+					continue;
+			} else if (m->size() != 1) {
+				continue;
+			}
+
+			this->matches.push_back(m->at(0));
+		}
 
 		for (std::vector<cv::DMatch>::iterator m = this->matches.begin() ; m != this->matches.end(); ++m) {
 			cv::DMatch match = *m;
