@@ -172,14 +172,14 @@ namespace Boxes {
 		std::vector<double> reproj_errors;
 
 		for (unsigned int i = 0; i < this->keypoints1->size(); i++) {
-			cv::KeyPoint keypoint1 = (*this->keypoints1)[i];
-			cv::KeyPoint keypoint2 = (*this->keypoints2)[i];
+			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(i);
+			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(i);
 
-			cv::Point2f match_point1 = keypoint1.pt;
-			cv::Point2f match_point2 = keypoint2.pt;
+			const cv::Point2f* match_point1 = &keypoint1->pt;
+			const cv::Point2f* match_point2 = &keypoint2->pt;
 
-			cv::Point3d match_point_3d1(match_point1.x, match_point1.y, 1.0);
-			cv::Point3d match_point_3d2(match_point2.x, match_point2.y, 1.0);
+			cv::Point3d match_point_3d1(match_point1->x, match_point1->y, 1.0);
+			cv::Point3d match_point_3d2(match_point2->x, match_point2->y, 1.0);
 
 			cv::Mat_<double> match_point_3d1i = c1_inv * cv::Mat_<double>(match_point_3d1);
 			cv::Mat_<double> match_point_3d2i = c2_inv * cv::Mat_<double>(match_point_3d2);
@@ -200,7 +200,7 @@ namespace Boxes {
 			cv::Point2f X_reproj_point = cv::Point2f(X_reproj(0) / X_reproj(2), X_reproj(1) / X_reproj(2));
 
 			// Calculate the reprojection error.
-			double reproj_error = cv::norm(X_reproj_point - match_point1);
+			double reproj_error = cv::norm(X_reproj_point - *match_point1);
 			reproj_errors.push_back(reproj_error);
 
 			// Create CloudPoint object.
@@ -209,7 +209,7 @@ namespace Boxes {
 			cloud_point.reprojection_error = reproj_error;
 
 			point_cloud->push_back(cloud_point);
-			corresponding_image_points->push_back(keypoint1);
+			corresponding_image_points->push_back(*keypoint1);
 		}
 
 		cv::Scalar mse = cv::mean(reproj_errors);
