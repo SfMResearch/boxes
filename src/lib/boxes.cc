@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <boxes/boxes.h>
+#include <boxes/feature_matcher.h>
 #include <boxes/image.h>
 
 namespace Boxes {
@@ -36,27 +37,22 @@ namespace Boxes {
 		return *i;
 	}
 
-	std::vector<cv::DMatch> Boxes::calc_matches(unsigned int index1, unsigned int index2) {
-		// Images must not be the same.
-		assert(index1 != index2);
-
-		// Get the two images from the list of loaded images.
+	BoxesFeatureMatcher* Boxes::match(unsigned int index1, unsigned int index2) {
 		BoxesImage* image1 = this->img_get(index1);
 		assert(image1);
 
 		BoxesImage* image2 = this->img_get(index2);
 		assert(image2);
 
-		cv::Mat* descriptors1 = image1->get_descriptors();
-		cv::Mat* descriptors2 = image2->get_descriptors();
+		BoxesFeatureMatcher* feature_matcher = new BoxesFeatureMatcher(image1, image2);
+		return feature_matcher;
 
-		std::vector<cv::DMatch> matches;
+		//cv::Mat camera_matrix = this->find_best_camera_matrix(image1, image2, &matches);
 
-		// Create matcher
-		cv::BFMatcher matcher = cv::BFMatcher(cv::NORM_L2);
-		matcher.match(*descriptors1, *descriptors2, matches);
+		//std::cout << camera_matrix << std::endl;
 
-		return matches;
+		//std::cout << fundamental_matrix << std::endl;
+		//std::cout << essential_matrix << std::endl;
 	}
 
 	/*

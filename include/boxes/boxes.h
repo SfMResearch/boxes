@@ -3,9 +3,11 @@
 #define BOXES_BOXES_H
 
 #include <list>
+#include <opencv2/opencv.hpp>
 #include <string>
 #include <vector>
 
+#include <boxes/feature_matcher.h>
 #include <boxes/image.h>
 
 namespace Boxes {
@@ -17,7 +19,7 @@ namespace Boxes {
 			unsigned int img_read(const std::string filename);
 			BoxesImage* img_get(unsigned int index);
 
-			std::vector<cv::DMatch> calc_matches(unsigned int index1, unsigned int index2);
+			BoxesFeatureMatcher* match(unsigned int index1, unsigned int index2);
 
 			std::string version_string() const;
 

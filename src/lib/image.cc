@@ -43,6 +43,10 @@ namespace Boxes {
 		return &this->mat;
 	}
 
+	cv::Size BoxesImage::size() const {
+		return this->mat.size();
+	}
+
 	std::vector<cv::KeyPoint>* BoxesImage::calc_keypoints() {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
@@ -77,5 +81,20 @@ namespace Boxes {
 			this->descriptors = this->calc_descriptors();
 
 		return this->descriptors;
+	}
+
+	cv::Mat BoxesImage::guess_camera_matrix() const {
+		cv::Size image_size = this->size();
+
+		cv::Mat camera_matrix = cv::Mat::zeros(3, 3, CV_64F);
+		camera_matrix.at<double>(0, 0) = image_size.width;
+		camera_matrix.at<double>(1, 1) = image_size.height;
+		camera_matrix.at<double>(2, 2) = 1.0;
+
+		// The center of the image.
+		camera_matrix.at<double>(0, 2) = image_size.width / 2;
+		camera_matrix.at<double>(1, 2) = image_size.height / 2;
+
+		return camera_matrix;
 	}
 };

@@ -17,6 +17,7 @@ namespace Boxes {
 			// Basic methods.
 			void show();
 			void write(const std::string filename);
+			cv::Size size() const;
 
 			// mat
 			const cv::Mat* get_mat();
@@ -26,6 +27,9 @@ namespace Boxes {
 
 			// keypoints
 			std::vector<cv::KeyPoint>* get_keypoints();
+
+			// camera matrix
+			cv::Mat guess_camera_matrix() const;
 
 		private:
 			cv::Mat mat;

@@ -30,6 +30,7 @@ lib_LTLIBRARIES += \
 
 libboxes_la_SOURCES = \
 	src/lib/boxes.cc \
+	src/lib/feature_matcher.cc \
 	src/lib/image.cc
 
 libboxes_la_CXXFLAGS = \
@@ -40,4 +41,6 @@ libboxes_la_LIBADD = \
 
 pkginclude_HEADERS += \
 	include/boxes/boxes.h \
-	include/boxes/image.h
+	include/boxes/feature_matcher.h \
+	include/boxes/image.h \
+	include/boxes/structs.h

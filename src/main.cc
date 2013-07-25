@@ -52,5 +52,7 @@ int main(int argc, char **argv) {
 		boxes.img_read(filename);
 	}
 
+	boxes.match(0, 1);
+
 	exit(0);
 }
