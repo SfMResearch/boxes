@@ -28,13 +28,7 @@ namespace Boxes {
 		if (this->images.size() <= index)
 			return NULL;
 
-		std::list<BoxesImage*>::iterator i = this->images.begin();
-
-		// Move the i pointer index steps forward.
-		if (index > 0)
-			std::next(i, index);
-
-		return *i;
+		return this->images[index];
 	}
 
 	BoxesFeatureMatcher* Boxes::match(unsigned int index1, unsigned int index2) {

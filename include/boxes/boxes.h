@@ -2,7 +2,6 @@
 #ifndef BOXES_BOXES_H
 #define BOXES_BOXES_H
 
-#include <list>
 #include <opencv2/opencv.hpp>
 #include <string>
 #include <vector>
@@ -24,7 +23,7 @@ namespace Boxes {
 			std::string version_string() const;
 
 		private:
-			std::list<BoxesImage*> images;
+			std::vector<BoxesImage*> images;
 	};
 }
 
