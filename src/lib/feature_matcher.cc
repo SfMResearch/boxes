@@ -5,6 +5,7 @@
 #include <tuple>
 #include <vector>
 
+#include <boxes/constants.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
@@ -172,7 +173,7 @@ namespace Boxes {
 			double reprojection_error = this->triangulate_points(&P0, &p, &point_cloud, &corresponding_image_points);
 
 			// Skip all matrices with too high projection error.
-			if (reprojection_error > 100.0)
+			if (reprojection_error > REPROJECTION_ERROR_MAX)
 				continue;
 
 			// Test triangulation for a valid result.

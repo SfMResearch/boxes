@@ -1,4 +1,6 @@
 
+CXXFLAGS_PRIVATE = -DBOXES_PRIVATE
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include
@@ -34,12 +36,14 @@ libboxes_la_SOURCES = \
 	src/lib/image.cc
 
 libboxes_la_CXXFLAGS = \
+	$(CXXFLAGS_PRIVATE) \
 	$(OPENCV_CXXCFLAGS)
 
 libboxes_la_LIBADD = \
 	$(OPENCV_LIBS)
 
 pkginclude_HEADERS += \
+	include/boxes/constants.h \
 	include/boxes/boxes.h \
 	include/boxes/feature_matcher.h \
 	include/boxes/image.h \
