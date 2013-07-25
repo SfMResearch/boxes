@@ -35,11 +35,11 @@ namespace Boxes {
 			cv::Mat mat;
 
 			// descriptors
-			cv::Mat* descriptors;
+			cv::Mat* descriptors = NULL;
 			cv::Mat* calc_descriptors();
 
 			// keypoints
-			std::vector<cv::KeyPoint>* keypoints;
+			std::vector<cv::KeyPoint>* keypoints = NULL;
 			std::vector<cv::KeyPoint>* calc_keypoints();
 	};
 };
