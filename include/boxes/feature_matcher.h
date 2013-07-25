@@ -13,6 +13,8 @@ namespace Boxes {
 		public:
 			BoxesFeatureMatcher(BoxesImage* image1, BoxesImage* image2);
 
+			void draw_matches(const std::string filename);
+
 		private:
 			BoxesImage* image1;
 			BoxesImage* image2;

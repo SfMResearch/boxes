@@ -23,6 +23,7 @@ namespace Boxes {
 
 		// Match the two given images.
 		this->match();
+		this->draw_matches("result.jpg");
 
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
@@ -57,6 +58,18 @@ namespace Boxes {
 			this->match_points1.push_back(keypoint1.pt);
 			this->match_points2.push_back(keypoint2.pt);
 		}
+	}
+
+	void BoxesFeatureMatcher::draw_matches(const std::string filename) {
+		cv::Mat img_matches;
+
+		const cv::Mat* image1 = this->image1->get_mat();
+		const cv::Mat* image2 = this->image2->get_mat();
+
+		cv::drawMatches(*image1, *this->keypoints1, *image2, *this->keypoints2, this->matches, img_matches);
+
+		BoxesImage image = BoxesImage(img_matches);
+		image.write(filename);
 	}
 
 	cv::Mat BoxesFeatureMatcher::calculate_fundamental_matrix() {
