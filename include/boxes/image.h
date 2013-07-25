@@ -26,7 +26,7 @@ namespace Boxes {
 			cv::Mat* get_descriptors();
 
 			// keypoints
-			std::vector<cv::KeyPoint>* get_keypoints();
+			const std::vector<cv::KeyPoint>* get_keypoints();
 
 			// camera matrix
 			cv::Mat guess_camera_matrix() const;

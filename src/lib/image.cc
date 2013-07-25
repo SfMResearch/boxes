@@ -56,7 +56,7 @@ namespace Boxes {
 		return output;
 	}
 
-	std::vector<cv::KeyPoint>* BoxesImage::get_keypoints() {
+	const std::vector<cv::KeyPoint>* BoxesImage::get_keypoints() {
 		if (!this->keypoints)
 			this->keypoints = this->calc_keypoints();
 
@@ -67,11 +67,12 @@ namespace Boxes {
 		cv::Mat* descriptors = new cv::Mat();
 
 		// Get keypoints.
-		std::vector<cv::KeyPoint>* keypoints = this->get_keypoints();
+		if (!this->keypoints)
+			this->keypoints = this->calc_keypoints();
 
 		// Extract descriptors.
 		cv::OrbDescriptorExtractor extractor = cv::OrbDescriptorExtractor();
-		extractor.compute(this->mat, *keypoints, *descriptors);
+		extractor.compute(this->mat, *this->keypoints, *descriptors);
 
 		return descriptors;
 	}
