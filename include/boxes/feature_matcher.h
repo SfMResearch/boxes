@@ -22,7 +22,9 @@ namespace Boxes {
 			const std::vector<cv::KeyPoint>* keypoints1;
 			const std::vector<cv::KeyPoint>* keypoints2;
 
+			void optical_flow();
 			void match();
+			void search_match_points();
 			std::vector<cv::DMatch> matches;
 			std::vector<cv::Point2f> match_points1;
 			std::vector<cv::Point2f> match_points2;

@@ -84,6 +84,17 @@ namespace Boxes {
 		return this->descriptors;
 	}
 
+	cv::Mat BoxesImage::get_greyscale_mat() {
+		if (this->mat.channels() == 1) {
+			return this->mat;
+		}
+
+		cv::Mat greyscale;
+		cv::cvtColor(this->mat, greyscale, CV_RGB2GRAY);
+
+		return greyscale;
+	}
+
 	cv::Mat BoxesImage::guess_camera_matrix() const {
 		cv::Size image_size = this->size();
 

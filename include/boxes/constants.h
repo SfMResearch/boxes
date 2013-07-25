@@ -9,6 +9,10 @@
 
 #define REPROJECTION_ERROR_MAX 1000.0
 
+#define OF_MAX_VERROR                   16.0
+#define OF_NEIGHBOUR_RATIO               0.8
+#define OF_RADIUS_MATCH                  4.0
+
 #endif
 
 #endif

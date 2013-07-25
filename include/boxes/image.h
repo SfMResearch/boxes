@@ -21,6 +21,7 @@ namespace Boxes {
 
 			// mat
 			const cv::Mat* get_mat();
+			cv::Mat get_greyscale_mat();
 
 			// descriptors
 			cv::Mat* get_descriptors();
