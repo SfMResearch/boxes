@@ -205,7 +205,10 @@ namespace Boxes {
 
 		std::vector<double> reproj_errors;
 
-		for (unsigned int i = 0; i < this->keypoints1->size(); i++) {
+		assert(this->keypoints1->size() >= this->matches.size());
+		assert(this->keypoints2->size() >= this->matches.size());
+
+		for (unsigned int i = 0; i < this->matches.size(); i++) {
 			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(i);
 			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(i);
 
