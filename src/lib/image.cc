@@ -50,7 +50,7 @@ namespace Boxes {
 	std::vector<cv::KeyPoint>* BoxesImage::calc_keypoints() {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
-		cv::OrbFeatureDetector detector = cv::OrbFeatureDetector();
+		cv::FastFeatureDetector detector = cv::FastFeatureDetector();
 		detector.detect(this->mat, *output);
 
 		return output;
