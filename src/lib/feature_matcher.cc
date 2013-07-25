@@ -162,7 +162,7 @@ namespace Boxes {
 
 			// Check for coherency of the rotation matrix.
 			cv::Mat rotation = cv::Mat(p).colRange(0, 3);
-			double determinant = cv::determinant(rotation) - 1.0;
+			double determinant = fabsf(cv::determinant(rotation)) - 1.0;
 			if (determinant > 1e-07)
 				continue;
 
