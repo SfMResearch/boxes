@@ -7,7 +7,7 @@
  */
 #ifdef BOXES_PRIVATE
 
-#define REPROJECTION_ERROR_MAX 1000.0
+#define REPROJECTION_ERROR_MAX         200.0
 
 #define OF_MAX_VERROR                   16.0
 #define OF_NEIGHBOUR_RATIO               0.8
