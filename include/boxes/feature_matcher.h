@@ -24,6 +24,7 @@ namespace Boxes {
 
 			void optical_flow();
 			void match();
+			void match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, int norm_type = cv::NORM_L2);
 			void search_match_points();
 			std::vector<cv::DMatch> matches;
 			std::vector<cv::Point2f> match_points1;

@@ -143,14 +143,18 @@ namespace Boxes {
 	}
 
 	void BoxesFeatureMatcher::match() {
-		cv::Mat* descriptors1 = this->image1->get_descriptors();
-		cv::Mat* descriptors2 = this->image2->get_descriptors();
+		const cv::Mat* descriptors1 = this->image1->get_descriptors();
+		const cv::Mat* descriptors2 = this->image2->get_descriptors();
 
+		this->match(descriptors1, descriptors2);
+	}
+
+	void BoxesFeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, int norm_type) {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
 		// Create matcher
-		cv::BFMatcher matcher = cv::BFMatcher(cv::NORM_L2);
+		cv::BFMatcher matcher = cv::BFMatcher(norm_type);
 
 		// Match.
 		std::vector<std::vector<cv::DMatch>> matches;
