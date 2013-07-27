@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include <boxes/constants.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
@@ -24,8 +25,7 @@ namespace Boxes {
 
 			void optical_flow();
 			void match();
-			void match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, int norm_type = cv::NORM_L2);
-			void search_match_points();
+			void match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
 			std::vector<cv::DMatch> matches;
 			std::vector<cv::Point2f> match_points1;
 			std::vector<cv::Point2f> match_points2;

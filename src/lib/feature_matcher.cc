@@ -70,76 +70,31 @@ namespace Boxes {
 		// Calculate the optical flow field, i.e. how each point1 moved across the two images
 		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2, vstatus, verror);
 
-		// First, filter out the points with high error.
-		std::vector<cv::Point2f> good_points1;
-		std::vector<int> points1_index;
+		std::vector<MatchPoint> match_points;
 
+		// First, filter out the points with high error.
 		for (unsigned int i = 0; i < vstatus.size(); i++) {
 			// Save good points with a low error rate.
 			if (vstatus[i] && verror[i] < OF_MAX_VERROR) {
-				// Keep the original index of the point in the optical flow array,
-				// for future use
-				points1_index.push_back(i);
+				MatchPoint match_point;
 
-				// Keep the feature point itself
-				good_points1.push_back(points1[i]);
+				match_point.pt = points1[i];
+				match_point.query_index = i;
+
+				match_points.push_back(match_point);
 			}
 		}
 
-		/* Look around each optical flow point in the first image for any features
-		 * that were detected in its area and make a match.
-		 */
-		std::vector<std::vector<cv::DMatch>> nearest_neighbours;
+		std::vector<cv::Point2f> good_points1;
+		for (std::vector<MatchPoint>::const_iterator i = match_points.begin(); i != match_points.end(); ++i) {
+			good_points1.push_back(i->pt);
+		}
 
 		// Format appropriate data structures.
 		cv::Mat good_points1_flat = cv::Mat(good_points1).reshape(1, good_points1.size());
 		cv::Mat points2_flat = cv::Mat(points2).reshape(1, points2.size());
 
-		cv::BFMatcher matcher = cv::BFMatcher(CV_L2);
-		matcher.radiusMatch(good_points1_flat, points2_flat, nearest_neighbours, OF_RADIUS_MATCH);
-
-		/* Check if the found neighbours are unique
-		 * (throw away neighbours that are too close together, as they may be confusing)
-		 */
-		std::set<int> found_in_points2;
-
-		for (unsigned int i = 0; i < nearest_neighbours.size(); i++) {
-			cv::DMatch match;
-
-			unsigned int size = nearest_neighbours[i].size();
-
-			if (size >= 1) {
-				match = nearest_neighbours[i][0];
-			} else {
-				continue;
-			}
-
-			/* If there are two neighbours, we check how close they are.
-			 * If they aren't too close, we to each other, we go with neither
-			 * of them because we cannot tell which one is better. */
-			if (size > 1) {
-				double ratio = match.distance / nearest_neighbours[i][1].distance;
-
-				if (ratio >= OF_NEIGHBOUR_RATIO) {
-					// too close.
-					continue;
-				}
-			}
-
-			/* Check if the match point is already in the list.
-			 * If not, add it. */
-			if (found_in_points2.find(match.trainIdx) == found_in_points2.end()) {
-				match.queryIdx = points1_index[match.queryIdx];
-				this->matches.push_back(match);
-
-				found_in_points2.insert(match.trainIdx);
-			}
-		}
-
-		this->search_match_points();
-
-		assert(this->matches.size() <= this->keypoints1->size());
-		assert(this->matches.size() <= this->keypoints2->size());
+		this->match(&good_points1_flat, &points2_flat, &match_points, MATCH_TYPE_RADIUS, CV_L2);
 	}
 
 	void BoxesFeatureMatcher::match() {
@@ -149,46 +104,69 @@ namespace Boxes {
 		this->match(descriptors1, descriptors2);
 	}
 
-	void BoxesFeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, int norm_type) {
+	void BoxesFeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
-
-		// Create matcher
-		cv::BFMatcher matcher = cv::BFMatcher(norm_type);
-
-		// Match.
-		std::vector<std::vector<cv::DMatch>> matches;
-		matcher.knnMatch(*descriptors1, *descriptors2, matches, 2);
-
-		for (std::vector<std::vector<cv::DMatch>>::iterator m = matches.begin(); m != matches.end(); ++m) {
-			if (m->size() >= 2) {
-				cv::DMatch* match1 = &m->at(0);
-				cv::DMatch* match2 = &m->at(1);
-
-				if (match1->distance > match2->distance * 0.8)
-					continue;
-			} else if (m->size() != 1) {
-				continue;
-			}
-
-			this->matches.push_back(m->at(0));
-		}
-
-		this->search_match_points();
-	}
-
-	void BoxesFeatureMatcher::search_match_points() {
-		assert(this->matches.size() > 0);
-
-		// Discard any data.
 		this->match_points1.clear();
 		this->match_points2.clear();
 
-		for (std::vector<cv::DMatch>::iterator m = this->matches.begin() ; m != this->matches.end(); ++m) {
-			cv::DMatch match = *m;
+		// Create matcher
+		std::vector<std::vector<cv::DMatch>> nearest_neighbours;
+		cv::BFMatcher matcher = cv::BFMatcher(norm_type);
 
-			cv::KeyPoint keypoint1 = (*this->keypoints1)[match.queryIdx];
-			cv::KeyPoint keypoint2 = (*this->keypoints2)[match.trainIdx];
+		// Match.
+		switch (match_type) {
+			case MATCH_TYPE_NORMAL:
+				matcher.knnMatch(*descriptors1, *descriptors2, nearest_neighbours, 2);
+				break;
+
+			case MATCH_TYPE_RADIUS:
+				matcher.radiusMatch(*descriptors1, *descriptors2, nearest_neighbours, OF_RADIUS_MATCH);
+				break;
+
+			default:
+				return;
+		}
+
+		int back_index = -1;
+
+		cv::DMatch* match1;
+		cv::DMatch* match2;
+		for (std::vector<std::vector<cv::DMatch>>::iterator n = nearest_neighbours.begin(); n != nearest_neighbours.end(); ++n) {
+			back_index++;
+
+			unsigned int size = n->size();
+
+			switch (size) {
+				case 1:
+					match1 = &n->at(0);
+					break;
+
+				case 2:
+					match1 = &n->at(0);
+					match2 = &n->at(1);
+
+					if (match1->distance > match2->distance * MATCH_VALID_RATIO)
+						continue;
+					break;
+
+				case 0:
+				default:
+					continue;
+			}
+
+			if (match_points) {
+				match1->queryIdx = match_points->at(back_index).query_index;
+			}
+
+			this->matches.push_back(*match1);
+		}
+
+		assert(this->matches.size() > 0);
+
+		for (std::vector<cv::DMatch>::iterator m = this->matches.begin() ; m != this->matches.end(); ++m) {
+			cv::KeyPoint keypoint1 = (*this->keypoints1)[m->queryIdx];
+			cv::KeyPoint keypoint2 = (*this->keypoints2)[m->trainIdx];
 
 			this->match_points1.push_back(keypoint1.pt);
 			this->match_points2.push_back(keypoint2.pt);
