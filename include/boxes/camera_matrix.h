@@ -17,6 +17,9 @@ namespace Boxes {
 			cv::Matx34d matrix;
 			std::vector<CloudPoint> point_cloud;
 			std::vector<cv::KeyPoint> corresponding_image_points;
+
+			// Methods
+			bool rotation_is_coherent() const;
 	};
 };
 

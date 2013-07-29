@@ -255,9 +255,8 @@ namespace Boxes {
 			cv::Matx34d p = i->matrix;
 
 			// Check for coherency of the rotation matrix.
-			cv::Mat rotation = cv::Mat(p).colRange(0, 3);
-			double determinant = fabsf(cv::determinant(rotation)) - 1.0;
-			if (determinant > 1e-07)
+			// Skip if the condition is true.
+			if (i->rotation_is_coherent())
 				continue;
 
 			// Reset point cloud.
