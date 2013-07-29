@@ -248,32 +248,45 @@ namespace Boxes {
 	CameraMatrix* BoxesFeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
+		CameraMatrix* best_matrix = NULL;
+
 		for (std::vector<CameraMatrix>::iterator i = (*camera_matrices).begin(); i != (*camera_matrices).end(); ++i) {
 			// Check for coherency of the rotation matrix.
 			// Skip if the condition is true.
 			if (i->rotation_is_coherent())
 				continue;
 
+			// Pick first matrix as the best one until we know better.
+			if (!best_matrix)
+				best_matrix = &(*i);
+
 			// Triangulate.
 			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix),
 				&i->point_cloud, &i->corresponding_image_points);
 
-			// Skip all matrices with too high projection error.
-			if (i->reprojection_error > REPROJECTION_ERROR_MAX)
+			// Select the matrix with best reprojection error.
+			if (i->reprojection_error < best_matrix->reprojection_error) {
+				best_matrix = &(*i);
 				continue;
-
-			// Test triangulation for a valid result.
+			}
 
 			// Count all points that are "in front of the camera".
-			double percentage = i->percentage_of_points_in_front_of_camera();
-
-			// If more than 75% of the points are in front of the camera, we
-			// consider the camera matrix as a valid solution.
-			if (percentage > 0.75)
-				return &(*i);
+			if (i->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
+				best_matrix = &(*i);
+				continue;
+			}
 		}
 
-		return NULL;
+		if (best_matrix) {
+			if (best_matrix->reprojection_error > REPROJECTION_ERROR_MAX) {
+				// XXX should raise an exception
+				std::cerr << "best matrix' reprojection error too high: " << best_matrix->reprojection_error << std::endl;
+
+				return NULL;
+			}
+		}
+
+		return best_matrix;
 	}
 
 	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, std::vector<CloudPoint>* point_cloud, std::vector<cv::KeyPoint>* corresponding_image_points) {
