@@ -160,17 +160,15 @@ namespace Boxes {
 			}
 
 			this->matches.push_back(*match1);
+
+			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(match1->queryIdx);
+			this->match_points1.push_back(keypoint1->pt);
+			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(match1->trainIdx);
+			this->match_points2.push_back(keypoint2->pt);
 		}
 
 		assert(this->matches.size() > 0);
-
-		for (std::vector<cv::DMatch>::iterator m = this->matches.begin() ; m != this->matches.end(); ++m) {
-			cv::KeyPoint keypoint1 = (*this->keypoints1)[m->queryIdx];
-			cv::KeyPoint keypoint2 = (*this->keypoints2)[m->trainIdx];
-
-			this->match_points1.push_back(keypoint1.pt);
-			this->match_points2.push_back(keypoint2.pt);
-		}
+		assert(this->match_points1.size() == this->match_points2.size());
 	}
 
 	void BoxesFeatureMatcher::draw_matches(const std::string filename) {
