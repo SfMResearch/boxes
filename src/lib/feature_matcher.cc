@@ -5,6 +5,7 @@
 #include <tuple>
 #include <vector>
 
+#include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/image.h>
@@ -37,13 +38,13 @@ namespace Boxes {
 		this->essential_matrix = this->calculate_essential_matrix();
 
 		// Calculate all possible camera matrices.
-		std::vector<cv::Matx34d> camera_matrices = this->calculate_possible_camera_matrices();
+		std::vector<CameraMatrix> camera_matrices = this->calculate_possible_camera_matrices();
 
 		// Find the best camera matrix.
 		this->best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
 		assert(this->best_camera_matrix);
 
-		std::cout << *best_camera_matrix << std::endl;
+		std::cout << best_camera_matrix->matrix << std::endl;
 	}
 
 	void BoxesFeatureMatcher::optical_flow() {
@@ -193,7 +194,7 @@ namespace Boxes {
 		return camera_matrix.t() * this->fundamental_matrix * camera_matrix;
 	}
 
-	std::vector<cv::Matx34d> BoxesFeatureMatcher::calculate_possible_camera_matrices() {
+	std::vector<CameraMatrix> BoxesFeatureMatcher::calculate_possible_camera_matrices() {
 		// Perform SVD of the matrix.
 		cv::SVD svd = cv::SVD(this->essential_matrix, cv::SVD::MODIFY_A|cv::SVD::FULL_UV);
 
@@ -216,7 +217,7 @@ namespace Boxes {
 		cv::Mat_<double> translation1 = svd.u.col(2);
 		cv::Mat_<double> translation2 = -translation1;
 
-		std::vector<cv::Matx34d> matrices;
+		std::vector<CameraMatrix> matrices;
 
 		cv::Mat* rotation = &rotation1;
 		cv::Mat* translation = &translation1;
@@ -226,12 +227,14 @@ namespace Boxes {
 			translation = &translation1;
 
 			for (unsigned int j = 0; j < 2; j++) {
-				matrix = cv::Matx34d(
+				cv::Matx34d matrix = cv::Matx34d(
 					rotation->at<double>(0, 0), rotation->at<double>(0, 1), rotation->at<double>(0, 2), translation->at<double>(0),
 					rotation->at<double>(1, 0), rotation->at<double>(1, 1), rotation->at<double>(1, 2), translation->at<double>(1),
 					rotation->at<double>(2, 0), rotation->at<double>(2, 1), rotation->at<double>(2, 2), translation->at<double>(2)
 				);
-				matrices.push_back(matrix);
+
+				CameraMatrix camera_matrix = CameraMatrix(matrix);
+				matrices.push_back(camera_matrix);
 
 				translation = &translation2;
 			}
@@ -242,14 +245,14 @@ namespace Boxes {
 		return matrices;
 	}
 
-	cv::Matx34d* BoxesFeatureMatcher::find_best_camera_matrix(std::vector<cv::Matx34d>* camera_matrices) {
+	CameraMatrix* BoxesFeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
 		std::vector<CloudPoint> point_cloud;
 		std::vector<cv::KeyPoint> corresponding_image_points;
 
-		for (std::vector<cv::Matx34d>::iterator i = (*camera_matrices).begin(); i != (*camera_matrices).end(); ++i) {
-			cv::Matx34d p = *i;
+		for (std::vector<CameraMatrix>::iterator i = (*camera_matrices).begin(); i != (*camera_matrices).end(); ++i) {
+			cv::Matx34d p = i->matrix;
 
 			// Check for coherency of the rotation matrix.
 			cv::Mat rotation = cv::Mat(p).colRange(0, 3);

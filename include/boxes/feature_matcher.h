@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
@@ -38,9 +39,9 @@ namespace Boxes {
 			cv::Mat calculate_fundamental_matrix();	
 			cv::Mat fundamental_matrix;
 
-			cv::Matx34d* find_best_camera_matrix(std::vector<cv::Matx34d>* camera_matrices);
-			cv::Matx34d* best_camera_matrix;
-			std::vector<cv::Matx34d> calculate_possible_camera_matrices();
+			CameraMatrix* find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices);
+			CameraMatrix* best_camera_matrix;
+			std::vector<CameraMatrix> calculate_possible_camera_matrices();
 
 			double triangulate_points(cv::Matx34d* p0, cv::Matx34d* p1, std::vector<CloudPoint>* point_cloud, std::vector<cv::KeyPoint>* corresponding_image_points);
 			cv::Mat_<double> triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2);
