@@ -129,13 +129,9 @@ namespace Boxes {
 				return;
 		}
 
-		int back_index = -1;
-
 		cv::DMatch* match1;
 		cv::DMatch* match2;
 		for (std::vector<std::vector<cv::DMatch>>::iterator n = nearest_neighbours.begin(); n != nearest_neighbours.end(); ++n) {
-			back_index++;
-
 			unsigned int size = n->size();
 
 			switch (size) {
@@ -160,7 +156,7 @@ namespace Boxes {
 			}
 
 			if (match_points) {
-				match1->queryIdx = match_points->at(back_index).query_index;
+				match1->queryIdx = match_points->at(match1->queryIdx).query_index;
 			}
 
 			this->matches.push_back(*match1);
