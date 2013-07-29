@@ -9,6 +9,9 @@
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
+#define FEATURE_MATCHER_USE_SINGLE_MATCHES
+#define FEATURE_MATCHER_USE_DOUBLE_MATCHES
+
 namespace Boxes {
 	class BoxesFeatureMatcher {
 		public:

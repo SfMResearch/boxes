@@ -138,10 +138,13 @@ namespace Boxes {
 			unsigned int size = n->size();
 
 			switch (size) {
+#ifdef FEATURE_MATCHER_USE_SINGLE_MATCHES
 				case 1:
 					match1 = &n->at(0);
 					break;
+#endif
 
+#ifdef FEATURE_MATCHER_USE_DOUBLE_MATCHES
 				case 2:
 					match1 = &n->at(0);
 					match2 = &n->at(1);
@@ -149,8 +152,8 @@ namespace Boxes {
 					if (match1->distance > match2->distance * MATCH_VALID_RATIO)
 						continue;
 					break;
+#endif
 
-				case 0:
 				default:
 					continue;
 			}
