@@ -298,6 +298,7 @@ namespace Boxes {
 		assert(this->keypoints1->size() >= this->matches.size());
 		assert(this->keypoints2->size() >= this->matches.size());
 
+		#pragma omp parallel for
 		for (unsigned int i = 0; i < this->matches.size(); i++) {
 			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(i);
 			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(i);
@@ -326,17 +327,19 @@ namespace Boxes {
 			cv::Mat_<double> X_reproj = KP1 * X;
 			cv::Point2f X_reproj_point = cv::Point2f(X_reproj(0) / X_reproj(2), X_reproj(1) / X_reproj(2));
 
-			// Calculate the reprojection error.
-			double reproj_error = cv::norm(X_reproj_point - *match_point1);
-			reproj_errors.push_back(reproj_error);
-
 			// Create CloudPoint object.
 			CloudPoint cloud_point;
 			cloud_point.pt = cv::Point3d(X(0), X(1), X(2));
-			cloud_point.reprojection_error = reproj_error;
 
-			point_cloud->push_back(cloud_point);
-			corresponding_image_points->push_back(*keypoint1);
+			// Calculate the reprojection error.
+			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point1);
+
+			#pragma omp critical
+			{
+				corresponding_image_points->push_back(*keypoint1);
+				point_cloud->push_back(cloud_point);
+				reproj_errors.push_back(cloud_point.reprojection_error);
+			}
 		}
 
 		cv::Scalar mse = cv::mean(reproj_errors);

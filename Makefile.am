@@ -37,6 +37,7 @@ libboxes_la_SOURCES = \
 
 libboxes_la_CXXFLAGS = \
 	$(CXXFLAGS_PRIVATE) \
+	$(OPENMP_CFLAGS) \
 	$(OPENCV_CXXCFLAGS)
 
 libboxes_la_LIBADD = \
