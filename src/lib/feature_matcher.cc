@@ -248,35 +248,24 @@ namespace Boxes {
 	CameraMatrix* BoxesFeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
-		std::vector<CloudPoint> point_cloud;
-		std::vector<cv::KeyPoint> corresponding_image_points;
-
 		for (std::vector<CameraMatrix>::iterator i = (*camera_matrices).begin(); i != (*camera_matrices).end(); ++i) {
-			cv::Matx34d p = i->matrix;
-
 			// Check for coherency of the rotation matrix.
 			// Skip if the condition is true.
 			if (i->rotation_is_coherent())
 				continue;
 
-			// Reset point cloud.
-			point_cloud.clear();
-
-			double reprojection_error = this->triangulate_points(&P0, &p, &point_cloud, &corresponding_image_points);
+			// Triangulate.
+			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix),
+				&i->point_cloud, &i->corresponding_image_points);
 
 			// Skip all matrices with too high projection error.
-			if (reprojection_error > REPROJECTION_ERROR_MAX)
+			if (i->reprojection_error > REPROJECTION_ERROR_MAX)
 				continue;
 
 			// Test triangulation for a valid result.
 
-			// Count all points that or "in front of the camera".
-			unsigned int points_in_front = 0;
-			for (std::vector<CloudPoint>::iterator cp = point_cloud.begin(); cp != point_cloud.end(); ++cp) {
-				if (cp->pt.z > 0)
-					points_in_front++;
-			}
-			double percentage = (double)points_in_front / (double)point_cloud.size();
+			// Count all points that are "in front of the camera".
+			double percentage = i->percentage_of_points_in_front_of_camera();
 
 			// If more than 75% of the points are in front of the camera, we
 			// consider the camera matrix as a valid solution.
