@@ -59,6 +59,7 @@ namespace Boxes {
 		for (std::vector<cv::KeyPoint>::const_iterator i = this->keypoints2->begin(); i != this->keypoints2->end(); ++i) {
 			points2.push_back(i->pt);
 		}
+		std::vector<cv::Point2f> points2x(points1.size());
 
 		// Convert images to greyscale.
 		cv::Mat greyscale1 = this->image1->get_greyscale_mat();
@@ -68,7 +69,7 @@ namespace Boxes {
 		std::vector<float> verror;
 
 		// Calculate the optical flow field, i.e. how each point1 moved across the two images
-		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2, vstatus, verror);
+		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror);
 
 		std::vector<MatchPoint> match_points;
 
@@ -78,7 +79,7 @@ namespace Boxes {
 			if (vstatus[i] && verror[i] < OF_MAX_VERROR) {
 				MatchPoint match_point;
 
-				match_point.pt = points1[i];
+				match_point.pt = points2x[i];
 				match_point.query_index = i;
 
 				match_points.push_back(match_point);
