@@ -23,11 +23,29 @@ namespace Boxes {
 	double CameraMatrix::percentage_of_points_in_front_of_camera() const {
 		unsigned int points_in_front = 0;
 
+		cv::Matx44d matrix_mul = cv::Matx44d::eye();
+		for (unsigned int i = 0; i < 12; i++) {
+			matrix_mul(i) = this->matrix(i);
+		}
+
+		std::vector<cv::Point3d> points(this->point_cloud.size());
+		std::vector<cv::Point3d> points_transformed(this->point_cloud.size());
+
+
 		for (std::vector<CloudPoint>::const_iterator cp = this->point_cloud.begin(); cp != this->point_cloud.end(); ++cp) {
 			if (cp->pt.z > 0)
 				points_in_front++;
+
+			points.push_back(cp->pt);
 		}
 
-		return (double)points_in_front / (double)this->point_cloud.size();
+		cv::perspectiveTransform(points, points_transformed, matrix_mul);
+
+		for (std::vector<cv::Point3d>::iterator pt = points_transformed.begin(); pt != points_transformed.end(); ++pt) {
+			if (pt->z > 0)
+				points_in_front++;
+		}
+
+		return (double)points_in_front / ((double)this->point_cloud.size() * 2);
 	}
 }
