@@ -8,7 +8,7 @@
 namespace Boxes {
 	struct CloudPoint {
 		cv::Point3d pt;
-		// std::vector<int> imgpt_for_img;
+		cv::KeyPoint keypoint;
 		double reprojection_error;
 	};
 

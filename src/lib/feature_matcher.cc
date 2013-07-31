@@ -261,8 +261,7 @@ namespace Boxes {
 				best_matrix = &(*i);
 
 			// Triangulate.
-			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix),
-				&i->point_cloud, &i->corresponding_image_points);
+			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix), &i->point_cloud);
 
 			// Select the matrix with best reprojection error.
 			if (i->reprojection_error < best_matrix->reprojection_error) {
@@ -289,7 +288,7 @@ namespace Boxes {
 		return best_matrix;
 	}
 
-	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, std::vector<CloudPoint>* point_cloud, std::vector<cv::KeyPoint>* corresponding_image_points) {
+	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, std::vector<CloudPoint>* point_cloud) {
 		cv::Mat c1 = this->image1->guess_camera_matrix();
 		cv::Mat c1_inv = c1.inv();
 		cv::Mat c2 = this->image2->guess_camera_matrix();
@@ -334,13 +333,13 @@ namespace Boxes {
 			// Create CloudPoint object.
 			CloudPoint cloud_point;
 			cloud_point.pt = cv::Point3d(X(0), X(1), X(2));
+			cloud_point.keypoint = *keypoint1;
 
 			// Calculate the reprojection error.
 			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point1);
 
 			#pragma omp critical
 			{
-				corresponding_image_points->push_back(*keypoint1);
 				point_cloud->push_back(cloud_point);
 				reproj_errors.push_back(cloud_point.reprojection_error);
 			}
