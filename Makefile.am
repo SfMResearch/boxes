@@ -22,6 +22,10 @@ pkginclude_HEADERS =
 boxes_SOURCES = \
 	src/main.cc
 
+boxes_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
+	$(PCL_CFLAGS)
+
 boxes_LDADD = \
 	libboxes.la
 
@@ -37,12 +41,15 @@ libboxes_la_SOURCES = \
 	src/lib/image.cc
 
 libboxes_la_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
 	$(CXXFLAGS_PRIVATE) \
 	$(OPENMP_CFLAGS) \
-	$(OPENCV_CXXCFLAGS)
+	$(OPENCV_CXXCFLAGS) \
+	$(PCL_CFLAGS)
 
 libboxes_la_LIBADD = \
-	$(OPENCV_LIBS)
+	$(OPENCV_LIBS) \
+	$(PCL_LIBS)
 
 pkginclude_HEADERS += \
 	include/boxes/camera_matrix.h \

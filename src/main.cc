@@ -9,9 +9,12 @@
 int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
+	bool visualize = false;
+
 	while (1) {
 		static struct option long_options[] = {
 			{"version",		no_argument,		0, 'V'},
+			{"visualize",   no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
@@ -36,6 +39,10 @@ int main(int argc, char **argv) {
 				std::cout << boxes.version_string() << std::endl;
 				break;
 
+			case 'v':
+				visualize = true;
+				break;
+
 			case '?':
 				// getopt_long already printed an error message.
 				break;
@@ -52,7 +59,14 @@ int main(int argc, char **argv) {
 		boxes.img_read(filename);
 	}
 
-	boxes.match(0, 1);
+	Boxes::BoxesFeatureMatcher* matcher = boxes.match(0, 1);
+
+	if (matcher->best_camera_matrix) {
+		std::cout << matcher->best_camera_matrix->matrix << std::endl;
+
+		if (visualize)
+			matcher->visualize_point_cloud(matcher->best_camera_matrix);
+	}
 
 	exit(0);
 }

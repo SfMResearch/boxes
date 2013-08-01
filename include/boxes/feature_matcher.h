@@ -2,6 +2,7 @@
 #ifndef BOXES_FEATURE_MATCHER_H
 #define BOXES_FEATURE_MATCHER_H
 
+#include <pcl/visualization/cloud_viewer.h>
 #include <opencv2/opencv.hpp>
 #include <vector>
 
@@ -10,6 +11,7 @@
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
+#define CLOUD_POINT_USE_STATISTICAL_OUTLIER_REMOVAL
 #define FEATURE_MATCHER_USE_SINGLE_MATCHES
 #define FEATURE_MATCHER_USE_DOUBLE_MATCHES
 
@@ -18,7 +20,10 @@ namespace Boxes {
 		public:
 			BoxesFeatureMatcher(BoxesImage* image1, BoxesImage* image2);
 
+			const CameraMatrix* best_camera_matrix;
+
 			void draw_matches(const std::string filename);
+			void visualize_point_cloud(const CameraMatrix* camera_matrix);
 
 		private:
 			BoxesImage* image1;
@@ -39,12 +44,13 @@ namespace Boxes {
 			cv::Mat calculate_fundamental_matrix();	
 			cv::Mat fundamental_matrix;
 
-			CameraMatrix* find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices);
-			CameraMatrix* best_camera_matrix;
+			const CameraMatrix* find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices);
 			std::vector<CameraMatrix> calculate_possible_camera_matrices();
 
 			double triangulate_points(cv::Matx34d* p0, cv::Matx34d* p1, std::vector<CloudPoint>* point_cloud);
 			cv::Mat_<double> triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2);
+
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud);
 	};
 };
 
