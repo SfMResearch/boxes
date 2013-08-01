@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "V", long_options, &option_index);
+		int c = getopt_long(argc, argv, "Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
