@@ -37,6 +37,7 @@ int main(int argc, char **argv) {
 
 			case 'V':
 				std::cout << boxes.version_string() << std::endl;
+				exit(0);
 				break;
 
 			case 'v':
