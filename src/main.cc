@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		static struct option long_options[] = {
-			{"version",		no_argument,		0, 'V'},
+			{"version",     no_argument,        0, 'V'},
 			{"visualize",   no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
