@@ -15,8 +15,10 @@
 
 #define MATCH_VALID_RATIO                0.8
 
-#define OF_MAX_VERROR                   16.0
-#define OF_RADIUS_MATCH                  4.0
+#define OF_MAX_VERROR                   12.0
+#define OF_RADIUS_MATCH                  5.0
+
+#define EPIPOLAR_DISTANCE				 2
 
 #endif
 

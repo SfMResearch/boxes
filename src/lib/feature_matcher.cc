@@ -34,10 +34,11 @@ namespace Boxes {
 		// Calculate optical flow.
 		this->optical_flow();
 
-		this->draw_matches("result.jpg");
-
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
+		
+
+		this->draw_matches("result.jpg");
 
 		// Calculate the essential matrix.
 		this->essential_matrix = this->calculate_essential_matrix();
@@ -47,6 +48,9 @@ namespace Boxes {
 
 		// Find the best camera matrix.
 		this->best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
+		assert(this->best_camera_matrix);
+
+		std::cout << best_camera_matrix->matrix << std::endl;
 	}
 
 	void BoxesFeatureMatcher::optical_flow() {
@@ -187,7 +191,20 @@ namespace Boxes {
 	}
 
 	cv::Mat BoxesFeatureMatcher::calculate_fundamental_matrix() {
-		return cv::findFundamentalMat(this->match_points1, this->match_points2, cv::FM_RANSAC, 0.1, 0.99);
+		cv::Mat fund;
+		std::vector<uchar> status(this->matches.size());		
+		fund  = cv::findFundamentalMat(this->match_points1, this->match_points2, status, cv::FM_RANSAC, EPIPOLAR_DISTANCE , 0.99);
+		
+		//sorting out good matches
+		std::vector<cv::DMatch> bestMatches;
+		
+		for(int i = 0; i < status.size(); i++)
+		{
+			if(status[i] == 1)
+				bestMatches.push_back(this->matches[i]);
+		}
+		this->matches = bestMatches;
+		return fund;
 	}
 
 	cv::Mat BoxesFeatureMatcher::calculate_essential_matrix() {
@@ -304,11 +321,14 @@ namespace Boxes {
 
 		#pragma omp parallel for
 		for (unsigned int i = 0; i < this->matches.size(); i++) {
-			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(i);
-			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(i);
+			cv::DMatch match = this->matches[i];
+			
+			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(match.queryIdx);
+			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(match.trainIdx);
 
 			const cv::Point2f* match_point1 = &keypoint1->pt;
 			const cv::Point2f* match_point2 = &keypoint2->pt;
+			
 
 			cv::Point3d match_point_3d1(match_point1->x, match_point1->y, 1.0);
 			cv::Point3d match_point_3d2(match_point2->x, match_point2->y, 1.0);
@@ -342,7 +362,8 @@ namespace Boxes {
 			#pragma omp critical
 			{
 				point_cloud->push_back(cloud_point);
-				reproj_errors.push_back(cloud_point.reprojection_error);
+				reproj_errors.push_back(cloud_point.reprojection_error);			
+
 			}
 		}
 
