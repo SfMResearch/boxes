@@ -38,7 +38,8 @@ libboxes_la_SOURCES = \
 	src/lib/camera_matrix.cc \
 	src/lib/boxes.cc \
 	src/lib/feature_matcher.cc \
-	src/lib/image.cc
+	src/lib/image.cc \
+	src/lib/point_cloud.cc
 
 libboxes_la_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
@@ -57,4 +58,5 @@ pkginclude_HEADERS += \
 	include/boxes/boxes.h \
 	include/boxes/feature_matcher.h \
 	include/boxes/image.h \
+	include/boxes/point_cloud.h \
 	include/boxes/structs.h

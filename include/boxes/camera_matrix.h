@@ -7,6 +7,7 @@
 
 #include <boxes/constants.h>
 #include <boxes/image.h>
+#include <boxes/point_cloud.h>
 #include <boxes/structs.h>
 
 namespace Boxes {
@@ -15,7 +16,7 @@ namespace Boxes {
 			CameraMatrix(cv::Matx34d matrix);
 
 			cv::Matx34d matrix;
-			std::vector<CloudPoint> point_cloud;
+			PointCloud point_cloud;
 			double reprojection_error;
 
 			// Methods

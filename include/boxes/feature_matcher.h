@@ -47,7 +47,7 @@ namespace Boxes {
 			const CameraMatrix* find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices);
 			std::vector<CameraMatrix> calculate_possible_camera_matrices();
 
-			double triangulate_points(cv::Matx34d* p0, cv::Matx34d* p1, std::vector<CloudPoint>* point_cloud);
+			double triangulate_points(cv::Matx34d* p0, cv::Matx34d* p1, PointCloud* point_cloud);
 			cv::Mat_<double> triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2);
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud);

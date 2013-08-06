@@ -31,8 +31,8 @@ namespace Boxes {
 		std::vector<cv::Point3d> points(this->point_cloud.size());
 		std::vector<cv::Point3d> points_transformed(this->point_cloud.size());
 
-
-		for (std::vector<CloudPoint>::const_iterator cp = this->point_cloud.begin(); cp != this->point_cloud.end(); ++cp) {
+		for (std::vector<CloudPoint>::const_iterator cp = this->point_cloud.points.begin();
+				cp != this->point_cloud.points.end(); ++cp) {
 			if (cp->pt.z > 0)
 				points_in_front++;
 

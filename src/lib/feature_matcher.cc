@@ -30,9 +30,11 @@ namespace Boxes {
 
 		// Match the two given images.
 		//this->match();
+		//this->draw_matches("result-match.jpg");
 
 		// Calculate optical flow.
 		this->optical_flow();
+		this->draw_matches("result-optical-flow.jpg");
 
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
@@ -281,14 +283,14 @@ namespace Boxes {
 			// Triangulate.
 			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix), &i->point_cloud);
 
-			// Select the matrix with best reprojection error.
-			if (i->reprojection_error < best_matrix->reprojection_error) {
+			// Count all points that are "in front of the camera".
+			if (i->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
 				best_matrix = &(*i);
 				continue;
 			}
 
-			// Count all points that are "in front of the camera".
-			if (i->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
+			// Select the matrix with best reprojection error.
+			if (i->reprojection_error < best_matrix->reprojection_error) {
 				best_matrix = &(*i);
 				continue;
 			}
@@ -306,7 +308,7 @@ namespace Boxes {
 		return best_matrix;
 	}
 
-	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, std::vector<CloudPoint>* point_cloud) {
+	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, PointCloud* point_cloud) {
 		cv::Mat c1 = this->image1->guess_camera_matrix();
 		cv::Mat c1_inv = c1.inv();
 		cv::Mat c2 = this->image2->guess_camera_matrix();
@@ -361,7 +363,7 @@ namespace Boxes {
 
 			#pragma omp critical
 			{
-				point_cloud->push_back(cloud_point);
+				point_cloud->add_point(cloud_point);
 				reproj_errors.push_back(cloud_point.reprojection_error);			
 
 			}
@@ -399,7 +401,7 @@ namespace Boxes {
 	}
 
 	void BoxesFeatureMatcher::visualize_point_cloud(const CameraMatrix* camera_matrix) {
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud(camera_matrix->point_cloud);
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud(camera_matrix->point_cloud.points);
 
 		// Visualize.
 		pcl::visualization::CloudViewer viewer("3D Point Cloud");
