@@ -39,10 +39,18 @@ m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-conf
 PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4])
 
 # PCL
-PKG_CHECK_MODULES(PCL_COMMON, [pcl_common >= 1.6.0])
-PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters >= 1.6.0])
-PKG_CHECK_MODULES(PCL_IO, [pcl_io >= 1.6.0])
-PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization >= 1.6.0])
+PKG_CHECK_MODULES(PCL_COMMON, [pcl_common >= 1.6.0], [], [
+	PKG_CHECK_MODULES(PCL_COMMON, [pcl_common-1.6])
+])
+PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters >= 1.6.0], [], [
+	PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters-1.6])
+])
+PKG_CHECK_MODULES(PCL_IO, [pcl_io >= 1.6.0], [], [
+	PKG_CHECK_MODULES(PCL_IO, [pcl_io-1.6])
+])
+PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization >= 1.6.0], [], [
+	PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization-1.6])
+])
 
 PCL_CFLAGS="$PCL_COMMON_CFLAGS $PCL_FILTERS_CFLAGS $PCL_IO_CFLAGS $PCL_VISUALIZATION_CFLAGS"
 PCL_LIBS="$PCL_COMMON_LIBS $PCL_FILTERS_LIBS $PCL_IO_LIBS $PCL_VISUALIZATION_LIBS"
