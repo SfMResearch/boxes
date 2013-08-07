@@ -196,19 +196,17 @@ namespace Boxes {
 	}
 
 	cv::Mat BoxesFeatureMatcher::calculate_fundamental_matrix() {
-		cv::Mat fund;
 		std::vector<uchar> status(this->matches.size());		
-		fund  = cv::findFundamentalMat(this->match_points1, this->match_points2, status, cv::FM_RANSAC, EPIPOLAR_DISTANCE , 0.99);
-		
-		//sorting out good matches
-		std::vector<cv::DMatch> bestMatches;
-		
-		for(int i = 0; i < status.size(); i++)
-		{
-			if(status[i] == 1)
-				bestMatches.push_back(this->matches[i]);
+		cv::Mat fund = cv::findFundamentalMat(this->match_points1, this->match_points2, status, cv::FM_RANSAC, EPIPOLAR_DISTANCE , 0.99);
+
+		// Sort out bad matches.
+		std::vector<cv::DMatch> best_matches;
+		for(unsigned int i = 0; i < status.size(); i++) {
+			if (status[i] == 1)
+				best_matches.push_back(this->matches[i]);
 		}
-		this->matches = bestMatches;
+		this->matches = best_matches;
+
 		return fund;
 	}
 
