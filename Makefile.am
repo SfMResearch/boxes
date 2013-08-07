@@ -1,5 +1,15 @@
 
-CXXFLAGS_PRIVATE = -DBOXES_PRIVATE
+ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
+AM_MAKEFLAGS = --no-print-directory
+AUTOMAKE_OPTIONS = color-tests parallel-tests
+
+SUBDIRS = . tests
+
+# remove targets if the command fails
+.DELETE_ON_ERROR:
+
+# keep intermediate files
+.SECONDARY:
 
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
@@ -9,8 +19,6 @@ AM_CPPFLAGS = \
 AM_CFLAGS = $(OUR_CFLAGS)
 AM_CXXFLAGS = $(OUR_CXXFLAGS)
 AM_LDFLAGS = $(OUR_LDFLAGS)
-
-ACLOCAL_AMFLAGS = -I m4
 
 lib_LTLIBRARIES =
 noinst_LTLIBRARIES =
@@ -48,7 +56,7 @@ libboxes_la_SOURCES = \
 
 libboxes_la_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
-	$(CXXFLAGS_PRIVATE) \
+	-DBOXES_PRIVATE \
 	$(OPENMP_CFLAGS) \
 	$(OPENCV_CXXCFLAGS) \
 	$(PCL_CFLAGS)

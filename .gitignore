@@ -12,6 +12,7 @@
 *.lo
 *.o
 *.stamp
+*.trs
 *~
 .deps
 .dirstamp
@@ -24,3 +25,5 @@ config.log
 config.status
 configure
 stamp-*
+/tests/Makefile
+/tests/library_version

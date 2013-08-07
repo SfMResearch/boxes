@@ -148,6 +148,7 @@ PCL_CFLAGS+="-I/usr/include/vtk -I/usr/include/vtk-5.8"
 
 AC_CONFIG_FILES([
 	Makefile
+	tests/Makefile
 ])
 
 AC_OUTPUT
