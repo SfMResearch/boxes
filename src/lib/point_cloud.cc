@@ -6,16 +6,18 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/point_types.h>
 #include <pcl/surface/gp3.h>
 #include <pcl/visualization/pcl_visualizer.h>
-
-#ifdef POINT_CLOUD_USE_STATISTICAL_OUTLIER_REMOVAL
-#include <pcl/filters/statistical_outlier_removal.h>
-#endif
 INCLUDE_IGNORE_WARNINGS_END
 
 #include <boxes/constants.h>
 #include <boxes/converters.h>
 #include <boxes/point_cloud.h>
 #include <boxes/structs.h>
+
+INCLUDE_IGNORE_WARNINGS_BEGIN
+#ifdef POINT_CLOUD_USE_STATISTICAL_OUTLIER_REMOVAL
+#include <pcl/filters/statistical_outlier_removal.h>
+#endif
+INCLUDE_IGNORE_WARNINGS_END
 
 namespace Boxes {
 	/*
