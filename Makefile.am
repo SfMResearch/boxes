@@ -55,6 +55,7 @@ libboxes_la_LIBADD = \
 pkginclude_HEADERS += \
 	include/boxes/camera_matrix.h \
 	include/boxes/constants.h \
+	include/boxes/converters.h \
 	include/boxes/boxes.h \
 	include/boxes/feature_matcher.h \
 	include/boxes/image.h \
