@@ -120,8 +120,6 @@ namespace Boxes {
 	void BoxesFeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
-		this->match_points1.clear();
-		this->match_points2.clear();
 
 		// Create matcher
 		std::vector<std::vector<cv::DMatch>> nearest_neighbours;
@@ -172,15 +170,9 @@ namespace Boxes {
 			}
 
 			this->matches.push_back(*match1);
-
-			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(match1->queryIdx);
-			this->match_points1.push_back(keypoint1->pt);
-			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(match1->trainIdx);
-			this->match_points2.push_back(keypoint2->pt);
 		}
 
 		assert(this->matches.size() > 0);
-		assert(this->match_points1.size() == this->match_points2.size());
 	}
 
 	void BoxesFeatureMatcher::draw_matches(const std::string filename) {
@@ -196,8 +188,16 @@ namespace Boxes {
 	}
 
 	cv::Mat BoxesFeatureMatcher::calculate_fundamental_matrix() {
-		std::vector<uchar> status(this->matches.size());		
-		cv::Mat fund = cv::findFundamentalMat(this->match_points1, this->match_points2, status, cv::FM_RANSAC, EPIPOLAR_DISTANCE , 0.99);
+		std::vector<uchar> status(this->matches.size());
+
+		std::vector<cv::Point2f> match_points1, match_points2;
+		for (std::vector<cv::DMatch>::iterator i = this->matches.begin(); i != this->matches.end(); i++) {
+			match_points1.push_back(this->keypoints1->at(i->queryIdx).pt);
+			match_points2.push_back(this->keypoints2->at(i->trainIdx).pt);
+		}
+
+		cv::Mat fund = cv::findFundamentalMat(match_points1, match_points2, status,
+			cv::FM_RANSAC, EPIPOLAR_DISTANCE, 0.99);
 
 		// Sort out bad matches.
 		std::vector<cv::DMatch> best_matches;

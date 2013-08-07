@@ -39,8 +39,6 @@ namespace Boxes {
 			void match();
 			void match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
 			std::vector<cv::DMatch> matches;
-			std::vector<cv::Point2f> match_points1;
-			std::vector<cv::Point2f> match_points2;
 
 			cv::Mat calculate_essential_matrix();
 			cv::Mat essential_matrix;
