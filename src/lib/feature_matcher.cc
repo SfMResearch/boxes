@@ -218,7 +218,7 @@ namespace Boxes {
 
 	std::vector<CameraMatrix> BoxesFeatureMatcher::calculate_possible_camera_matrices() {
 		// Perform SVD of the matrix.
-		cv::SVD svd = cv::SVD(this->essential_matrix, cv::SVD::MODIFY_A|cv::SVD::FULL_UV);
+		cv::SVD svd = cv::SVD(this->essential_matrix, cv::SVD::FULL_UV);
 
 		// Check if first and second singular values are the same (as they should be).
 		double singular_values_ratio = fabsf(svd.w.at<double>(0) / svd.w.at<double>(1));
