@@ -59,4 +59,5 @@ pkginclude_HEADERS += \
 	include/boxes/feature_matcher.h \
 	include/boxes/image.h \
 	include/boxes/point_cloud.h \
-	include/boxes/structs.h
+	include/boxes/structs.h \
+	include/boxes/suppress_warnings.h

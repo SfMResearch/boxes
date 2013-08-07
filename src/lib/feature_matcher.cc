@@ -1,10 +1,14 @@
 
-#include <pcl/visualization/cloud_viewer.h>
 #include <list>
 #include <opencv2/opencv.hpp>
 #include <string>
 #include <tuple>
 #include <vector>
+
+#include <boxes/suppress_warnings.h>
+INCLUDE_IGNORE_WARNINGS_BEGIN
+#include <pcl/visualization/cloud_viewer.h>
+INCLUDE_IGNORE_WARNINGS_END
 
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>

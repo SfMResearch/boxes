@@ -2,9 +2,13 @@
 #ifndef BOXES_FEATURE_MATCHER_H
 #define BOXES_FEATURE_MATCHER_H
 
-#include <pcl/visualization/cloud_viewer.h>
 #include <opencv2/opencv.hpp>
 #include <vector>
+
+#include <boxes/suppress_warnings.h>
+INCLUDE_IGNORE_WARNINGS_BEGIN
+#include <pcl/visualization/cloud_viewer.h>
+INCLUDE_IGNORE_WARNINGS_END
 
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>

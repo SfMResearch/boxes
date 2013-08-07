@@ -2,13 +2,16 @@
 #ifndef BOXES_POINT_CLOUD_H
 #define BOXES_POINT_CLOUD_H
 
+#include <boxes/suppress_warnings.h>
+INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/PolygonMesh.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/point_types.h>
+INCLUDE_IGNORE_WARNINGS_END
+
 #include <string>
 #include <vector>
 
-#include <boxes/constants.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
