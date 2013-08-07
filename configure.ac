@@ -33,6 +33,57 @@ AC_OPENMP
 
 AC_PATH_PROG([M4], [m4])
 
+CC_CHECK_FLAGS_APPEND([with_cflags], [CFLAGS], [\
+	-pipe \
+	-Wall \
+	-Wextra \
+	-Wno-inline \
+	-Wundef \
+	"-Wformat=2 -Wformat-security -Wformat-nonliteral" \
+	-Wlogical-op \
+	-Wsign-compare \
+	-Wpointer-arith \
+	-Winit-self \
+	-Wfloat-equal \
+	-Wredundant-decls \
+	-Wmissing-declarations \
+	-Wmissing-noreturn \
+	-Wendif-labels \
+	-Wcast-align \
+	-Wstrict-aliasing=2 \
+	-Wwrite-strings \
+	-Wno-long-long \
+	-Wno-overlength-strings \
+	-Wno-unused-parameter \
+	-Wno-missing-field-initializers \
+	-Wno-unused-result \
+	-Werror=overflow \
+	-ffast-math \
+	-fno-common \
+	-fdiagnostics-show-option \
+	-fdiagnostics-color \
+	-fno-strict-aliasing \
+	-ffunction-sections \
+	-fdata-sections \
+	-fstack-protector-all \
+	--param=ssp-buffer-size=4])
+AC_SUBST([OUR_CFLAGS], $with_cflags)
+AC_SUBST([OUR_CXXFLAGS], $with_cflags)
+
+AS_CASE([$CFLAGS], [*-O[[12345g\ ]]*],
+	[CC_CHECK_FLAGS_APPEND([with_cppflags], [CPPFLAGS], [\
+		-Wp,-D_FORTIFY_SOURCE=2])],
+	[AC_MSG_RESULT([skipping -D_FORTIFY_SOURCE, optimization not enabled])])
+AC_SUBST([OUR_CPPFLAGS], $with_cppflags)
+
+CC_CHECK_FLAGS_APPEND([with_ldflags], [LDFLAGS], [\
+	-Wl,--as-needed \
+	-Wl,--no-undefined \
+	-Wl,--gc-sections \
+	-Wl,-z,relro \
+	-Wl,-z,now])
+AC_SUBST([OUR_LDFLAGS], $with_ldflags)
+
 # This makes sure pkg.m4 is available.
 m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
 
@@ -103,8 +154,8 @@ AC_OUTPUT
 AC_MSG_RESULT([
 	$PACKAGE_NAME $VERSION
 
-	CFLAGS:			${CFLAGS}
-	CXXFLAGS:		${CXXFLAGS}
-	CPPFLAGS:		${CPPFLAGS}
-	LDFLAGS:		${LDFLAGS}
+	CFLAGS:			${OUR_CFLAGS} ${CFLAGS}
+	CXXFLAGS:		${OUR_CXXFLAGS} ${CXXFLAGS}
+	CPPFLAGS:		${OUR_CPPFLAGS} ${CPPFLAGS}
+	LDFLAGS:		${OUR_LDFLAGS} ${LDFLAGS}
 ])

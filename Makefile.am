@@ -3,7 +3,12 @@ CXXFLAGS_PRIVATE = -DBOXES_PRIVATE
 
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
-	-I $(top_srcdir)/include
+	-I $(top_srcdir)/include \
+	$(OUR_CPPFLAGS)
+
+AM_CFLAGS = $(OUR_CFLAGS)
+AM_CXXFLAGS = $(OUR_CXXFLAGS)
+AM_LDFLAGS = $(OUR_LDFLAGS)
 
 ACLOCAL_AMFLAGS = -I m4
 

@@ -8,7 +8,12 @@
 	_Pragma("GCC diagnostic ignored \"-Wextra\""); \
 	\
 	_Pragma("GCC diagnostic ignored \"-Wattributes\""); \
-	_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"");
+	_Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\""); \
+	_Pragma("GCC diagnostic ignored \"-Wfloat-equal\""); \
+	_Pragma("GCC diagnostic ignored \"-Wshadow\""); \
+	_Pragma("GCC diagnostic ignored \"-Wundef\""); \
+	_Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\""); \
+	_Pragma("GCC diagnostic ignored \"-Wunused-local-typedefs\"");
 
 #define INCLUDE_IGNORE_WARNINGS_END \
 	_Pragma("GCC diagnostic pop");
