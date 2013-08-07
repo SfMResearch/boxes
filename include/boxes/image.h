@@ -20,7 +20,7 @@ namespace Boxes {
 			cv::Size size() const;
 
 			// mat
-			const cv::Mat* get_mat();
+			const cv::Mat* get_mat() const;
 			cv::Mat get_greyscale_mat();
 
 			// descriptors

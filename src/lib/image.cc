@@ -39,7 +39,7 @@ namespace Boxes {
 		cv::imwrite(filename, this->mat);
 	}
 
-	const cv::Mat* BoxesImage::get_mat() {
+	const cv::Mat* BoxesImage::get_mat() const {
 		return &this->mat;
 	}
 
