@@ -11,7 +11,6 @@
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
-#define CLOUD_POINT_USE_STATISTICAL_OUTLIER_REMOVAL
 #define FEATURE_MATCHER_USE_SINGLE_MATCHES
 #define FEATURE_MATCHER_USE_DOUBLE_MATCHES
 

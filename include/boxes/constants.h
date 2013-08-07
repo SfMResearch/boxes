@@ -11,6 +11,8 @@
  */
 #ifdef BOXES_PRIVATE
 
+#include <boxes/converters.h>
+
 #define REPROJECTION_ERROR_MAX         200.0
 
 #define MATCH_VALID_RATIO                0.8
@@ -19,6 +21,14 @@
 #define OF_RADIUS_MATCH                  5.0
 
 #define EPIPOLAR_DISTANCE				 2
+
+// Point Cloud constants
+#define POINT_CLOUD_TRIANGULATION_SEARCH_RADIUS               0.025
+#define POINT_CLOUD_TRIANGULATION_MULTIPLIER                  2.5
+#define POINT_CLOUD_TRIANGULATION_MAX_NEAREST_NEIGHBOUR     100
+#define POINT_CLOUD_TRIANGULATION_MAX_SURFACE_ANGLE        DEG2RAD(45)
+#define POINT_CLOUD_TRIANGULATION_MIN_ANGLE                DEG2RAD(10)
+#define POINT_CLOUD_TRIANGULATION_MAX_ANGLE                DEG2RAD(120)
 
 #endif
 

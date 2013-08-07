@@ -12,10 +12,6 @@
 #include <boxes/image.h>
 #include <boxes/structs.h>
 
-#ifdef CLOUD_POINT_USE_STATISTICAL_OUTLIER_REMOVAL
-#include <pcl/filters/statistical_outlier_removal.h>
-#endif
-
 namespace Boxes {
 	/*
 	 * Contructor.
@@ -53,6 +49,9 @@ namespace Boxes {
 		assert(this->best_camera_matrix);
 
 		std::cout << best_camera_matrix->matrix << std::endl;
+
+		pcl::PolygonMesh mesh = best_camera_matrix->point_cloud.triangulate(this->image1);
+		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
 	}
 
 	void BoxesFeatureMatcher::optical_flow() {
@@ -401,49 +400,13 @@ namespace Boxes {
 	}
 
 	void BoxesFeatureMatcher::visualize_point_cloud(const CameraMatrix* camera_matrix) {
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud(camera_matrix->point_cloud.points);
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = \
+			camera_matrix->point_cloud.generate_pcl_point_cloud(this->image1);
 
 		// Visualize.
 		pcl::visualization::CloudViewer viewer("3D Point Cloud");
 		viewer.showCloud(cloud, "cloud");
 
 		while (!viewer.wasStopped()) {}
-	}
-
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr BoxesFeatureMatcher::generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud) {
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-		const cv::Mat* image = this->image1->get_mat();
-
-		for (std::vector<CloudPoint>::const_iterator i = point_cloud.begin(); i != point_cloud.end(); i++) {
-			pcl::PointXYZRGB cloud_point;
-			cloud_point.x = i->pt.x;
-			cloud_point.y = i->pt.y;
-			cloud_point.z = i->pt.z;
-
-			// Apply RGB value from image for this pixel.
-			cv::Vec3b pixel = image->at<cv::Vec3b>(i->keypoint.pt.y, i->keypoint.pt.x);
-			uint32_t rgb = ((uint32_t)pixel[2] << 16 | (uint32_t)pixel[1] << 8 | (uint32_t)pixel[0]);
-			cloud_point.rgb = *reinterpret_cast<float*>(&rgb);
-
-			cloud->push_back(cloud_point);
-		}
-
-		cloud->width = (uint32_t) cloud->points.size();
-		cloud->height = 1;
-
-#ifdef CLOUD_POINT_USE_STATISTICAL_OUTLIER_REMOVAL
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-		pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-		sor.setInputCloud(cloud);
-		sor.setMeanK(50);
-		sor.setStddevMulThresh(1.0);
-		sor.filter(*cloud_filtered);
-
-		return cloud_filtered;
-#else
-		return cloud;
-#endif
 	}
 }
