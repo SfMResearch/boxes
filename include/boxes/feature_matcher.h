@@ -19,9 +19,9 @@ INCLUDE_IGNORE_WARNINGS_END
 #define FEATURE_MATCHER_USE_DOUBLE_MATCHES
 
 namespace Boxes {
-	class BoxesFeatureMatcher {
+	class FeatureMatcher {
 		public:
-			BoxesFeatureMatcher(BoxesImage* image1, BoxesImage* image2);
+			FeatureMatcher(BoxesImage* image1, BoxesImage* image2);
 
 			const CameraMatrix* best_camera_matrix;
 

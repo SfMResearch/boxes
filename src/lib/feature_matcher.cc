@@ -20,7 +20,7 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	BoxesFeatureMatcher::BoxesFeatureMatcher(BoxesImage* image1, BoxesImage* image2) {
+	FeatureMatcher::FeatureMatcher(BoxesImage* image1, BoxesImage* image2) {
 		this->image1 = image1;
 		this->image2 = image2;
 
@@ -29,16 +29,13 @@ namespace Boxes {
 		this->keypoints2 = this->image2->get_keypoints();
 
 		// Match the two given images.
-		//this->match();
-		//this->draw_matches("result-match.jpg");
+		this->match();
 
 		// Calculate optical flow.
-		this->optical_flow();
-		this->draw_matches("result-optical-flow.jpg");
+		//this->optical_flow();
 
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
-		
 
 		this->draw_matches("result.jpg");
 
@@ -58,7 +55,7 @@ namespace Boxes {
 		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
 	}
 
-	void BoxesFeatureMatcher::optical_flow() {
+	void FeatureMatcher::optical_flow() {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
@@ -110,14 +107,14 @@ namespace Boxes {
 		this->match(&good_points1_flat, &points2_flat, &match_points, MATCH_TYPE_RADIUS, CV_L2);
 	}
 
-	void BoxesFeatureMatcher::match() {
+	void FeatureMatcher::match() {
 		const cv::Mat* descriptors1 = this->image1->get_descriptors();
 		const cv::Mat* descriptors2 = this->image2->get_descriptors();
 
 		this->match(descriptors1, descriptors2);
 	}
 
-	void BoxesFeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
+	void FeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
@@ -175,7 +172,7 @@ namespace Boxes {
 		assert(this->matches.size() > 0);
 	}
 
-	void BoxesFeatureMatcher::draw_matches(const std::string filename) {
+	void FeatureMatcher::draw_matches(const std::string filename) {
 		cv::Mat img_matches;
 
 		const cv::Mat* image1 = this->image1->get_mat();
@@ -187,7 +184,7 @@ namespace Boxes {
 		image.write(filename);
 	}
 
-	cv::Mat BoxesFeatureMatcher::calculate_fundamental_matrix() {
+	cv::Mat FeatureMatcher::calculate_fundamental_matrix() {
 		std::vector<uchar> status(this->matches.size());
 
 		std::vector<cv::Point2f> match_points1, match_points2;
@@ -210,13 +207,13 @@ namespace Boxes {
 		return fund;
 	}
 
-	cv::Mat BoxesFeatureMatcher::calculate_essential_matrix() {
+	cv::Mat FeatureMatcher::calculate_essential_matrix() {
 		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
 
 		return camera_matrix.t() * this->fundamental_matrix * camera_matrix;
 	}
 
-	std::vector<CameraMatrix> BoxesFeatureMatcher::calculate_possible_camera_matrices() {
+	std::vector<CameraMatrix> FeatureMatcher::calculate_possible_camera_matrices() {
 		// Perform SVD of the matrix.
 		cv::SVD svd = cv::SVD(this->essential_matrix, cv::SVD::FULL_UV);
 
@@ -267,7 +264,7 @@ namespace Boxes {
 		return matrices;
 	}
 
-	const CameraMatrix* BoxesFeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
+	const CameraMatrix* FeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
 		const CameraMatrix* best_matrix = NULL;
@@ -309,7 +306,7 @@ namespace Boxes {
 		return best_matrix;
 	}
 
-	double BoxesFeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, PointCloud* point_cloud) {
+	double FeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, PointCloud* point_cloud) {
 		cv::Mat c1 = this->image1->guess_camera_matrix();
 		cv::Mat c1_inv = c1.inv();
 		cv::Mat c2 = this->image2->guess_camera_matrix();
@@ -374,7 +371,7 @@ namespace Boxes {
 		return mse[0];
 	}
 
-	cv::Mat_<double> BoxesFeatureMatcher::triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2) {
+	cv::Mat_<double> FeatureMatcher::triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2) {
 		cv::Matx43d A(
 			p1->x * (*c1)(2,0) - (*c1)(0,0), p1->x * (*c1)(2,1) - (*c1)(0,1), p1->x * (*c1)(2,2) - (*c1)(0,2),
 			p1->y * (*c1)(2,0) - (*c1)(1,0), p1->y * (*c1)(2,1) - (*c1)(1,1), p1->y * (*c1)(2,2) - (*c1)(1,2),
@@ -401,7 +398,7 @@ namespace Boxes {
 		return Y;
 	}
 
-	void BoxesFeatureMatcher::visualize_point_cloud(const CameraMatrix* camera_matrix) {
+	void FeatureMatcher::visualize_point_cloud(const CameraMatrix* camera_matrix) {
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = \
 			camera_matrix->point_cloud.generate_pcl_point_cloud(this->image1);
 

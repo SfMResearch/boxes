@@ -31,14 +31,14 @@ namespace Boxes {
 		return this->images[index];
 	}
 
-	BoxesFeatureMatcher* Boxes::match(unsigned int index1, unsigned int index2) {
+	FeatureMatcher* Boxes::match(unsigned int index1, unsigned int index2) {
 		BoxesImage* image1 = this->img_get(index1);
 		assert(image1);
 
 		BoxesImage* image2 = this->img_get(index2);
 		assert(image2);
 
-		BoxesFeatureMatcher* feature_matcher = new BoxesFeatureMatcher(image1, image2);
+		FeatureMatcher* feature_matcher = new FeatureMatcher(image1, image2);
 		return feature_matcher;
 
 		//cv::Mat camera_matrix = this->find_best_camera_matrix(image1, image2, &matches);

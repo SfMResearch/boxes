@@ -18,7 +18,7 @@ namespace Boxes {
 			unsigned int img_read(const std::string filename);
 			BoxesImage* img_get(unsigned int index);
 
-			BoxesFeatureMatcher* match(unsigned int index1, unsigned int index2);
+			FeatureMatcher* match(unsigned int index1, unsigned int index2);
 
 			std::string version_string() const;
 

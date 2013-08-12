@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
 		boxes.img_read(filename);
 	}
 
-	Boxes::BoxesFeatureMatcher* matcher = boxes.match(0, 1);
+	Boxes::FeatureMatcher* matcher = boxes.match(0, 1);
 
 	if (matcher->best_camera_matrix) {
 		std::cout << matcher->best_camera_matrix->matrix << std::endl;
