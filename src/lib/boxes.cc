@@ -22,34 +22,26 @@ namespace Boxes {
 		BoxesImage *image = new BoxesImage(filename);
 		this->images.push_back(image);
 
-		return this->images.size() - 1;
+		return this->img_size() - 1;
 	}
 
 	BoxesImage* Boxes::img_get(unsigned int index) {
-		if (this->images.size() <= index)
+		if (this->img_size() <= index)
 			return NULL;
 
 		return this->images[index];
 	}
 
-	FeatureMatcher* Boxes::match(unsigned int index1, unsigned int index2) {
-		BoxesImage* image1 = this->img_get(index1);
-		assert(image1);
+	unsigned int Boxes::img_size() const {
+		return this->images.size();
+	}
 
-		BoxesImage* image2 = this->img_get(index2);
-		assert(image2);
-
+	FeatureMatcher* Boxes::match(BoxesImage* image1, BoxesImage* image2) {
 		FeatureMatcher* feature_matcher = new FeatureMatcher(image1, image2);
 		return feature_matcher;
 	}
 
-	FeatureMatcherOpticalFlow* Boxes::match_optical_flow(unsigned int index1, unsigned int index2) {
-		BoxesImage* image1 = this->img_get(index1);
-		assert(image1);
-
-		BoxesImage* image2 = this->img_get(index2);
-		assert(image2);
-
+	FeatureMatcherOpticalFlow* Boxes::match_optical_flow(BoxesImage* image1, BoxesImage* image2) {
 		FeatureMatcherOpticalFlow* feature_matcher = new FeatureMatcherOpticalFlow(image1, image2);
 		return feature_matcher;
 	}

@@ -18,9 +18,10 @@ namespace Boxes {
 			// Image operations
 			unsigned int img_read(const std::string filename);
 			BoxesImage* img_get(unsigned int index);
+			unsigned int img_size() const;
 
-			FeatureMatcher* match(unsigned int index1, unsigned int index2);
-			FeatureMatcherOpticalFlow* match_optical_flow(unsigned int index1, unsigned int index2);
+			FeatureMatcher* match(BoxesImage* image1, BoxesImage* image2);
+			FeatureMatcherOpticalFlow* match_optical_flow(BoxesImage* image1, BoxesImage* image2);
 
 			std::string version_string() const;
 

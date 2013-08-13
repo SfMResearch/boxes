@@ -73,11 +73,20 @@ int main(int argc, char **argv) {
 		boxes.img_read(filename);
 	}
 
+	// Warn if not enough images have been loaded.
+	if (boxes.img_size() < 2) {
+		std::cerr << "You need to load at least two image files! Exiting." << std::endl;
+		exit(2);
+	}
+
+	Boxes::BoxesImage* image1 = boxes.img_get(0);
+	Boxes::BoxesImage* image2 = boxes.img_get(1);
+
 	Boxes::FeatureMatcher* matcher = NULL;
 	if (use_optical_flow) {
-		matcher = boxes.match(0, 1);
+		matcher = boxes.match(image1, image2);
 	} else {
-		matcher = boxes.match_optical_flow(0, 1);
+		matcher = boxes.match_optical_flow(image1, image2);
 	}
 	assert(matcher);
 
