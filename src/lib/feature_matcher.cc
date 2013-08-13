@@ -315,18 +315,47 @@ namespace Boxes {
 	}
 
 	cv::Mat_<double> FeatureMatcher::triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2) {
+		cv::Mat_<double> X;
+
+		// Initialize weights
+		double weight1 = 1.0;
+		double weight2 = 1.0;
+
+		X = this->_triangulate_one_point(p1, c1, p2, c2);
+
+		// It is suggested to run 10 iterations at most.
+		for (unsigned int i = 0; i < TRIANGULATION_MAX_ITERATIONS; i++) {
+			// Recalculate weights
+			double weight1_ = cv::Mat_<double>(cv::Mat_<double>(*c1).row(2) * X)(0);
+			double weight2_ = cv::Mat_<double>(cv::Mat_<double>(*c2).row(2) * X)(0);
+
+			// Stop the loop, if the gained precision is smaller than epsilon.
+			if ((fabsf(weight1 - weight1_) <= TRIANGULATION_EPSILON) && (fabsf(weight2 - weight2_) <= TRIANGULATION_EPSILON))
+				break;
+
+			// Otherwise use new weights and re-weight the equations.
+			weight1 = weight1_;
+			weight2 = weight2_;
+
+			X = this->_triangulate_one_point(p1, c1, p2, c2, weight1, weight2);
+		}
+
+		return X;
+	}
+
+	cv::Mat_<double> FeatureMatcher::_triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2, double weight1, double weight2) {
 		cv::Matx43d A(
-			p1->x * (*c1)(2,0) - (*c1)(0,0), p1->x * (*c1)(2,1) - (*c1)(0,1), p1->x * (*c1)(2,2) - (*c1)(0,2),
-			p1->y * (*c1)(2,0) - (*c1)(1,0), p1->y * (*c1)(2,1) - (*c1)(1,1), p1->y * (*c1)(2,2) - (*c1)(1,2),
-			p2->x * (*c2)(2,0) - (*c2)(0,0), p2->x * (*c2)(2,1) - (*c2)(0,1), p2->x * (*c2)(2,2) - (*c2)(0,2),
-			p2->y * (*c2)(2,0) - (*c2)(1,0), p2->y * (*c2)(2,1) - (*c2)(1,1), p2->y * (*c2)(2,2) - (*c2)(1,2)
+			(p1->x * (*c1)(2,0) - (*c1)(0,0)) / weight1, (p1->x * (*c1)(2,1) - (*c1)(0,1)) / weight1, (p1->x * (*c1)(2,2) - (*c1)(0,2)) / weight1,
+			(p1->y * (*c1)(2,0) - (*c1)(1,0)) / weight1, (p1->y * (*c1)(2,1) - (*c1)(1,1)) / weight1, (p1->y * (*c1)(2,2) - (*c1)(1,2)) / weight1,
+			(p2->x * (*c2)(2,0) - (*c2)(0,0)) / weight2, (p2->x * (*c2)(2,1) - (*c2)(0,1)) / weight2, (p2->x * (*c2)(2,2) - (*c2)(0,2)) / weight2,
+			(p2->y * (*c2)(2,0) - (*c2)(1,0)) / weight2, (p2->y * (*c2)(2,1) - (*c2)(1,1)) / weight2, (p2->y * (*c2)(2,2) - (*c2)(1,2)) / weight2
 		);
 
 		cv::Matx41d B(
-			-(p1->x * (*c1)(2,3) - (*c1)(0,3)),
-			-(p1->y * (*c1)(2,3) - (*c1)(1,3)),
-			-(p2->x * (*c2)(2,3) - (*c2)(0,3)),
-			-(p2->y * (*c2)(2,3) - (*c2)(1,3))
+			-(p1->x * (*c1)(2,3) - (*c1)(0,3)) / weight1,
+			-(p1->y * (*c1)(2,3) - (*c1)(1,3)) / weight1,
+			-(p2->x * (*c2)(2,3) - (*c2)(0,3)) / weight2,
+			-(p2->y * (*c2)(2,3) - (*c2)(1,3)) / weight2
 		);
 
 		cv::Mat_<double> X;

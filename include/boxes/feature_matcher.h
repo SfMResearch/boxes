@@ -51,6 +51,7 @@ namespace Boxes {
 
 			double triangulate_points(cv::Matx34d* p0, cv::Matx34d* p1, PointCloud* point_cloud);
 			cv::Mat_<double> triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2);
+			cv::Mat_<double> _triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2, double weight1 = 1.0, double weight2 = 1.0);
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud);
 	};

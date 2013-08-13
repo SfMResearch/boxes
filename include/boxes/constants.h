@@ -24,6 +24,10 @@
 
 #define EPIPOLAR_DISTANCE				 2
 
+// Triangulation
+#define TRIANGULATION_MAX_ITERATIONS    10
+#define TRIANGULATION_EPSILON            0.001
+
 // Point Cloud constants
 #define POINT_CLOUD_TRIANGULATION_SEARCH_RADIUS               0.025
 #define POINT_CLOUD_TRIANGULATION_MULTIPLIER                  2.5
