@@ -34,8 +34,6 @@ namespace Boxes {
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
 
-		this->draw_matches("result.jpg");
-
 		// Calculate the essential matrix.
 		this->essential_matrix = this->calculate_essential_matrix();
 
