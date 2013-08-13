@@ -69,5 +69,8 @@ int main(int argc, char **argv) {
 			matcher->visualize_point_cloud(matcher->best_camera_matrix);
 	}
 
+	// Free memory.
+	delete matcher;
+
 	exit(0);
 }
