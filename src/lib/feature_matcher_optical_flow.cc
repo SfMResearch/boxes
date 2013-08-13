@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <boxes/constants.h>
+#include <boxes/converters.h>
 #include <boxes/feature_matcher_optical_flow.h>
 
 namespace Boxes {
@@ -10,15 +11,8 @@ namespace Boxes {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
-		std::vector<cv::Point2f> points1;
-		for (std::vector<cv::KeyPoint>::const_iterator i = this->keypoints1->begin(); i != this->keypoints1->end(); ++i) {
-			points1.push_back(i->pt);
-		}
-
-		std::vector<cv::Point2f> points2;
-		for (std::vector<cv::KeyPoint>::const_iterator i = this->keypoints2->begin(); i != this->keypoints2->end(); ++i) {
-			points2.push_back(i->pt);
-		}
+		std::vector<cv::Point2f> points1 = convertKeyPoints(this->keypoints1);
+		std::vector<cv::Point2f> points2 = convertKeyPoints(this->keypoints2);
 		std::vector<cv::Point2f> points2x(points1.size());
 
 		// Convert images to greyscale.
