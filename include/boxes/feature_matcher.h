@@ -28,16 +28,15 @@ namespace Boxes {
 			void draw_matches(const std::string filename);
 			void visualize_point_cloud(const CameraMatrix* camera_matrix);
 
-		private:
+		protected:
 			BoxesImage* image1;
 			BoxesImage* image2;
 
 			const std::vector<cv::KeyPoint>* keypoints1;
 			const std::vector<cv::KeyPoint>* keypoints2;
 
-			void optical_flow();
 			void match();
-			void match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
+			void _match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
 			std::vector<cv::DMatch> matches;
 
 			cv::Mat calculate_essential_matrix();

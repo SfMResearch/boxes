@@ -31,9 +31,6 @@ namespace Boxes {
 		// Match the two given images.
 		this->match();
 
-		// Calculate optical flow.
-		//this->optical_flow();
-
 		// Calculate the fundamental matrix.
 		this->fundamental_matrix = this->calculate_fundamental_matrix();
 
@@ -55,66 +52,14 @@ namespace Boxes {
 		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
 	}
 
-	void FeatureMatcher::optical_flow() {
-		// Remove any stale matches that might be in here.
-		this->matches.clear();
-
-		std::vector<cv::Point2f> points1;
-		for (std::vector<cv::KeyPoint>::const_iterator i = this->keypoints1->begin(); i != this->keypoints1->end(); ++i) {
-			points1.push_back(i->pt);
-		}
-
-		std::vector<cv::Point2f> points2;
-		for (std::vector<cv::KeyPoint>::const_iterator i = this->keypoints2->begin(); i != this->keypoints2->end(); ++i) {
-			points2.push_back(i->pt);
-		}
-		std::vector<cv::Point2f> points2x(points1.size());
-
-		// Convert images to greyscale.
-		cv::Mat greyscale1 = this->image1->get_greyscale_mat();
-		cv::Mat greyscale2 = this->image2->get_greyscale_mat();
-
-		std::vector<uchar> vstatus;
-		std::vector<float> verror;
-
-		// Calculate the optical flow field, i.e. how each point1 moved across the two images
-		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror);
-
-		std::vector<MatchPoint> match_points;
-
-		// First, filter out the points with high error.
-		for (unsigned int i = 0; i < vstatus.size(); i++) {
-			// Save good points with a low error rate.
-			if (vstatus[i] && verror[i] < OF_MAX_VERROR) {
-				MatchPoint match_point;
-
-				match_point.pt = points2x[i];
-				match_point.query_index = i;
-
-				match_points.push_back(match_point);
-			}
-		}
-
-		std::vector<cv::Point2f> good_points1;
-		for (std::vector<MatchPoint>::const_iterator i = match_points.begin(); i != match_points.end(); ++i) {
-			good_points1.push_back(i->pt);
-		}
-
-		// Format appropriate data structures.
-		cv::Mat good_points1_flat = cv::Mat(good_points1).reshape(1, good_points1.size());
-		cv::Mat points2_flat = cv::Mat(points2).reshape(1, points2.size());
-
-		this->match(&good_points1_flat, &points2_flat, &match_points, MATCH_TYPE_RADIUS, CV_L2);
-	}
-
 	void FeatureMatcher::match() {
 		const cv::Mat* descriptors1 = this->image1->get_descriptors();
 		const cv::Mat* descriptors2 = this->image2->get_descriptors();
 
-		this->match(descriptors1, descriptors2);
+		this->_match(descriptors1, descriptors2);
 	}
 
-	void FeatureMatcher::match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
+	void FeatureMatcher::_match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 

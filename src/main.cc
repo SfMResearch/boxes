@@ -9,17 +9,19 @@
 int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
+	bool use_optical_flow = false;
 	bool visualize = false;
 
 	while (1) {
 		static struct option long_options[] = {
-			{"version",     no_argument,        0, 'V'},
-			{"visualize",   no_argument,        0, 'v'},
+			{"optical-flow", no_argument,        0, 'O'},
+			{"version",      no_argument,        0, 'V'},
+			{"visualize",    no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "OVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -33,6 +35,10 @@ int main(int argc, char **argv) {
 				if (optarg)
 					std::cerr << " with argument " << optarg;
 				std::cerr << std::endl;
+				break;
+
+			case 'O':
+				use_optical_flow = true;
 				break;
 
 			case 'V':
@@ -60,7 +66,13 @@ int main(int argc, char **argv) {
 		boxes.img_read(filename);
 	}
 
-	Boxes::FeatureMatcher* matcher = boxes.match(0, 1);
+	Boxes::FeatureMatcher* matcher = NULL;
+	if (use_optical_flow) {
+		matcher = boxes.match(0, 1);
+	} else {
+		matcher = boxes.match_optical_flow(0, 1);
+	}
+	assert(matcher);
 
 	if (matcher->best_camera_matrix) {
 		std::cout << matcher->best_camera_matrix->matrix << std::endl;

@@ -7,6 +7,7 @@
 
 #include <boxes/boxes.h>
 #include <boxes/feature_matcher.h>
+#include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/image.h>
 
 namespace Boxes {
@@ -40,13 +41,17 @@ namespace Boxes {
 
 		FeatureMatcher* feature_matcher = new FeatureMatcher(image1, image2);
 		return feature_matcher;
+	}
 
-		//cv::Mat camera_matrix = this->find_best_camera_matrix(image1, image2, &matches);
+	FeatureMatcherOpticalFlow* Boxes::match_optical_flow(unsigned int index1, unsigned int index2) {
+		BoxesImage* image1 = this->img_get(index1);
+		assert(image1);
 
-		//std::cout << camera_matrix << std::endl;
+		BoxesImage* image2 = this->img_get(index2);
+		assert(image2);
 
-		//std::cout << fundamental_matrix << std::endl;
-		//std::cout << essential_matrix << std::endl;
+		FeatureMatcherOpticalFlow* feature_matcher = new FeatureMatcherOpticalFlow(image1, image2);
+		return feature_matcher;
 	}
 
 	/*
