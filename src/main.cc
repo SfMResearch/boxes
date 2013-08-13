@@ -94,8 +94,6 @@ int main(int argc, char **argv) {
 	matcher->run();
 
 	if (matcher->best_camera_matrix) {
-		std::cout << matcher->best_camera_matrix->matrix << std::endl;
-
 		if (visualize)
 			matcher->visualize_point_cloud(matcher->best_camera_matrix);
 	}

@@ -46,8 +46,6 @@ namespace Boxes {
 		this->best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
 		assert(this->best_camera_matrix);
 
-		std::cout << best_camera_matrix->matrix << std::endl;
-
 		pcl::PolygonMesh mesh = best_camera_matrix->point_cloud.triangulate(this->image1);
 		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
 	}
