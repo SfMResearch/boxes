@@ -99,7 +99,7 @@ namespace Boxes {
 		if (image)
 			mat = image->get_mat();
 
-		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); i++) {
+		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
 			pcl::PointXYZRGB cloud_point;
 			cloud_point.x = i->pt.x;
 			cloud_point.y = i->pt.y;

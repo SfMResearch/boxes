@@ -26,7 +26,7 @@ namespace Boxes {
 	inline std::vector<cv::Point2f> convertKeyPoints(const std::vector<cv::KeyPoint>* keypoints) {
 		std::vector<cv::Point2f> points;
 
-		for (std::vector<cv::KeyPoint>::const_iterator i = keypoints->begin(); i != keypoints->end(); i++) {
+		for (std::vector<cv::KeyPoint>::const_iterator i = keypoints->begin(); i != keypoints->end(); ++i) {
 			points.push_back(i->pt);
 		}
 
@@ -37,7 +37,7 @@ namespace Boxes {
 	inline pcl::PointCloud<pcl::PointXYZ>::Ptr convertPointCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_in) {
 		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
 
-		for (pcl::PointCloud<pcl::PointXYZRGB>::const_iterator i = cloud_in->begin(); i != cloud_in->end(); i++) {
+		for (pcl::PointCloud<pcl::PointXYZRGB>::const_iterator i = cloud_in->begin(); i != cloud_in->end(); ++i) {
 			pcl::PointXYZ point = pcl::PointXYZ(i->x, i->y, i->z);
 			cloud_out->push_back(point);
 		}
