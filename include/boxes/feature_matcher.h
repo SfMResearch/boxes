@@ -23,6 +23,8 @@ namespace Boxes {
 		public:
 			FeatureMatcher(BoxesImage* image1, BoxesImage* image2);
 
+			void run();
+
 			const CameraMatrix* best_camera_matrix;
 
 			void draw_matches(const std::string filename);

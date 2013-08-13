@@ -27,7 +27,9 @@ namespace Boxes {
 		// Cache keypoint pointers.
 		this->keypoints1 = this->image1->get_keypoints();
 		this->keypoints2 = this->image2->get_keypoints();
+	}
 
+	void FeatureMatcher::run() {
 		// Match the two given images.
 		this->match();
 

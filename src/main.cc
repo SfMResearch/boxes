@@ -81,6 +81,9 @@ int main(int argc, char **argv) {
 	}
 	assert(matcher);
 
+	// Run it.
+	matcher->run();
+
 	if (matcher->best_camera_matrix) {
 		std::cout << matcher->best_camera_matrix->matrix << std::endl;
 
