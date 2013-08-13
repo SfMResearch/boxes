@@ -15,9 +15,14 @@ namespace Boxes {
 		std::vector<cv::Point2f> points2 = convertKeyPoints(this->keypoints2);
 		std::vector<cv::Point2f> points2x(points1.size());
 
+#ifdef OPTICAL_FLOW_USE_GREYSCALE_IMAGES
 		// Convert images to greyscale.
 		cv::Mat greyscale1 = this->image1->get_greyscale_mat();
 		cv::Mat greyscale2 = this->image2->get_greyscale_mat();
+#else
+		cv::Mat greyscale1 = *this->image1->get_mat();
+		cv::Mat greyscale2 = *this->image2->get_mat();
+#endif
 
 		std::vector<uchar> vstatus;
 		std::vector<float> verror;
