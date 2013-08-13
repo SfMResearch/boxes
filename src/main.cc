@@ -79,8 +79,8 @@ int main(int argc, char **argv) {
 		exit(2);
 	}
 
-	Boxes::BoxesImage* image1 = boxes.img_get(0);
-	Boxes::BoxesImage* image2 = boxes.img_get(1);
+	Boxes::Image* image1 = boxes.img_get(0);
+	Boxes::Image* image2 = boxes.img_get(1);
 
 	Boxes::FeatureMatcher* matcher = NULL;
 	if (use_optical_flow) {

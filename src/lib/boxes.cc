@@ -19,13 +19,13 @@ namespace Boxes {
 	}
 
 	unsigned int Boxes::img_read(const std::string filename) {
-		BoxesImage *image = new BoxesImage(filename);
+		Image *image = new Image(filename);
 		this->images.push_back(image);
 
 		return this->img_size() - 1;
 	}
 
-	BoxesImage* Boxes::img_get(unsigned int index) {
+	Image* Boxes::img_get(unsigned int index) {
 		if (this->img_size() <= index)
 			return NULL;
 
@@ -36,12 +36,12 @@ namespace Boxes {
 		return this->images.size();
 	}
 
-	FeatureMatcher* Boxes::match(BoxesImage* image1, BoxesImage* image2) {
+	FeatureMatcher* Boxes::match(Image* image1, Image* image2) {
 		FeatureMatcher* feature_matcher = new FeatureMatcher(image1, image2);
 		return feature_matcher;
 	}
 
-	FeatureMatcherOpticalFlow* Boxes::match_optical_flow(BoxesImage* image1, BoxesImage* image2) {
+	FeatureMatcherOpticalFlow* Boxes::match_optical_flow(Image* image1, Image* image2) {
 		FeatureMatcherOpticalFlow* feature_matcher = new FeatureMatcherOpticalFlow(image1, image2);
 		return feature_matcher;
 	}

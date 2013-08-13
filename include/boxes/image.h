@@ -7,12 +7,12 @@
 #include <vector>
 
 namespace Boxes {
-	class BoxesImage {
+	class Image {
 		public:
-			BoxesImage();
-			BoxesImage(const std::string filename);
-			BoxesImage(cv::Mat mat);
-			~BoxesImage();
+			Image();
+			Image(const std::string filename);
+			Image(cv::Mat mat);
+			~Image();
 
 			// Basic methods.
 			void show();

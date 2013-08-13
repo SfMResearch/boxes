@@ -21,7 +21,7 @@ INCLUDE_IGNORE_WARNINGS_END
 namespace Boxes {
 	class FeatureMatcher {
 		public:
-			FeatureMatcher(BoxesImage* image1, BoxesImage* image2);
+			FeatureMatcher(Image* image1, Image* image2);
 
 			void run();
 
@@ -31,8 +31,8 @@ namespace Boxes {
 			void visualize_point_cloud(const CameraMatrix* camera_matrix);
 
 		protected:
-			BoxesImage* image1;
-			BoxesImage* image2;
+			Image* image1;
+			Image* image2;
 
 			const std::vector<cv::KeyPoint>* keypoints1;
 			const std::vector<cv::KeyPoint>* keypoints2;

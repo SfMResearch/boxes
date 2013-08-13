@@ -20,7 +20,7 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	FeatureMatcher::FeatureMatcher(BoxesImage* image1, BoxesImage* image2) {
+	FeatureMatcher::FeatureMatcher(Image* image1, Image* image2) {
 		this->image1 = image1;
 		this->image2 = image2;
 
@@ -125,7 +125,7 @@ namespace Boxes {
 
 		cv::drawMatches(*image1, *this->keypoints1, *image2, *this->keypoints2, this->matches, img_matches);
 
-		BoxesImage image = BoxesImage(img_matches);
+		Image image = Image(img_matches);
 		image.write(filename);
 	}
 

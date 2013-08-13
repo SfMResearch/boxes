@@ -17,16 +17,16 @@ namespace Boxes {
 
 			// Image operations
 			unsigned int img_read(const std::string filename);
-			BoxesImage* img_get(unsigned int index);
+			Image* img_get(unsigned int index);
 			unsigned int img_size() const;
 
-			FeatureMatcher* match(BoxesImage* image1, BoxesImage* image2);
-			FeatureMatcherOpticalFlow* match_optical_flow(BoxesImage* image1, BoxesImage* image2);
+			FeatureMatcher* match(Image* image1, Image* image2);
+			FeatureMatcherOpticalFlow* match_optical_flow(Image* image1, Image* image2);
 
 			std::string version_string() const;
 
 		private:
-			std::vector<BoxesImage*> images;
+			std::vector<Image*> images;
 	};
 }
 

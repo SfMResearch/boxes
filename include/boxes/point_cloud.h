@@ -27,10 +27,10 @@ namespace Boxes {
 			std::vector<CloudPoint> points;
 			void add_point(CloudPoint point);
 
-			pcl::PolygonMesh triangulate(const BoxesImage* image) const;
+			pcl::PolygonMesh triangulate(const Image* image) const;
 			void write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const;
 
-			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const BoxesImage* image) const;
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const Image* image) const;
 
 		private:
 			pcl::PointCloud<pcl::Normal>::Ptr estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const;

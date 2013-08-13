@@ -7,20 +7,20 @@
 #include <boxes/image.h>
 
 namespace Boxes {
-	BoxesImage::BoxesImage() {
+	Image::Image() {
 	}
 
-	BoxesImage::BoxesImage(const std::string filename) {
+	Image::Image(const std::string filename) {
 		this->mat = cv::imread(filename);
 
 		assert(!this->mat.empty());
 	}
 
-	BoxesImage::BoxesImage(cv::Mat mat) {
+	Image::Image(cv::Mat mat) {
 		this->mat = mat;
 	}
 
-	BoxesImage::~BoxesImage() {
+	Image::~Image() {
 		// Free keypoint cache.
 		if (this->keypoints)
 			delete this->keypoints;
@@ -30,24 +30,24 @@ namespace Boxes {
 			delete this->descriptors;
 	}
 
-	void BoxesImage::show() {
-		cv::namedWindow("BoxesImage", CV_WINDOW_AUTOSIZE);
-		cv::imshow("BoxesImage", this->mat);
+	void Image::show() {
+		cv::namedWindow("Image", CV_WINDOW_AUTOSIZE);
+		cv::imshow("Image", this->mat);
 	}
 
-	void BoxesImage::write(const std::string filename) {
+	void Image::write(const std::string filename) {
 		cv::imwrite(filename, this->mat);
 	}
 
-	const cv::Mat* BoxesImage::get_mat() const {
+	const cv::Mat* Image::get_mat() const {
 		return &this->mat;
 	}
 
-	cv::Size BoxesImage::size() const {
+	cv::Size Image::size() const {
 		return this->mat.size();
 	}
 
-	std::vector<cv::KeyPoint>* BoxesImage::calc_keypoints() {
+	std::vector<cv::KeyPoint>* Image::calc_keypoints() {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
 		cv::FastFeatureDetector detector = cv::FastFeatureDetector();
@@ -56,14 +56,14 @@ namespace Boxes {
 		return output;
 	}
 
-	const std::vector<cv::KeyPoint>* BoxesImage::get_keypoints() {
+	const std::vector<cv::KeyPoint>* Image::get_keypoints() {
 		if (!this->keypoints)
 			this->keypoints = this->calc_keypoints();
 
 		return this->keypoints;
 	}
 
-	cv::Mat* BoxesImage::calc_descriptors() {
+	cv::Mat* Image::calc_descriptors() {
 		cv::Mat* descriptors = new cv::Mat();
 
 		// Get keypoints.
@@ -77,14 +77,14 @@ namespace Boxes {
 		return descriptors;
 	}
 
-	cv::Mat* BoxesImage::get_descriptors() {
+	cv::Mat* Image::get_descriptors() {
 		if (!this->descriptors)
 			this->descriptors = this->calc_descriptors();
 
 		return this->descriptors;
 	}
 
-	cv::Mat BoxesImage::get_greyscale_mat() {
+	cv::Mat Image::get_greyscale_mat() {
 		if (this->mat.channels() == 1) {
 			return this->mat;
 		}
@@ -95,7 +95,7 @@ namespace Boxes {
 		return greyscale;
 	}
 
-	cv::Mat BoxesImage::guess_camera_matrix() const {
+	cv::Mat Image::guess_camera_matrix() const {
 		cv::Size image_size = this->size();
 
 		cv::Mat camera_matrix = cv::Mat::zeros(3, 3, CV_64F);

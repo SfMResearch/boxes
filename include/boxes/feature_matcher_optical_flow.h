@@ -8,7 +8,7 @@
 namespace Boxes {
 	class FeatureMatcherOpticalFlow: public FeatureMatcher {
 		public:
-			FeatureMatcherOpticalFlow(BoxesImage *image1, BoxesImage *image2):
+			FeatureMatcherOpticalFlow(Image *image1, Image *image2):
 				FeatureMatcher(image1, image2) {};
 
 		private:

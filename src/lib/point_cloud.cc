@@ -34,7 +34,7 @@ namespace Boxes {
 		this->points.push_back(point);
 	}
 
-	pcl::PolygonMesh PointCloud::triangulate(const BoxesImage* image) const {
+	pcl::PolygonMesh PointCloud::triangulate(const Image* image) const {
 		// Concert point cloud into PCL format.
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud(image);
 		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = convertPointCloud(cloud_rgb);
@@ -92,7 +92,7 @@ namespace Boxes {
 		return normals;
 	}
 
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloud::generate_pcl_point_cloud(const BoxesImage* image) const {
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloud::generate_pcl_point_cloud(const Image* image) const {
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
 		const cv::Mat* mat = NULL;
