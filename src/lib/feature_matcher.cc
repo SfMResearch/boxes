@@ -267,13 +267,12 @@ namespace Boxes {
 		#pragma omp parallel for
 		for (unsigned int i = 0; i < this->matches.size(); i++) {
 			cv::DMatch match = this->matches[i];
-			
+
 			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(match.queryIdx);
 			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(match.trainIdx);
 
 			const cv::Point2f* match_point1 = &keypoint1->pt;
 			const cv::Point2f* match_point2 = &keypoint2->pt;
-			
 
 			cv::Point3d match_point_3d1(match_point1->x, match_point1->y, 1.0);
 			cv::Point3d match_point_3d2(match_point2->x, match_point2->y, 1.0);
@@ -307,8 +306,7 @@ namespace Boxes {
 			#pragma omp critical
 			{
 				point_cloud->add_point(cloud_point);
-				reproj_errors.push_back(cloud_point.reprojection_error);			
-
+				reproj_errors.push_back(cloud_point.reprojection_error);
 			}
 		}
 
