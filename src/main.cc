@@ -3,25 +3,28 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 
 #include <boxes.h>
 
 int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
+	std::string output;
 	bool use_optical_flow = false;
 	bool visualize = false;
 
 	while (1) {
 		static struct option long_options[] = {
 			{"optical-flow", no_argument,        0, 'O'},
+			{"output",       required_argument,  0, 'o'},
 			{"version",      no_argument,        0, 'V'},
 			{"visualize",    no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "OVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "Oo:Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -39,6 +42,10 @@ int main(int argc, char **argv) {
 
 			case 'O':
 				use_optical_flow = true;
+				break;
+
+			case 'o':
+				output.assign(optarg);
 				break;
 
 			case 'V':
@@ -79,6 +86,11 @@ int main(int argc, char **argv) {
 
 		if (visualize)
 			matcher->visualize_point_cloud(matcher->best_camera_matrix);
+	}
+
+	if (!output.empty()) {
+		std::cout << "Writing matched image to " << output << "..." << std::endl;
+		matcher->draw_matches(output);
 	}
 
 	// Free memory.
