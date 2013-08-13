@@ -110,6 +110,10 @@ namespace Boxes {
 				cv::Vec3b pixel = mat->at<cv::Vec3b>(i->keypoint.pt.y, i->keypoint.pt.x);
 				uint32_t rgb = ((uint32_t)pixel[2] << 16 | (uint32_t)pixel[1] << 8 | (uint32_t)pixel[0]);
 				cloud_point.rgb = *reinterpret_cast<float*>(&rgb);
+
+			// Otherwise set them in a bright colour.
+			} else {
+				cloud_point.rgb = 0xffffff;
 			}
 
 			cloud->push_back(cloud_point);
