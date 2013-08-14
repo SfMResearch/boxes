@@ -11,11 +11,14 @@ int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
 	std::string output;
+	std::string output_depths_map;
+
 	bool use_optical_flow = false;
 	bool visualize = false;
 
 	while (1) {
 		static struct option long_options[] = {
+			{"depths-map",   required_argument,  0, 'd'},
 			{"optical-flow", no_argument,        0, 'O'},
 			{"output",       required_argument,  0, 'o'},
 			{"version",      no_argument,        0, 'V'},
@@ -24,7 +27,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "Oo:Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "d:Oo:Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -38,6 +41,10 @@ int main(int argc, char **argv) {
 				if (optarg)
 					std::cerr << " with argument " << optarg;
 				std::cerr << std::endl;
+				break;
+
+			case 'd':
+				output_depths_map.assign(optarg);
 				break;
 
 			case 'O':
@@ -96,6 +103,11 @@ int main(int argc, char **argv) {
 	if (matcher->best_camera_matrix) {
 		if (visualize)
 			matcher->visualize_point_cloud(matcher->best_camera_matrix);
+
+		if (!output_depths_map.empty()) {
+			std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
+			matcher->best_camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
+		}
 	}
 
 	if (!output.empty()) {
