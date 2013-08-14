@@ -136,4 +136,25 @@ namespace Boxes {
 		return cloud;
 #endif
 	}
+
+	void PointCloud::write_depths_map(std::string filename, Image* image) const {
+		double val_min, val_max;
+		std::vector<double> depths(this->points.size());
+		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
+			depths.push_back(i->pt.z);
+		}
+		cv::minMaxLoc(depths, &val_min, &val_max);
+
+		cv::Mat map;
+		cvtColor(*image->get_mat(), map, CV_BGR2HSV);
+
+		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
+			double d = MAX(MIN((i->pt.z - val_min) / (val_max - val_min), 1.0), 0.0);
+			cv::circle(map, i->keypoint.pt, 1, cv::Scalar(255.0 * (1.0 - d), 255, 255), CV_FILLED);
+		}
+		cvtColor(map, map, CV_HSV2BGR);
+
+		Image image_map = Image(map);
+		image_map.write(filename);
+	}
 }

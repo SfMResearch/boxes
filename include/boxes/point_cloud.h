@@ -31,6 +31,7 @@ namespace Boxes {
 			void write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const;
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const Image* image = NULL) const;
+			void write_depths_map(std::string filename, Image* image) const;
 
 		private:
 			pcl::PointCloud<pcl::Normal>::Ptr estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const;
