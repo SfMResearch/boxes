@@ -29,25 +29,35 @@ namespace Boxes {
 		this->keypoints2 = this->image2->get_keypoints();
 	}
 
-	void FeatureMatcher::run() {
+	CameraMatrix* FeatureMatcher::run() {
 		// Match the two given images.
 		this->match();
 
 		// Calculate the fundamental matrix.
-		this->fundamental_matrix = this->calculate_fundamental_matrix();
+		cv::Mat fundamental_matrix = this->calculate_fundamental_matrix();
 
 		// Calculate the essential matrix.
-		this->essential_matrix = this->calculate_essential_matrix();
+		cv::Mat essential_matrix = this->calculate_essential_matrix(&fundamental_matrix);
 
 		// Calculate all possible camera matrices.
-		std::vector<CameraMatrix> camera_matrices = this->calculate_possible_camera_matrices();
+		std::vector<CameraMatrix*> camera_matrices = \
+			this->calculate_possible_camera_matrices(&essential_matrix);
 
 		// Find the best camera matrix.
-		this->best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
-		assert(this->best_camera_matrix);
+		CameraMatrix* best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
+
+		// Clear all camera matrices, we do not want to use.
+		for (std::vector<CameraMatrix*>::iterator i = camera_matrices.begin(); i != camera_matrices.end(); ++i) {
+			if (*i == best_camera_matrix)
+				continue;
+
+			delete *i;
+		}
 
 		pcl::PolygonMesh mesh = best_camera_matrix->point_cloud.triangulate(this->image1);
 		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
+
+		return best_camera_matrix;
 	}
 
 	void FeatureMatcher::match() {
@@ -128,14 +138,13 @@ namespace Boxes {
 	}
 
 	cv::Mat FeatureMatcher::calculate_fundamental_matrix() {
-		std::vector<uchar> status(this->matches.size());
-
 		std::vector<cv::Point2f> match_points1, match_points2;
 		for (std::vector<cv::DMatch>::iterator i = this->matches.begin(); i != this->matches.end(); i++) {
 			match_points1.push_back(this->keypoints1->at(i->queryIdx).pt);
 			match_points2.push_back(this->keypoints2->at(i->trainIdx).pt);
 		}
 
+		std::vector<uchar> status(this->matches.size());
 		cv::Mat fund = cv::findFundamentalMat(match_points1, match_points2, status,
 			cv::FM_RANSAC, EPIPOLAR_DISTANCE, 0.99);
 
@@ -150,15 +159,15 @@ namespace Boxes {
 		return fund;
 	}
 
-	cv::Mat FeatureMatcher::calculate_essential_matrix() {
+	cv::Mat FeatureMatcher::calculate_essential_matrix(cv::Mat* fundamental_matrix) {
 		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
 
-		return camera_matrix.t() * this->fundamental_matrix * camera_matrix;
+		return camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
 	}
 
-	std::vector<CameraMatrix> FeatureMatcher::calculate_possible_camera_matrices() {
+	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(cv::Mat* essential_matrix) {
 		// Perform SVD of the matrix.
-		cv::SVD svd = cv::SVD(this->essential_matrix, cv::SVD::FULL_UV);
+		cv::SVD svd = cv::SVD(*essential_matrix, cv::SVD::MODIFY_A|cv::SVD::FULL_UV);
 
 		// Check if first and second singular values are the same (as they should be).
 		double singular_values_ratio = fabsf(svd.w.at<double>(0) / svd.w.at<double>(1));
@@ -179,7 +188,7 @@ namespace Boxes {
 		cv::Mat_<double> translation1 = svd.u.col(2);
 		cv::Mat_<double> translation2 = -translation1;
 
-		std::vector<CameraMatrix> matrices;
+		std::vector<CameraMatrix*> matrices;
 
 		cv::Mat* rotation = &rotation1;
 		cv::Mat* translation = &translation1;
@@ -195,7 +204,7 @@ namespace Boxes {
 					rotation->at<double>(2, 0), rotation->at<double>(2, 1), rotation->at<double>(2, 2), translation->at<double>(2)
 				);
 
-				CameraMatrix camera_matrix = CameraMatrix(matrix);
+				CameraMatrix* camera_matrix = new CameraMatrix(matrix);
 				matrices.push_back(camera_matrix);
 
 				translation = &translation2;
@@ -207,42 +216,35 @@ namespace Boxes {
 		return matrices;
 	}
 
-	const CameraMatrix* FeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix>* camera_matrices) {
+	CameraMatrix* FeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix*>* camera_matrices) {
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
-		const CameraMatrix* best_matrix = NULL;
-		for (std::vector<CameraMatrix>::iterator i = (*camera_matrices).begin(); i != (*camera_matrices).end(); ++i) {
+		CameraMatrix* best_matrix = NULL;
+		for (std::vector<CameraMatrix*>::iterator i = camera_matrices->begin(); i != camera_matrices->end(); ++i) {
+			CameraMatrix* camera_matrix = *i;
+
 			// Check for coherency of the rotation matrix.
 			// Skip if the condition is true.
-			if (i->rotation_is_coherent())
+			if (camera_matrix->rotation_is_coherent())
 				continue;
 
 			// Pick first matrix as the best one until we know better.
 			if (!best_matrix)
-				best_matrix = &(*i);
+				best_matrix = &(*camera_matrix);
 
 			// Triangulate.
-			i->reprojection_error = this->triangulate_points(&P0, &(i->matrix), &i->point_cloud);
+			camera_matrix->reprojection_error = this->triangulate_points(&P0, &(camera_matrix->matrix), &camera_matrix->point_cloud);
 
 			// Count all points that are "in front of the camera".
-			if (i->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
-				best_matrix = &(*i);
+			if (camera_matrix->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
+				best_matrix = &(*camera_matrix);
 				continue;
 			}
 
 			// Select the matrix with best reprojection error.
-			if (i->reprojection_error < best_matrix->reprojection_error) {
-				best_matrix = &(*i);
+			if (camera_matrix->reprojection_error < best_matrix->reprojection_error) {
+				best_matrix = &(*camera_matrix);
 				continue;
-			}
-		}
-
-		if (best_matrix) {
-			if (best_matrix->reprojection_error > REPROJECTION_ERROR_MAX) {
-				// XXX should raise an exception
-				std::cerr << "best matrix' reprojection error too high: " << best_matrix->reprojection_error << std::endl;
-
-				return NULL;
 			}
 		}
 

@@ -98,24 +98,29 @@ int main(int argc, char **argv) {
 	assert(matcher);
 
 	// Run it.
-	matcher->run();
+	Boxes::CameraMatrix* camera_matrix = matcher->run();
 
-	if (matcher->best_camera_matrix) {
-		if (visualize)
-			matcher->visualize_point_cloud(matcher->best_camera_matrix);
-
-		if (!output_depths_map.empty()) {
-			std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
-			matcher->best_camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
-		}
+	if (!camera_matrix) {
+		std::cerr << "Could not find a suitable camera matrix. Exiting." << std::endl;
+		exit(1);
 	}
 
+	// First, write everything to file.
 	if (!output.empty()) {
 		std::cout << "Writing matched image to " << output << "..." << std::endl;
 		matcher->draw_matches(output);
 	}
 
+	if (!output_depths_map.empty()) {
+		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
+		camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
+	}
+
+	if (visualize)
+		matcher->visualize_point_cloud(camera_matrix);
+
 	// Free memory.
+	delete camera_matrix;
 	delete matcher;
 
 	exit(0);
