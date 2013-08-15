@@ -22,10 +22,10 @@ namespace Boxes {
 		public:
 			PointCloud();
 
-			unsigned int size() const;
-
-			std::vector<CloudPoint> points;
 			void add_point(CloudPoint point);
+			const std::vector<CloudPoint>* get_points() const;
+
+			unsigned int size() const;
 
 			pcl::PolygonMesh triangulate(const Image* image) const;
 			void write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const;
@@ -34,6 +34,8 @@ namespace Boxes {
 			void write_depths_map(std::string filename, Image* image) const;
 
 		private:
+			std::vector<CloudPoint> points;
+
 			pcl::PointCloud<pcl::Normal>::Ptr estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const;
 	};
 };

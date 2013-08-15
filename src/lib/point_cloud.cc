@@ -34,6 +34,10 @@ namespace Boxes {
 		this->points.push_back(point);
 	}
 
+	const std::vector<CloudPoint>* PointCloud::get_points() const {
+		return &this->points;
+	}
+
 	pcl::PolygonMesh PointCloud::triangulate(const Image* image) const {
 		// Concert point cloud into PCL format.
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud(image);
