@@ -257,8 +257,6 @@ namespace Boxes {
 
 		cv::Mat_<double> KP1 = c1 * cv::Mat(*p1);
 
-		std::vector<double> reproj_errors;
-
 		assert(this->keypoints1->size() >= this->matches.size());
 		assert(this->keypoints2->size() >= this->matches.size());
 
@@ -304,8 +302,16 @@ namespace Boxes {
 			#pragma omp critical
 			{
 				point_cloud->add_point(cloud_point);
-				reproj_errors.push_back(cloud_point.reprojection_error);
+				#pragma omp flush(point_cloud)
 			}
+		}
+
+		// Calculate mean reprojection error.
+		std::vector<double> reproj_errors(point_cloud->size());
+		const std::vector<CloudPoint>* points = point_cloud->get_points();
+
+		for (std::vector<CloudPoint>::const_iterator i = points->begin(); i != points->end(); ++i) {
+			reproj_errors.push_back(i->reprojection_error);
 		}
 
 		cv::Scalar mse = cv::mean(reproj_errors);
