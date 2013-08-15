@@ -111,17 +111,19 @@ int main(int argc, char **argv) {
 		matcher->draw_matches(output);
 	}
 
+	// Delete the matcher, which is not needed any more.
+	delete matcher;
+
 	if (!output_depths_map.empty()) {
 		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
 		camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
 	}
 
 	if (visualize)
-		matcher->visualize_point_cloud(camera_matrix);
+		camera_matrix->point_cloud.visualize_point_cloud(image1);
 
 	// Free memory.
 	delete camera_matrix;
-	delete matcher;
 
 	exit(0);
 }

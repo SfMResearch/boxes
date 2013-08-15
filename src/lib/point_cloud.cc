@@ -5,6 +5,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/io/vtk_io.h>
 #include <pcl/point_types.h>
 #include <pcl/surface/gp3.h>
+#include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 INCLUDE_IGNORE_WARNINGS_END
 
@@ -160,5 +161,15 @@ namespace Boxes {
 
 		Image image_map = Image(map);
 		image_map.write(filename);
+	}
+
+	void PointCloud::visualize_point_cloud(const Image* image) {
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud(image);
+
+		// Visualize.
+		pcl::visualization::CloudViewer viewer("3D Point Cloud");
+		viewer.showCloud(cloud, "cloud");
+
+		while (!viewer.wasStopped()) {}
 	}
 }

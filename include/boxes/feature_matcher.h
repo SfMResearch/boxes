@@ -5,11 +5,6 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include <boxes/suppress_warnings.h>
-INCLUDE_IGNORE_WARNINGS_BEGIN
-#include <pcl/visualization/cloud_viewer.h>
-INCLUDE_IGNORE_WARNINGS_END
-
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/image.h>
@@ -28,7 +23,6 @@ namespace Boxes {
 			const CameraMatrix* best_camera_matrix;
 
 			void draw_matches(const std::string filename);
-			void visualize_point_cloud(const CameraMatrix* camera_matrix);
 
 		protected:
 			Image* image1;

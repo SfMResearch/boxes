@@ -5,11 +5,6 @@
 #include <tuple>
 #include <vector>
 
-#include <boxes/suppress_warnings.h>
-INCLUDE_IGNORE_WARNINGS_BEGIN
-#include <pcl/visualization/cloud_viewer.h>
-INCLUDE_IGNORE_WARNINGS_END
-
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/feature_matcher.h>
@@ -374,16 +369,5 @@ namespace Boxes {
 		Y(3) = 1.0;
 
 		return Y;
-	}
-
-	void FeatureMatcher::visualize_point_cloud(const CameraMatrix* camera_matrix) {
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = \
-			camera_matrix->point_cloud.generate_pcl_point_cloud(this->image1);
-
-		// Visualize.
-		pcl::visualization::CloudViewer viewer("3D Point Cloud");
-		viewer.showCloud(cloud, "cloud");
-
-		while (!viewer.wasStopped()) {}
 	}
 }

@@ -33,6 +33,8 @@ namespace Boxes {
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const Image* image = NULL) const;
 			void write_depths_map(std::string filename, Image* image) const;
 
+			void visualize_point_cloud(const Image* image = NULL);
+
 		private:
 			std::vector<CloudPoint> points;
 
