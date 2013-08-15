@@ -17,6 +17,16 @@
 
 #define MATCH_VALID_RATIO                0.8
 
+// Feature Detector
+/* Available feature detectors: FAST, STAR, ORB, BRISK, MSER, GFTT, HARRIS,
+     Dense, SimpleBlob, Grid, Pyramid and (SIFT, SURF which are non-free) */
+#define FEATURE_DETECTOR                  "FAST"
+
+/* Available feature extractors: ORB, BRISK, BRIEF
+     (SIFT, SURF which are non-free) */
+#define FEATURE_DETECTOR_EXTRACTOR        "ORB"
+
+
 // Optical Flow constants
 //#define OPTICAL_FLOW_USE_GREYSCALE_IMAGES
 #define OF_MAX_VERROR                   12.0

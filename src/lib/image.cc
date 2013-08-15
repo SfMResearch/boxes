@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include <boxes/constants.h>
 #include <boxes/image.h>
 
 namespace Boxes {
@@ -50,8 +51,9 @@ namespace Boxes {
 	std::vector<cv::KeyPoint>* Image::calc_keypoints() {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
-		cv::FastFeatureDetector detector = cv::FastFeatureDetector();
-		detector.detect(this->mat, *output);
+		cv::Ptr<cv::FeatureDetector> detector = \
+			cv::FeatureDetector::create(FEATURE_DETECTOR);
+		detector->detect(this->mat, *output);
 
 		return output;
 	}
@@ -71,8 +73,9 @@ namespace Boxes {
 			this->keypoints = this->calc_keypoints();
 
 		// Extract descriptors.
-		cv::OrbDescriptorExtractor extractor = cv::OrbDescriptorExtractor();
-		extractor.compute(this->mat, *this->keypoints, *descriptors);
+		cv::Ptr<cv::DescriptorExtractor> extractor = \
+			cv::DescriptorExtractor::create(FEATURE_DETECTOR_EXTRACTOR);
+		extractor->compute(this->mat, *this->keypoints, *descriptors);
 
 		return descriptors;
 	}
