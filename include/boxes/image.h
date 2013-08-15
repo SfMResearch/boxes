@@ -29,11 +29,15 @@ namespace Boxes {
 			// keypoints
 			const std::vector<cv::KeyPoint>* get_keypoints();
 
+			// distance
+			void set_distance(unsigned int distance);
+
 			// camera matrix
 			cv::Mat guess_camera_matrix() const;
 
 		private:
 			cv::Mat mat;
+			void decode_jfif_data(std::string filename);
 
 			// descriptors
 			cv::Mat* descriptors = NULL;
@@ -42,6 +46,9 @@ namespace Boxes {
 			// keypoints
 			std::vector<cv::KeyPoint>* keypoints = NULL;
 			std::vector<cv::KeyPoint>* calc_keypoints();
+
+			// distance
+			unsigned int distance = 0;
 	};
 };
 

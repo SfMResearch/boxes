@@ -87,6 +87,12 @@ AC_SUBST([OUR_LDFLAGS], $with_ldflags)
 # This makes sure pkg.m4 is available.
 m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
 
+# Boost
+BOOST_REQUIRE([1.53])
+
+BOOST_REGEX([mt])
+
+# OpenCV
 PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4])
 
 # PCL

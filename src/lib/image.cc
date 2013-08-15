@@ -1,4 +1,7 @@
 
+#include <boost/regex.hpp>
+#include <fstream>
+#include <iostream>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/opencv.hpp>
 #include <string>
@@ -13,6 +16,9 @@ namespace Boxes {
 
 	Image::Image(const std::string filename) {
 		this->mat = cv::imread(filename);
+
+		// Read available JFIF data.
+		this->decode_jfif_data(filename);
 
 		assert(!this->mat.empty());
 	}
@@ -29,6 +35,64 @@ namespace Boxes {
 		// Free descriptors cache.
 		if (this->descriptors)
 			delete this->descriptors;
+	}
+
+	void Image::decode_jfif_data(std::string filename) {
+		unsigned char header[2048];
+		unsigned int pos = 0;
+
+		std::ifstream file(filename, std::ios::in|std::ios::binary);
+		if (file.is_open()) {
+			file.read((char *)header, sizeof(header));
+			file.close();
+
+			// Check for magic number match.
+			if(header[pos] == 0xFF && header[pos+1] == 0xD8 && header[pos+2] == 0xFF && header[pos+3] == 0xE0) {
+				pos += 4;
+
+				// Check for a valid JFIF header (JFIF\0).
+				if (header[pos+2] == 'J' && header[pos+3] == 'F' && header[pos+4] == 'I' && header[pos+5] == 'F' && header[pos+6] == 0x00) {
+					// Retrieve block by block...
+					unsigned int block_length = (header[pos] << 8) + header[pos+1];
+					while (pos < sizeof(header)) {
+						pos += block_length;
+
+						// Check if we jumped past the end of the header.
+						if (pos >= sizeof(header)) {
+							break;
+						}
+
+						// Handle comment block.
+						if (header[pos+1] == 0xFE) {
+							unsigned int comment_pos = 0;
+							unsigned int comment_length = (header[pos+2] << 8) + header[pos+3] - 2;
+
+							// Copy comment to string.
+							std::string comment;
+							while (comment_pos < comment_length) {
+								comment += header[pos+comment_pos+4];
+								comment_pos++;
+							}
+
+							// Go (for) the distance.
+							/* Using boost::regex here, becase std::regex::regex_search is broken since GCC 4.7 */
+							boost::regex re("Distance=\"(\\d+)\"", boost::regex_constants::extended);
+
+							boost::smatch matches;
+							if (boost::regex_search(comment, matches, re)) {
+								unsigned int distance = 0;
+								std::stringstream (matches[1]) >> distance;
+
+								this->set_distance(distance);
+							}
+						}
+
+						// Go to the next block.
+						block_length = (header[pos+2] << 8) + header[pos+3] + 2;
+					}
+				}
+			}
+		}
 	}
 
 	void Image::show() {
@@ -96,6 +160,10 @@ namespace Boxes {
 		cv::cvtColor(this->mat, greyscale, CV_RGB2GRAY);
 
 		return greyscale;
+	}
+
+	void Image::set_distance(unsigned int distance) {
+		this->distance = distance;
 	}
 
 	cv::Mat Image::guess_camera_matrix() const {

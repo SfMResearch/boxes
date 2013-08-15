@@ -64,6 +64,7 @@ libboxes_la_CXXFLAGS = \
 	$(PCL_CFLAGS)
 
 libboxes_la_LIBADD = \
+	$(BOOST_REGEX_LIBS) \
 	$(OPENCV_LIBS) \
 	$(PCL_LIBS)
 
