@@ -139,9 +139,15 @@ namespace Boxes {
 			match_points2.push_back(this->keypoints2->at(i->trainIdx).pt);
 		}
 
+		double val_min = 0.0, val_max = 0.0;
+		cv::minMaxIdx(match_points1, &val_min, &val_max);
+
+		// Snavely
+		double epipolar_distance = 0.006 * val_max;
+
 		std::vector<uchar> status(this->matches.size());
 		cv::Mat fund = cv::findFundamentalMat(match_points1, match_points2, status,
-			cv::FM_RANSAC, EPIPOLAR_DISTANCE, 0.99);
+			cv::FM_RANSAC, epipolar_distance, 0.99);
 
 		// Sort out bad matches.
 		std::vector<cv::DMatch> best_matches;

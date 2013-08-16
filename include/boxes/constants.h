@@ -32,8 +32,6 @@
 #define OF_MAX_VERROR                   12.0
 #define OF_RADIUS_MATCH                  5.0
 
-#define EPIPOLAR_DISTANCE				 2
-
 // Triangulation
 #define TRIANGULATION_MAX_ITERATIONS    10
 #define TRIANGULATION_EPSILON            0.001
