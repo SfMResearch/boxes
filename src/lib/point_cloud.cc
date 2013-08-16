@@ -128,18 +128,20 @@ namespace Boxes {
 		cloud->height = 1;
 
 #ifdef POINT_CLOUD_USE_STATISTICAL_OUTLIER_REMOVAL
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
+		if (cloud->points.size() > 0) {
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-		pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
-		sor.setInputCloud(cloud);
-		sor.setMeanK(50);
-		sor.setStddevMulThresh(1.0);
-		sor.filter(*cloud_filtered);
+			pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor;
+			sor.setInputCloud(cloud);
+			sor.setMeanK(50);
+			sor.setStddevMulThresh(1.0);
+			sor.filter(*cloud_filtered);
 
-		return cloud_filtered;
-#else
-		return cloud;
+			return cloud_filtered;
+		}
 #endif
+
+		return cloud;
 	}
 
 	void PointCloud::write_depths_map(std::string filename, Image* image) const {
