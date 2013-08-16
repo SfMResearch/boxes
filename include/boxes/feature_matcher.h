@@ -17,6 +17,7 @@ namespace Boxes {
 	class FeatureMatcher {
 		public:
 			FeatureMatcher(Image* image1, Image* image2);
+			virtual ~FeatureMatcher() {};
 
 			CameraMatrix* run();
 

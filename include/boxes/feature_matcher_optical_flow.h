@@ -10,6 +10,7 @@ namespace Boxes {
 		public:
 			FeatureMatcherOpticalFlow(Image *image1, Image *image2):
 				FeatureMatcher(image1, image2) {};
+			~FeatureMatcherOpticalFlow() {};
 
 		private:
 			void match();
