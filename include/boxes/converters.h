@@ -9,6 +9,7 @@
 
 #include <boxes/suppress_warnings.h>
 INCLUDE_IGNORE_WARNINGS_BEGIN
+#include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 INCLUDE_IGNORE_WARNINGS_END
 #endif

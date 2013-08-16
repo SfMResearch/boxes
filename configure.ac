@@ -88,40 +88,41 @@ AC_SUBST([OUR_LDFLAGS], $with_ldflags)
 m4_pattern_forbid([^_?PKG_[A-Z_]+$],[*** pkg.m4 missing, please install pkg-config])
 
 # Boost
-BOOST_REQUIRE([1.53])
+BOOST_REQUIRE([1.49])
 
 BOOST_REGEX([mt])
+BOOST_SYSTEM([mt])
 
 # OpenCV
 PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4])
 
 # PCL
 PKG_CHECK_MODULES(PCL_APPS, [pcl_apps >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_APPS, [pcl_apps-1.6])
+	PKG_CHECK_MODULES(PCL_APPS, [pcl_apps-1.7])
 ])
 PKG_CHECK_MODULES(PCL_COMMON, [pcl_common >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_COMMON, [pcl_common-1.6])
+	PKG_CHECK_MODULES(PCL_COMMON, [pcl_common-1.7])
 ])
 PKG_CHECK_MODULES(PCL_FEATURES, [pcl_features >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_FEATURES, [pcl_features-1.6])
+	PKG_CHECK_MODULES(PCL_FEATURES, [pcl_features-1.7])
 ])
 PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters-1.6])
+	PKG_CHECK_MODULES(PCL_FILTERS, [pcl_filters-1.7])
 ])
 PKG_CHECK_MODULES(PCL_IO, [pcl_io >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_IO, [pcl_io-1.6])
+	PKG_CHECK_MODULES(PCL_IO, [pcl_io-1.7])
 ])
 PKG_CHECK_MODULES(PCL_KDTREE, [pcl_kdtree >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_KDTREE, [pcl_kdtree-1.6])
+	PKG_CHECK_MODULES(PCL_KDTREE, [pcl_kdtree-1.7])
 ])
 PKG_CHECK_MODULES(PCL_SEARCH, [pcl_search >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_SEARCH, [pcl_search-1.6])
+	PKG_CHECK_MODULES(PCL_SEARCH, [pcl_search-1.7])
 ])
 PKG_CHECK_MODULES(PCL_SURFACE, [pcl_surface >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_SURFACE, [pcl_surface-1.6])
+	PKG_CHECK_MODULES(PCL_SURFACE, [pcl_surface-1.7])
 ])
 PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization-1.6])
+	PKG_CHECK_MODULES(PCL_VISUALIZATION, [pcl_visualization-1.7])
 ])
 
 PCL_CFLAGS="\
