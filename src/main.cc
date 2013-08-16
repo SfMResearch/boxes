@@ -91,9 +91,9 @@ int main(int argc, char **argv) {
 
 	Boxes::FeatureMatcher* matcher = NULL;
 	if (use_optical_flow) {
-		matcher = boxes.match(image1, image2);
-	} else {
 		matcher = boxes.match_optical_flow(image1, image2);
+	} else {
+		matcher = boxes.match(image1, image2);
 	}
 	assert(matcher);
 

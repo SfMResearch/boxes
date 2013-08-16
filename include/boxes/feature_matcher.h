@@ -31,7 +31,7 @@ namespace Boxes {
 			const std::vector<cv::KeyPoint>* keypoints1;
 			const std::vector<cv::KeyPoint>* keypoints2;
 
-			void match();
+			virtual void match();
 			void _match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
 			std::vector<cv::DMatch> matches;
 
