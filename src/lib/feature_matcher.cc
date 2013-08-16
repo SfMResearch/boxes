@@ -185,8 +185,8 @@ namespace Boxes {
 
 		std::vector<CameraMatrix*> matrices;
 
-		cv::Mat* rotation = &rotation1;
-		cv::Mat* translation = &translation1;
+		cv::Mat_<double>* rotation = &rotation1;
+		cv::Mat_<double>* translation = &translation1;
 
 		cv::Matx34d matrix;
 		for (unsigned int i = 0; i < 2; i++) {
