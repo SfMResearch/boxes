@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
 
 	std::string output;
 	std::string output_depths_map;
+	std::string output_mesh;
 
 	bool use_optical_flow = false;
 	bool visualize = false;
@@ -19,6 +20,7 @@ int main(int argc, char **argv) {
 	while (1) {
 		static struct option long_options[] = {
 			{"depths-map",   required_argument,  0, 'd'},
+			{"mesh",         required_argument,  0, 'm'},
 			{"optical-flow", no_argument,        0, 'O'},
 			{"output",       required_argument,  0, 'o'},
 			{"version",      no_argument,        0, 'V'},
@@ -27,7 +29,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "d:Oo:Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "d:m:Oo:Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -45,6 +47,10 @@ int main(int argc, char **argv) {
 
 			case 'd':
 				output_depths_map.assign(optarg);
+				break;
+
+			case 'm':
+				output_mesh.assign(optarg);
 				break;
 
 			case 'O':
@@ -117,6 +123,15 @@ int main(int argc, char **argv) {
 	if (!output_depths_map.empty()) {
 		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
 		camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
+	}
+
+	// Pointer for the point cloud.
+	const Boxes::PointCloud* point_cloud = &camera_matrix->point_cloud;
+
+	if (!output_mesh.empty()) {
+		std::cout << "Writing mesh to " << output_mesh << "..." << std::endl;
+		pcl::PolygonMesh mesh = point_cloud->triangulate(image1);
+		point_cloud->write_polygon_mesh(output_mesh, &mesh);
 	}
 
 	if (visualize)

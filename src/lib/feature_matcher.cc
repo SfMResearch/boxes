@@ -49,9 +49,6 @@ namespace Boxes {
 			delete *i;
 		}
 
-		pcl::PolygonMesh mesh = best_camera_matrix->point_cloud.triangulate(this->image1);
-		best_camera_matrix->point_cloud.write_polygon_mesh("mesh.vtk", &mesh);
-
 		return best_camera_matrix;
 	}
 
