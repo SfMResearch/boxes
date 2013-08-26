@@ -13,11 +13,23 @@ namespace Boxes {
 		this->matrix = matrix;
 	}
 
-	bool CameraMatrix::rotation_is_coherent() const {
+	double CameraMatrix::get_rotation_determinant() const {
 		cv::Mat rotation = cv::Mat(this->matrix).colRange(0, 3);
 
-		double determinant = fabsf(cv::determinant(rotation)) - 1.0;
-		return (determinant > 1e-07);
+		return cv::determinant(rotation);
+	}
+
+	bool CameraMatrix::rotation_is_coherent() const {
+		double determinant = this->get_rotation_determinant();
+
+		// Must be +1 or -1
+		determinant = fabsf(determinant) - 1.0;
+
+		if (IS_ZERO(determinant)) {
+			return true;
+		}
+
+		return false;
 	}
 
 	double CameraMatrix::percentage_of_points_in_front_of_camera() const {

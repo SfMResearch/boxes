@@ -160,12 +160,19 @@ namespace Boxes {
 	cv::Mat FeatureMatcher::calculate_essential_matrix(cv::Mat* fundamental_matrix) {
 		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
 
-		return camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
+		cv::Mat essential_matrix = camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
+
+		double essential_determinant = cv::determinant(essential_matrix) - 1.0;
+		if (IS_ZERO(essential_determinant)) {
+			essential_matrix = -essential_matrix;
+		}
+
+		return essential_matrix;
 	}
 
-	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(cv::Mat* essential_matrix) {
+	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix) {
 		// Perform SVD of the matrix.
-		cv::SVD svd = cv::SVD(*essential_matrix, cv::SVD::MODIFY_A|cv::SVD::FULL_UV);
+		cv::SVD svd = cv::SVD(*essential_matrix, cv::SVD::FULL_UV);
 
 		// Check if first and second singular values are the same (as they should be).
 		double singular_values_ratio = fabsf(svd.w.at<double>(0) / svd.w.at<double>(1));
@@ -222,8 +229,7 @@ namespace Boxes {
 			CameraMatrix* camera_matrix = *i;
 
 			// Check for coherency of the rotation matrix.
-			// Skip if the condition is true.
-			if (camera_matrix->rotation_is_coherent())
+			if (!camera_matrix->rotation_is_coherent())
 				continue;
 
 			// Pick first matrix as the best one until we know better.

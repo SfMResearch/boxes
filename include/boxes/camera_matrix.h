@@ -20,6 +20,7 @@ namespace Boxes {
 			double reprojection_error;
 
 			// Methods
+			double get_rotation_determinant() const;
 			bool rotation_is_coherent() const;
 			double percentage_of_points_in_front_of_camera() const;
 	};
