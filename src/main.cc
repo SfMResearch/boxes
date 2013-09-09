@@ -150,6 +150,8 @@ int main(int argc, char **argv) {
 	if (visualize)
 		camera_matrix->point_cloud.visualize_point_cloud(image1);
 
+	std::cout << camera_matrix->matrix << std::endl;
+
 	// Free memory.
 	delete camera_matrix;
 

@@ -23,7 +23,7 @@
 
 # define DEFAULT_FEATURE_DETECTOR                 "SURF"
 #else
-# define DEFAULT_FEATURE_DETECTOR                 "PyramidFast"
+# define DEFAULT_FEATURE_DETECTOR                 "PyramidFAST"
 #endif
 
 /* Available feature extractors: ORB, BRISK, BRIEF
@@ -50,15 +50,6 @@
 #define REPROJECTION_ERROR_MAX         200.0
 
 #define MATCH_VALID_RATIO                0.8
-
-// Feature Detector
-/* Available feature detectors: FAST, STAR, ORB, BRISK, MSER, GFTT, HARRIS,
-     Dense, SimpleBlob, Grid, Pyramid and (SIFT, SURF which are non-free) */
-#define FEATURE_DETECTOR                  "PyramidFAST"
-
-/* Available feature extractors: ORB, BRISK, BRIEF
-     (SIFT, SURF which are non-free) */
-#define FEATURE_DETECTOR_EXTRACTOR        "ORB"
 
 // Optical Flow constants
 //#define OPTICAL_FLOW_USE_GREYSCALE_IMAGES

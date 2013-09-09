@@ -181,16 +181,15 @@ namespace Boxes {
 		while (!viewer.wasStopped()) {}
 	}
 
-
 	double PointCloud::generate_convex_hull(pcl::PolygonMesh &mesh) const {
-		//Convert Point Cloud
+		// Convert point cloud
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_point_cloud = generate_pcl_point_cloud();
-		
-		//Create Convex Hull			
+
+		// Create convex hull
 		pcl::ConvexHull<pcl::PointXYZRGB> convex_hull;
 		convex_hull.setInputCloud(pcl_point_cloud);
 
-		//Convert to mesh
+		// Convert to mesh
 		convex_hull.reconstruct(mesh);
 
 		return convex_hull.getTotalVolume();
