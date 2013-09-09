@@ -29,6 +29,9 @@ TESTS = \
 check_PROGRAMS = \
 	$(BOXES_BUILT_TESTS)
 
+EXTRA_DIST = \
+	tests.h
+
 
 # library version
 
@@ -36,6 +39,22 @@ BOXES_BUILT_TESTS += library_version
 
 library_version_SOURCES = \
 	library_version.cc 
+
+
+# image load
+
+BOXES_BUILT_TESTS += image_load
+
+image_load_SOURCES = \
+	image_load.cc
+
+
+# image get
+
+BOXES_BUILT_TESTS += image_get
+
+image_get_SOURCES = \
+	image_get.cc
 
 
 ## triangulation test

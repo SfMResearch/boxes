@@ -26,4 +26,6 @@ config.status
 configure
 stamp-*
 /tests/Makefile
+/tests/image_get
+/tests/image_load
 /tests/library_version
