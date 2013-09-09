@@ -28,13 +28,6 @@ namespace Boxes {
 	}
 
 	Image::~Image() {
-		// Free keypoint cache.
-		if (this->keypoints)
-			delete this->keypoints;
-
-		// Free descriptors cache.
-		if (this->descriptors)
-			delete this->descriptors;
 	}
 
 	void Image::decode_jfif_data(std::string filename) {
@@ -112,43 +105,23 @@ namespace Boxes {
 		return this->mat.size();
 	}
 
-	std::vector<cv::KeyPoint>* Image::calc_keypoints() {
+	std::vector<cv::KeyPoint>* Image::get_keypoints(const std::string detector_type) const {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
-		cv::Ptr<cv::FeatureDetector> detector = \
-			cv::FeatureDetector::create(FEATURE_DETECTOR);
+		cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create(detector_type);
 		detector->detect(this->mat, *output);
 
 		return output;
 	}
 
-	const std::vector<cv::KeyPoint>* Image::get_keypoints() {
-		if (!this->keypoints)
-			this->keypoints = this->calc_keypoints();
-
-		return this->keypoints;
-	}
-
-	cv::Mat* Image::calc_descriptors() {
+	cv::Mat* Image::get_descriptors(std::vector<cv::KeyPoint>* keypoints, const std::string detector_type) const {
 		cv::Mat* descriptors = new cv::Mat();
 
-		// Get keypoints.
-		if (!this->keypoints)
-			this->keypoints = this->calc_keypoints();
-
 		// Extract descriptors.
-		cv::Ptr<cv::DescriptorExtractor> extractor = \
-			cv::DescriptorExtractor::create(FEATURE_DETECTOR_EXTRACTOR);
-		extractor->compute(this->mat, *this->keypoints, *descriptors);
+		cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create(detector_type);
+		extractor->compute(this->mat, *keypoints, *descriptors);
 
 		return descriptors;
-	}
-
-	cv::Mat* Image::get_descriptors() {
-		if (!this->descriptors)
-			this->descriptors = this->calc_descriptors();
-
-		return this->descriptors;
 	}
 
 	cv::Mat Image::get_greyscale_mat() {
