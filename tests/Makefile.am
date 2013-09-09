@@ -38,12 +38,12 @@ library_version_SOURCES = \
 	library_version.cc 
 
 
-# triangulation test
-
-BOXES_BUILT_TESTS += triangulation_test
-
-triangulation_test_SOURCES= \
-	triangulation_test.cc
-
-triangulation_test_LDADD = \
-	$(OPENCV_LIBS)
+## triangulation test
+#
+#BOXES_BUILT_TESTS += triangulation_test
+#
+#triangulation_test_SOURCES= \
+#	triangulation_test.cc
+#
+#triangulation_test_LDADD = \
+#	$(OPENCV_LIBS)
