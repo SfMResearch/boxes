@@ -33,6 +33,14 @@ namespace Boxes {
 	}
 
 	double CameraMatrix::percentage_of_points_in_front_of_camera() const {
+		/* Check if there are actually points in the cloud.
+		 * If not, we return right here, because cv::perspectiveTransform
+		 * will raise an exception when called with an empty array of points.
+		 */
+		if (this->point_cloud.size() == 0) {
+			return 0.0;
+		}
+
 		unsigned int points_in_front = 0;
 
 		cv::Matx44d matrix_mul = cv::Matx44d::eye();

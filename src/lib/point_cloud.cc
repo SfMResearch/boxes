@@ -40,40 +40,43 @@ namespace Boxes {
 	}
 
 	pcl::PolygonMesh PointCloud::triangulate(const Image* image) const {
-		// Concert point cloud into PCL format.
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud(image);
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = convertPointCloud(cloud_rgb);
-
-		// Normal estimation
-		pcl::PointCloud<pcl::Normal>::Ptr normals = this->estimate_normals(cloud);
-
-		// Concatenate points and normal fields.
-		pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
-		pcl::concatenateFields(*cloud, *normals, *cloud_with_normals);
-
-		// Create search tree
-		pcl::search::KdTree<pcl::PointNormal>::Ptr tree(new pcl::search::KdTree<pcl::PointNormal>);
-		tree->setInputCloud(cloud_with_normals);
-
-		// Initialize triangulation
-		pcl::GreedyProjectionTriangulation<pcl::PointNormal> pt = pcl::GreedyProjectionTriangulation<pcl::PointNormal>();
 		pcl::PolygonMesh triangles;
 
-		// Set the maximum distance between connected points (maximum edge length)
-		pt.setSearchRadius(POINT_CLOUD_TRIANGULATION_SEARCH_RADIUS);
+		if (this->size() > 0) {
+			// Concert point cloud into PCL format.
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud(image);
+			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = convertPointCloud(cloud_rgb);
 
-		// Set typical values for the parameters
-		pt.setMu(POINT_CLOUD_TRIANGULATION_MULTIPLIER);
-		pt.setMaximumNearestNeighbors(POINT_CLOUD_TRIANGULATION_MAX_NEAREST_NEIGHBOUR);
-		pt.setMaximumSurfaceAngle(POINT_CLOUD_TRIANGULATION_MAX_SURFACE_ANGLE);
-		pt.setMinimumAngle(POINT_CLOUD_TRIANGULATION_MIN_ANGLE);
-		pt.setMaximumAngle(POINT_CLOUD_TRIANGULATION_MAX_ANGLE);
-		pt.setNormalConsistency(false);
+			// Normal estimation
+			pcl::PointCloud<pcl::Normal>::Ptr normals = this->estimate_normals(cloud);
 
-		// Get result
-		pt.setInputCloud(cloud_with_normals);
-		pt.setSearchMethod(tree);
-		pt.reconstruct(triangles);
+			// Concatenate points and normal fields.
+			pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
+			pcl::concatenateFields(*cloud, *normals, *cloud_with_normals);
+
+			// Create search tree
+			pcl::search::KdTree<pcl::PointNormal>::Ptr tree(new pcl::search::KdTree<pcl::PointNormal>);
+			tree->setInputCloud(cloud_with_normals);
+
+			// Initialize triangulation
+			pcl::GreedyProjectionTriangulation<pcl::PointNormal> pt = pcl::GreedyProjectionTriangulation<pcl::PointNormal>();
+
+			// Set the maximum distance between connected points (maximum edge length)
+			pt.setSearchRadius(POINT_CLOUD_TRIANGULATION_SEARCH_RADIUS);
+
+			// Set typical values for the parameters
+			pt.setMu(POINT_CLOUD_TRIANGULATION_MULTIPLIER);
+			pt.setMaximumNearestNeighbors(POINT_CLOUD_TRIANGULATION_MAX_NEAREST_NEIGHBOUR);
+			pt.setMaximumSurfaceAngle(POINT_CLOUD_TRIANGULATION_MAX_SURFACE_ANGLE);
+			pt.setMinimumAngle(POINT_CLOUD_TRIANGULATION_MIN_ANGLE);
+			pt.setMaximumAngle(POINT_CLOUD_TRIANGULATION_MAX_ANGLE);
+			pt.setNormalConsistency(false);
+
+			// Get result
+			pt.setInputCloud(cloud_with_normals);
+			pt.setSearchMethod(tree);
+			pt.reconstruct(triangles);
+		}
 
 		return triangles;
 	}
@@ -85,14 +88,16 @@ namespace Boxes {
 	pcl::PointCloud<pcl::Normal>::Ptr PointCloud::estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const {
 		pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
 
-		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
-		tree->setInputCloud(cloud);
+		if (cloud->size() > 0) {
+			pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+			tree->setInputCloud(cloud);
 
-		pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimation;
-		normal_estimation.setInputCloud(cloud);
-		normal_estimation.setSearchMethod(tree);
-		normal_estimation.setKSearch(20);
-		normal_estimation.compute(*normals);
+			pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimation;
+			normal_estimation.setInputCloud(cloud);
+			normal_estimation.setSearchMethod(tree);
+			normal_estimation.setKSearch(20);
+			normal_estimation.compute(*normals);
+		}
 
 		return normals;
 	}
