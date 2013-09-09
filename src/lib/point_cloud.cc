@@ -7,6 +7,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/surface/gp3.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/surface/convex_hull.h>
 INCLUDE_IGNORE_WARNINGS_END
 
 #include <boxes/constants.h>
@@ -173,5 +174,20 @@ namespace Boxes {
 		viewer.showCloud(cloud, "cloud");
 
 		while (!viewer.wasStopped()) {}
+	}
+
+
+	double PointCloud::generate_convex_hull(pcl::PolygonMesh &mesh) const {
+		//Convert Point Cloud
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_point_cloud = generate_pcl_point_cloud();
+		
+		//Create Convex Hull			
+		pcl::ConvexHull<pcl::PointXYZRGB> convex_hull;
+		convex_hull.setInputCloud(pcl_point_cloud);
+
+		//Convert to mesh
+		convex_hull.reconstruct(mesh);
+
+		return convex_hull.getTotalVolume();
 	}
 }

@@ -35,6 +35,8 @@ namespace Boxes {
 
 			void visualize_point_cloud(const Image* image = NULL);
 
+			double generate_convex_hull(pcl::PolygonMesh &mesh) const;
+
 		private:
 			std::vector<CloudPoint> points;
 

@@ -13,6 +13,7 @@ int main(int argc, char **argv) {
 	std::string output;
 	std::string output_depths_map;
 	std::string output_mesh;
+	std::string output_hull;
 
 	bool use_optical_flow = false;
 	bool visualize = false;
@@ -21,6 +22,7 @@ int main(int argc, char **argv) {
 		static struct option long_options[] = {
 			{"depths-map",   required_argument,  0, 'd'},
 			{"mesh",         required_argument,  0, 'm'},
+			{"convex-hull",  required_argument,  0, 'c'},
 			{"optical-flow", no_argument,        0, 'O'},
 			{"output",       required_argument,  0, 'o'},
 			{"version",      no_argument,        0, 'V'},
@@ -29,7 +31,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "d:m:Oo:Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:d:m:Oo:Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -51,6 +53,10 @@ int main(int argc, char **argv) {
 
 			case 'm':
 				output_mesh.assign(optarg);
+				break;
+
+			case 'c':
+				output_hull.assign(optarg);
 				break;
 
 			case 'O':
@@ -132,6 +138,13 @@ int main(int argc, char **argv) {
 		std::cout << "Writing mesh to " << output_mesh << "..." << std::endl;
 		pcl::PolygonMesh mesh = point_cloud->triangulate(image1);
 		point_cloud->write_polygon_mesh(output_mesh, &mesh);
+	}
+
+	if (!output_hull.empty()) {
+		std::cout << "Writing convex hull to " << output_hull << "..." << std::endl;
+		pcl::PolygonMesh mesh;
+		point_cloud->generate_convex_hull(mesh);
+		point_cloud->write_polygon_mesh(output_hull, &mesh);
 	}
 
 	if (visualize)
