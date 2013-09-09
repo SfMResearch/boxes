@@ -23,7 +23,7 @@
 
 # define DEFAULT_FEATURE_DETECTOR                 "SURF"
 #else
-# define DEFAULT_FEATURE_DETECTOR                 "PyramidFast"
+# define DEFAULT_FEATURE_DETECTOR                 "PyramidFAST"
 #endif
 
 /* Available feature extractors: ORB, BRISK, BRIEF
