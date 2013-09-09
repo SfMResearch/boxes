@@ -21,21 +21,29 @@ LDADD = \
 
 #- testsuite ------------------------------------------------------------------
 
-TESTS = $(BOXES_BUILT_TESTS)
+BOXES_BUILT_TESTS =
 
-BOXES_BUILT_TESTS = \
-	library_version \
-	triangulation_test
+TESTS = \
+	$(BOXES_BUILT_TESTS)
 
 check_PROGRAMS = \
 	$(BOXES_BUILT_TESTS)
 
+
+# library version
+
+BOXES_BUILT_TESTS += library_version
+
 library_version_SOURCES = \
 	library_version.cc 
+
+
+# triangulation test
+
+BOXES_BUILT_TESTS += triangulation_test
 
 triangulation_test_SOURCES= \
 	triangulation_test.cc
 
 triangulation_test_LDADD = \
 	$(OPENCV_LIBS)
-
