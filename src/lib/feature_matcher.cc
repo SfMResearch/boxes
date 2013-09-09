@@ -53,8 +53,8 @@ namespace Boxes {
 	}
 
 	void FeatureMatcher::match() {
-		const cv::Mat* descriptors1 = this->image1->get_descriptors();
-		const cv::Mat* descriptors2 = this->image2->get_descriptors();
+		const cv::Mat* descriptors1 = this->image1->get_descriptors(this->keypoints1);
+		const cv::Mat* descriptors2 = this->image2->get_descriptors(this->keypoints2);
 
 		this->_match(descriptors1, descriptors2);
 	}
