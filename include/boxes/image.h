@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+#include <boxes/constants.h>
+
 namespace Boxes {
 	class Image {
 		public:
@@ -24,10 +26,11 @@ namespace Boxes {
 			cv::Mat get_greyscale_mat();
 
 			// descriptors
-			cv::Mat* get_descriptors();
+			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints,
+				const std::string detector_type = DEFAULT_FEATURE_DETECTOR_EXTRACTOR) const;
 
 			// keypoints
-			const std::vector<cv::KeyPoint>* get_keypoints();
+			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR) const;
 
 			// distance
 			void set_distance(unsigned int distance);
@@ -38,14 +41,6 @@ namespace Boxes {
 		private:
 			cv::Mat mat;
 			void decode_jfif_data(std::string filename);
-
-			// descriptors
-			cv::Mat* descriptors = NULL;
-			cv::Mat* calc_descriptors();
-
-			// keypoints
-			std::vector<cv::KeyPoint>* keypoints = NULL;
-			std::vector<cv::KeyPoint>* calc_keypoints();
 
 			// distance
 			unsigned int distance = 0;

@@ -96,6 +96,22 @@ BOOST_SYSTEM([mt])
 # OpenCV
 PKG_CHECK_MODULES(OPENCV, [opencv >= 2.4])
 
+AC_LANG_PUSH([C++])
+AC_ARG_ENABLE([nonfree],
+	AS_HELP_STRING([--enable-nonfree], [Use nonfree features from OpenCV]),
+	[],
+	[AC_CHECK_HEADERS([opencv2/nonfree/nonfree.hpp], [
+		enable_nonfree=yes
+	], [
+		enable_nonfree=no
+	])]
+)
+AC_LANG_POP([C++])
+
+AS_IF([test "x${enable_nonfree}" = "xyes"], [
+        AC_DEFINE(BOXES_NONFREE, 1, [Define if OpenCV nonfree features are available])
+])
+
 # PCL
 PKG_CHECK_MODULES(PCL_APPS, [pcl_apps >= 1.6.0], [], [
 	PKG_CHECK_MODULES(PCL_APPS, [pcl_apps-1.7])
