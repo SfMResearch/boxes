@@ -55,7 +55,15 @@ libboxes_la_SOURCES = \
 	src/lib/feature_matcher.cc \
 	src/lib/feature_matcher_optical_flow.cc \
 	src/lib/image.cc \
-	src/lib/point_cloud.cc
+	src/lib/point_cloud.cc \
+	\
+	src/third-party/moges/NURBS/Curve.cpp \
+	src/third-party/moges/NURBS/Factories.cpp \
+	src/third-party/moges/missing.cpp \
+	include/third-party/moges/NURBS/Curve.h \
+	include/third-party/moges/NURBS/Factories.h \
+	include/third-party/moges/missing.h \
+	include/third-party/moges/Types.h
 
 libboxes_la_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
@@ -65,7 +73,6 @@ libboxes_la_CXXFLAGS = \
 	$(PCL_CFLAGS)
 
 libboxes_la_LIBADD = \
-	libmoges.la \
 	$(BOOST_REGEX_LIBS) \
 	$(BOOST_SYSTEM_LIBS)\
 	$(OPENCV_LIBS) \
@@ -82,21 +89,3 @@ pkginclude_HEADERS += \
 	include/boxes/point_cloud.h \
 	include/boxes/structs.h \
 	include/boxes/suppress_warnings.h
-
-#- libnurbs - (third-party) ---------------------------------------------------
-
-lib_LTLIBRARIES += \
-	libmoges.la
-
-libmoges_la_SOURCES = \
-	include/third-party/moges/NURBS/Curve.h \
-	include/third-party/moges/NURBS/Factories.h \
-	include/third-party/moges/missing.h \
-	include/third-party/moges/Types.h \
-	\
-	src/third-party/moges/NURBS/Curve.cpp \
-	src/third-party/moges/NURBS/Factories.cpp \
-	src/third-party/moges/missing.cpp
-
-libmoges_la_CXXFLAGS = \
-	$(AM_CXXFLAGS)
