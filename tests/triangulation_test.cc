@@ -34,6 +34,8 @@ std::vector<cv::Point3d> createPointCloud()
 
 
 int main() {
+	TEST_INIT
+
 	std::vector<cv::Point3d> point_cloud = createPointCloud();
 	//create Camera Matrix
 	cv::Mat camera_matrix = cv::Mat::zeros(3, 3, CV_64F);
