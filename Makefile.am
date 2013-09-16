@@ -14,6 +14,7 @@ SUBDIRS = . tests
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include \
+	-I $(top_srcdir)/include/third-party/moges \
 	$(OUR_CPPFLAGS)
 
 AM_CFLAGS = $(OUR_CFLAGS)
@@ -64,6 +65,7 @@ libboxes_la_CXXFLAGS = \
 	$(PCL_CFLAGS)
 
 libboxes_la_LIBADD = \
+	libmoges.la \
 	$(BOOST_REGEX_LIBS) \
 	$(BOOST_SYSTEM_LIBS)\
 	$(OPENCV_LIBS) \
@@ -80,3 +82,21 @@ pkginclude_HEADERS += \
 	include/boxes/point_cloud.h \
 	include/boxes/structs.h \
 	include/boxes/suppress_warnings.h
+
+#- libnurbs - (third-party) ---------------------------------------------------
+
+lib_LTLIBRARIES += \
+	libmoges.la
+
+libmoges_la_SOURCES = \
+	include/third-party/moges/NURBS/Curve.h \
+	include/third-party/moges/NURBS/Factories.h \
+	include/third-party/moges/missing.h \
+	include/third-party/moges/Types.h \
+	\
+	src/third-party/moges/NURBS/Curve.cpp \
+	src/third-party/moges/NURBS/Factories.cpp \
+	src/third-party/moges/missing.cpp
+
+libmoges_la_CXXFLAGS = \
+	$(AM_CXXFLAGS)
