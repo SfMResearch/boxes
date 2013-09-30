@@ -2,8 +2,11 @@
 #include <string>
 
 #include <boxes.h>
+#include "tests.h"
 
 int main() {
+	TEST_INIT
+
 	Boxes::Boxes boxes;
 
 	// Get version of the linked library and print string.

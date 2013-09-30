@@ -14,6 +14,7 @@ SUBDIRS = . tests
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include \
+	-I $(top_srcdir)/include/third-party/moges \
 	$(OUR_CPPFLAGS)
 
 AM_CFLAGS = $(OUR_CFLAGS)
@@ -54,7 +55,15 @@ libboxes_la_SOURCES = \
 	src/lib/feature_matcher.cc \
 	src/lib/feature_matcher_optical_flow.cc \
 	src/lib/image.cc \
-	src/lib/point_cloud.cc
+	src/lib/point_cloud.cc \
+	\
+	src/third-party/moges/NURBS/Curve.cpp \
+	src/third-party/moges/NURBS/Factories.cpp \
+	src/third-party/moges/missing.cpp \
+	include/third-party/moges/NURBS/Curve.h \
+	include/third-party/moges/NURBS/Factories.h \
+	include/third-party/moges/missing.h \
+	include/third-party/moges/Types.h
 
 libboxes_la_CXXFLAGS = \
 	$(AM_CXXFLAGS) \

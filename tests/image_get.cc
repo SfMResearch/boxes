@@ -5,6 +5,8 @@
 #include "tests.h"
 
 int main() {
+	TEST_INIT
+
 	Boxes::Boxes boxes;
 
 	Boxes::Image* image1;

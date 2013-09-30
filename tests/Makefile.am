@@ -21,6 +21,9 @@ LDADD = \
 
 #- testsuite ------------------------------------------------------------------
 
+TESTS_ENVIRONMENT = \
+	TEST_DIR=$(srcdir)
+
 BOXES_BUILT_TESTS =
 
 TESTS = \
@@ -31,6 +34,11 @@ check_PROGRAMS = \
 
 EXTRA_DIST = \
 	tests.h
+
+# Pregenerated images for testing
+EXTRA_DIST += \
+	images/test-square-1.jpg \
+	images/test-square-2.jpg
 
 
 # library version
