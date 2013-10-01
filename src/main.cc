@@ -12,6 +12,7 @@ int main(int argc, char **argv) {
 
 	std::string output;
 	std::string output_depths_map;
+	std::string output_disparity_map;
 	std::string output_mesh;
 	std::string output_hull;
 
@@ -20,18 +21,19 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		static struct option long_options[] = {
-			{"depths-map",   required_argument,  0, 'd'},
-			{"mesh",         required_argument,  0, 'm'},
-			{"convex-hull",  required_argument,  0, 'c'},
-			{"optical-flow", no_argument,        0, 'O'},
-			{"output",       required_argument,  0, 'o'},
-			{"version",      no_argument,        0, 'V'},
-			{"visualize",    no_argument,        0, 'v'},
+			{"depths-map",    required_argument,  0, 'd'},
+			{"disparity-map", required_argument,  0, 'D'},
+			{"mesh",          required_argument,  0, 'm'},
+			{"convex-hull",   required_argument,  0, 'c'},
+			{"optical-flow",  no_argument,        0, 'O'},
+			{"output",        required_argument,  0, 'o'},
+			{"version",       no_argument,        0, 'V'},
+			{"visualize",     no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:d:m:Oo:Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:D:d:m:Oo:Vv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -45,6 +47,10 @@ int main(int argc, char **argv) {
 				if (optarg)
 					std::cerr << " with argument " << optarg;
 				std::cerr << std::endl;
+				break;
+
+			case 'D':
+				output_disparity_map.assign(optarg);
 				break;
 
 			case 'd':
@@ -129,6 +135,16 @@ int main(int argc, char **argv) {
 	if (!output_depths_map.empty()) {
 		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
 		camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
+	}
+
+	if (!output_disparity_map.empty()) {
+		std::cout << "Writing disparity map to " << output_disparity_map << "..." << std::endl;
+
+		Boxes::Image* disparity_map = image1->get_disparity_map(image2);
+		if (disparity_map) {
+			disparity_map->write(output_disparity_map);
+			delete disparity_map;
+		}
 	}
 
 	// Pointer for the point cloud.

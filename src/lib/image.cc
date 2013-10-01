@@ -153,4 +153,13 @@ namespace Boxes {
 
 		return camera_matrix;
 	}
+
+	Image* Image::get_disparity_map(Image *other_img) {
+		cv::Mat disparity_map;
+
+		cv::StereoBM stereoBM;
+		stereoBM(this->get_greyscale_mat(), other_img->get_greyscale_mat(), disparity_map);
+
+		return new Image(disparity_map);
+	}
 };

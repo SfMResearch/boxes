@@ -38,6 +38,9 @@ namespace Boxes {
 			// camera matrix
 			cv::Mat guess_camera_matrix() const;
 
+			// disparity map
+			Image* get_disparity_map(Image *other_img);
+
 		private:
 			cv::Mat mat;
 			void decode_jfif_data(std::string filename);
