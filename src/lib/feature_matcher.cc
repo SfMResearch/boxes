@@ -87,6 +87,9 @@ namespace Boxes {
 			unsigned int size = n->size();
 
 			switch (size) {
+				case 0:
+					continue;
+
 #ifdef FEATURE_MATCHER_USE_SINGLE_MATCHES
 				case 1:
 					match1 = &n->at(0);
@@ -94,7 +97,7 @@ namespace Boxes {
 #endif
 
 #ifdef FEATURE_MATCHER_USE_DOUBLE_MATCHES
-				case 2:
+				default:
 					match1 = &n->at(0);
 					match2 = &n->at(1);
 
@@ -102,9 +105,6 @@ namespace Boxes {
 						continue;
 					break;
 #endif
-
-				default:
-					continue;
 			}
 
 			if (match_points) {
