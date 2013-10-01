@@ -11,8 +11,13 @@ namespace Boxes {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
+#ifdef OPTICAL_FLOW_USE_GFTT
+		std::vector<cv::Point2f> points1 = this->image1->get_good_features_to_track();
+		std::vector<cv::Point2f> points2 = this->image2->get_good_features_to_track();
+#else
 		std::vector<cv::Point2f> points1 = convertKeyPoints(this->keypoints1);
 		std::vector<cv::Point2f> points2 = convertKeyPoints(this->keypoints2);
+#endif
 		std::vector<cv::Point2f> points2x(points1.size());
 
 #ifdef OPTICAL_FLOW_USE_GREYSCALE_IMAGES

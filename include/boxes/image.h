@@ -33,6 +33,10 @@ namespace Boxes {
 			// keypoints
 			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR) const;
 
+			// (good) features
+			std::vector<cv::Point2f> get_good_features_to_track(int max_corners = 1500, double quality_level = 0.05,
+				double min_distance = 2.0);
+
 			// distance
 			void set_distance(unsigned int distance);
 

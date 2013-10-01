@@ -139,15 +139,19 @@ namespace Boxes {
 		return descriptors;
 	}
 
-	cv::Mat Image::get_greyscale_mat() {
-		if (this->mat.channels() == 1) {
-			return this->mat;
-		}
+	std::vector<cv::Point2f> Image::get_good_features_to_track(int max_corners, double quality_level, double min_distance) {
+		const cv::Mat* mat = this->get_greyscale_mat();
 
-		cv::Mat greyscale;
-		cv::cvtColor(this->mat, greyscale, CV_RGB2GRAY);
+		std::vector<cv::Point2f> corners = std::vector<cv::Point2f>();
 
-		return greyscale;
+		// Find all good features to track.
+		cv::goodFeaturesToTrack(*mat, corners, max_corners, quality_level, min_distance);
+
+		// Increase the precision of the result.
+		cv::cornerSubPix(*mat, corners, cv::Size(15, 15), cv::Size(-1, -1),
+			cv::TermCriteria(CV_TERMCRIT_ITER | CV_TERMCRIT_EPS, 20, 0.03));
+
+		return corners;
 	}
 
 	void Image::set_distance(unsigned int distance) {
