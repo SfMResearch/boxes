@@ -32,8 +32,11 @@ namespace Boxes {
 		std::vector<uchar> vstatus;
 		std::vector<float> verror;
 
+		cv::Size search_window_size = cv::Size(OF_SEARCH_WINDOW_SIZE, OF_SEARCH_WINDOW_SIZE);
+
 		// Calculate the optical flow field, i.e. how each point1 moved across the two images
-		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror);
+		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror,
+			search_window_size, OF_MAX_PYRAMIDS);
 
 		std::vector<MatchPoint> match_points;
 
