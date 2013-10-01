@@ -23,7 +23,8 @@ namespace Boxes {
 
 			// mat
 			const cv::Mat* get_mat() const;
-			cv::Mat get_greyscale_mat();
+			const cv::Mat* get_mat(int code) const;
+			const cv::Mat* get_greyscale_mat() const;
 
 			// descriptors
 			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints,

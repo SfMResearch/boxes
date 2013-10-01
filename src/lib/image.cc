@@ -101,6 +101,21 @@ namespace Boxes {
 		return &this->mat;
 	}
 
+	const cv::Mat* Image::get_mat(int code) const {
+		if (this->mat.type() == code) {
+			return &this->mat;
+		}
+
+		cv::Mat* new_mat = new cv::Mat();
+		cv::cvtColor(this->mat, *new_mat, code);
+
+		return new_mat;
+	}
+
+	const cv::Mat* Image::get_greyscale_mat() const {
+		return this->get_mat(CV_RGB2GRAY);
+	}
+
 	cv::Size Image::size() const {
 		return this->mat.size();
 	}
@@ -158,7 +173,7 @@ namespace Boxes {
 		cv::Mat disparity_map;
 
 		cv::StereoBM stereoBM;
-		stereoBM(this->get_greyscale_mat(), other_img->get_greyscale_mat(), disparity_map);
+		stereoBM(*this->get_greyscale_mat(), *other_img->get_greyscale_mat(), disparity_map);
 
 		return new Image(disparity_map);
 	}

@@ -17,8 +17,8 @@ namespace Boxes {
 
 #ifdef OPTICAL_FLOW_USE_GREYSCALE_IMAGES
 		// Convert images to greyscale.
-		cv::Mat greyscale1 = this->image1->get_greyscale_mat();
-		cv::Mat greyscale2 = this->image2->get_greyscale_mat();
+		cv::Mat greyscale1 = *this->image1->get_greyscale_mat();
+		cv::Mat greyscale2 = *this->image2->get_greyscale_mat();
 #else
 		cv::Mat greyscale1 = *this->image1->get_mat();
 		cv::Mat greyscale2 = *this->image2->get_mat();
