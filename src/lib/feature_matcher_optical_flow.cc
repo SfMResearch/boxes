@@ -11,14 +11,19 @@ namespace Boxes {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
+#ifdef OPTICAL_FLOW_USE_GFTT
+		std::vector<cv::Point2f> points1 = this->image1->get_good_features_to_track();
+		std::vector<cv::Point2f> points2 = this->image2->get_good_features_to_track();
+#else
 		std::vector<cv::Point2f> points1 = convertKeyPoints(this->keypoints1);
 		std::vector<cv::Point2f> points2 = convertKeyPoints(this->keypoints2);
+#endif
 		std::vector<cv::Point2f> points2x(points1.size());
 
 #ifdef OPTICAL_FLOW_USE_GREYSCALE_IMAGES
 		// Convert images to greyscale.
-		cv::Mat greyscale1 = this->image1->get_greyscale_mat();
-		cv::Mat greyscale2 = this->image2->get_greyscale_mat();
+		cv::Mat greyscale1 = *this->image1->get_greyscale_mat();
+		cv::Mat greyscale2 = *this->image2->get_greyscale_mat();
 #else
 		cv::Mat greyscale1 = *this->image1->get_mat();
 		cv::Mat greyscale2 = *this->image2->get_mat();
@@ -27,8 +32,11 @@ namespace Boxes {
 		std::vector<uchar> vstatus;
 		std::vector<float> verror;
 
+		cv::Size search_window_size = cv::Size(OF_SEARCH_WINDOW_SIZE, OF_SEARCH_WINDOW_SIZE);
+
 		// Calculate the optical flow field, i.e. how each point1 moved across the two images
-		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror);
+		cv::calcOpticalFlowPyrLK(greyscale1, greyscale2, points1, points2x, vstatus, verror,
+			search_window_size, OF_MAX_PYRAMIDS);
 
 		std::vector<MatchPoint> match_points;
 

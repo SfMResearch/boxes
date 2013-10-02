@@ -52,9 +52,12 @@
 #define MATCH_VALID_RATIO                0.8
 
 // Optical Flow constants
-//#define OPTICAL_FLOW_USE_GREYSCALE_IMAGES
-#define OF_MAX_VERROR                   12.0
-#define OF_RADIUS_MATCH                  5.0
+#define OPTICAL_FLOW_USE_GREYSCALE_IMAGES
+// #define OPTICAL_FLOW_USE_GFTT
+#define OF_SEARCH_WINDOW_SIZE           50
+#define OF_MAX_PYRAMIDS                  5
+#define OF_MAX_VERROR                   15.0
+#define OF_RADIUS_MATCH                 (float)OF_SEARCH_WINDOW_SIZE
 
 // Triangulation
 #define TRIANGULATION_MAX_ITERATIONS    10

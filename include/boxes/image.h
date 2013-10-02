@@ -23,7 +23,8 @@ namespace Boxes {
 
 			// mat
 			const cv::Mat* get_mat() const;
-			cv::Mat get_greyscale_mat();
+			const cv::Mat* get_mat(int code) const;
+			const cv::Mat* get_greyscale_mat() const;
 
 			// descriptors
 			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints,
@@ -32,11 +33,18 @@ namespace Boxes {
 			// keypoints
 			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR) const;
 
+			// (good) features
+			std::vector<cv::Point2f> get_good_features_to_track(int max_corners = 1500, double quality_level = 0.05,
+				double min_distance = 2.0);
+
 			// distance
 			void set_distance(unsigned int distance);
 
 			// camera matrix
 			cv::Mat guess_camera_matrix() const;
+
+			// disparity map
+			Image* get_disparity_map(Image *other_img);
 
 		private:
 			cv::Mat mat;
