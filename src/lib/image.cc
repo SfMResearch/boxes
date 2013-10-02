@@ -162,13 +162,14 @@ namespace Boxes {
 		cv::Size image_size = this->size();
 
 		cv::Mat camera_matrix = cv::Mat::zeros(3, 3, CV_64F);
-		camera_matrix.at<double>(0, 0) = image_size.width;
-		camera_matrix.at<double>(1, 1) = image_size.height;
+		double scale_factor=this->size().width/360.0;
+		camera_matrix.at<double>(0, 0) = 900*scale_factor;
+		camera_matrix.at<double>(1, 1) = 900*scale_factor;
 		camera_matrix.at<double>(2, 2) = 1.0;
 
 		// The center of the image.
-		camera_matrix.at<double>(0, 2) = image_size.width / 2;
-		camera_matrix.at<double>(1, 2) = image_size.height / 2;
+		camera_matrix.at<double>(0, 2) = 360*scale_factor;
+		camera_matrix.at<double>(1, 2) = 288*scale_factor;
 
 		return camera_matrix;
 	}

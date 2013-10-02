@@ -21,7 +21,7 @@
 # define FEATURE_DETECTOR_SIFT                    "SIFT"
 # define FEATURE_DETECTOR_SURF                    "SURF"
 
-# define DEFAULT_FEATURE_DETECTOR                 "SURF"
+# define DEFAULT_FEATURE_DETECTOR                 "SIFT"
 #else
 # define DEFAULT_FEATURE_DETECTOR                 "PyramidFAST"
 #endif
@@ -35,7 +35,7 @@
 # define FEATURE_DETECTOR_EXTRACTOR_SIFT          "SIFT"
 # define FEATURE_DETECTOR_EXTRACTOR_SURF          "SURF"
 
-# define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "SURF"
+# define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "SIFT"
 #else
 # define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "ORB"
 #endif
@@ -56,7 +56,7 @@
 // #define OPTICAL_FLOW_USE_GFTT
 #define OF_SEARCH_WINDOW_SIZE           50
 #define OF_MAX_PYRAMIDS                  5
-#define OF_MAX_VERROR                   15.0
+#define OF_MAX_VERROR                   5.0
 #define OF_RADIUS_MATCH                 (float)OF_SEARCH_WINDOW_SIZE
 
 // Triangulation
