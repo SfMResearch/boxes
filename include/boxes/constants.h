@@ -21,7 +21,7 @@
 # define FEATURE_DETECTOR_SIFT                    "SIFT"
 # define FEATURE_DETECTOR_SURF                    "SURF"
 
-# define DEFAULT_FEATURE_DETECTOR                 "SIFT"
+# define DEFAULT_FEATURE_DETECTOR                 "SURF"
 #else
 # define DEFAULT_FEATURE_DETECTOR                 "PyramidFAST"
 #endif
@@ -35,7 +35,7 @@
 # define FEATURE_DETECTOR_EXTRACTOR_SIFT          "SIFT"
 # define FEATURE_DETECTOR_EXTRACTOR_SURF          "SURF"
 
-# define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "SIFT"
+# define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "SURF"
 #else
 # define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "ORB"
 #endif
