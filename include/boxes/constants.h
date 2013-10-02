@@ -40,6 +40,8 @@
 # define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "ORB"
 #endif
 
+#define NURBS_CURVE_EXTENSION                     "nurbs"
+
 /*
  * Private definitions that may only be used internally.
  */

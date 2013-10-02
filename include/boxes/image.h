@@ -8,6 +8,8 @@
 
 #include <boxes/constants.h>
 
+#include <moges/NURBS/Curve.h>
+
 namespace Boxes {
 	class Image {
 		public:
@@ -46,9 +48,16 @@ namespace Boxes {
 			// disparity map
 			Image* get_disparity_map(Image *other_img);
 
+			// curve
+			MoGES::NURBS::Curve* curve = NULL;
+
 		private:
 			cv::Mat mat;
 			void decode_jfif_data(std::string filename);
+
+			// curve
+			MoGES::NURBS::Curve* read_curve(const std::string filename) const;
+			std::string find_curve_file(const std::string filename) const;
 
 			// distance
 			unsigned int distance = 0;

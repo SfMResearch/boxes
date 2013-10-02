@@ -14,6 +14,7 @@ SUBDIRS = . tests
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include \
+	-I $(top_srcdir)/include/third-party \
 	-I $(top_srcdir)/include/third-party/moges \
 	$(OUR_CPPFLAGS)
 

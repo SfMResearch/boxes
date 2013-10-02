@@ -10,17 +10,24 @@
 #include <boxes/constants.h>
 #include <boxes/image.h>
 
+#include <moges/NURBS/Curve.h>
+
 namespace Boxes {
 	Image::Image() {
 	}
 
 	Image::Image(const std::string filename) {
 		this->mat = cv::imread(filename);
+		assert(!this->mat.empty());
 
 		// Read available JFIF data.
 		this->decode_jfif_data(filename);
 
-		assert(!this->mat.empty());
+		// Try to find a curve and read it.
+		std::string filename_curve = this->find_curve_file(filename);
+		if (!filename_curve.empty()) {
+			this->curve = this->read_curve(filename_curve);
+		}
 	}
 
 	Image::Image(cv::Mat mat) {
@@ -28,6 +35,8 @@ namespace Boxes {
 	}
 
 	Image::~Image() {
+		if (this->curve)
+			delete this->curve;
 	}
 
 	void Image::decode_jfif_data(std::string filename) {
@@ -181,5 +190,43 @@ namespace Boxes {
 		stereoBM(*this->get_greyscale_mat(), *other_img->get_greyscale_mat(), disparity_map);
 
 		return new Image(disparity_map);
+	}
+
+	MoGES::NURBS::Curve* Image::read_curve(const std::string filename) const {
+		MoGES::NURBS::Curve* curve = new MoGES::NURBS::Curve();
+		curve->read(filename);
+
+		return curve;
+	}
+
+	std::string Image::find_curve_file(const std::string filename) const {
+		std::string result;
+
+		// Build a vector of candidate filenames.
+		std::vector<std::string> filenames;
+		filenames.push_back(filename + "." + NURBS_CURVE_EXTENSION);
+
+		// Replace extension by nurbs file extension.
+		std::size_t pos = filename.find_last_of(".");
+		if (pos != std::string::npos) {
+			std::string basename = std::string(filename.substr(0, pos));
+			filenames.push_back(basename + "." + NURBS_CURVE_EXTENSION);
+		}
+
+		// Check for all filenames in the vector if they exist
+		for (std::vector<std::string>::const_iterator i = filenames.begin(); i != filenames.end(); i++) {
+			// Check if the file can be opened for reading.
+			std::ifstream file(*i, std::ios::in);
+			if (!file.is_open())
+				continue;
+
+			// File exists.
+			file.close();
+
+			result.assign(*i);
+			break;
+		}
+
+		return result;
 	}
 };
