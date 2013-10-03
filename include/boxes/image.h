@@ -8,6 +8,7 @@
 
 #include <boxes/constants.h>
 
+#include <moges/Types.h>
 #include <moges/NURBS/Curve.h>
 
 namespace Boxes {
@@ -50,6 +51,8 @@ namespace Boxes {
 
 			// curve
 			MoGES::NURBS::Curve* curve = NULL;
+			std::vector<MoGES::IntPoint> discretize_curve() const;
+			void draw_curve(double colour = 0xffffff);
 
 		private:
 			cv::Mat mat;

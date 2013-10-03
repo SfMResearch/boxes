@@ -10,6 +10,7 @@
 #include <boxes/constants.h>
 #include <boxes/image.h>
 
+#include <moges/Types.h>
 #include <moges/NURBS/Curve.h>
 
 namespace Boxes {
@@ -228,5 +229,35 @@ namespace Boxes {
 		}
 
 		return result;
+	}
+
+	std::vector<MoGES::IntPoint> Image::discretize_curve() const {
+		std::vector<MoGES::IntPoint> result;
+
+		if (this->curve) {
+			MoGES::NURBS::DiscreteCurvePtr discrete_curve = this->curve->discretize();
+
+			for (MoGES::NURBS::DiscreteCurve::iterator i = discrete_curve->begin(); i != discrete_curve->end(); i++) {
+				result.push_back(i->second);
+			}
+		}
+
+		return result;
+	}
+
+	void Image::draw_curve(double colour) {
+		std::vector<MoGES::IntPoint> discrete_curve = this->discretize_curve();
+
+		for (std::vector<MoGES::IntPoint>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
+			int column = (*i)[0];
+			if (column >= this->mat.cols)
+				continue;
+
+			int row = (*i)[1];
+			if (row >= this->mat.rows)
+				continue;
+
+			this->mat.at<double>(row, column) = colour;
+		}
 	}
 };
