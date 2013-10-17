@@ -48,24 +48,21 @@ namespace Boxes {
 			matrix_mul(i) = this->matrix(i);
 		}
 
-		std::vector<cv::Point3d> points(this->point_cloud.size());
-		std::vector<cv::Point3d> points_transformed(this->point_cloud.size());
+		std::vector<cv::Point3d> points;
+		std::vector<cv::Point3d> points_transformed;
 
 		const std::vector<CloudPoint>* p = this->point_cloud.get_points();
 		for (std::vector<CloudPoint>::const_iterator cp = p->begin(); cp != p->end(); ++cp) {
-			if (cp->pt.z > 0)
-				points_in_front++;
-
 			points.push_back(cp->pt);
 		}
 
 		cv::perspectiveTransform(points, points_transformed, matrix_mul);
 
-		for (std::vector<cv::Point3d>::iterator pt = points_transformed.begin(); pt != points_transformed.end(); ++pt) {
-			if (pt->z > 0)
+		for (unsigned int i = 0; i <points.size();i++) {
+			if (points[i].z > 0 && points_transformed[i].z > 0)
 				points_in_front++;
 		}
 
-		return (double)points_in_front / ((double)this->point_cloud.size() * 2);
+		return (double)points_in_front / ((double)points.size());
 	}
 }

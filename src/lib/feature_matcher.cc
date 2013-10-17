@@ -38,6 +38,14 @@ namespace Boxes {
 		std::vector<CameraMatrix*> camera_matrices = \
 			this->calculate_possible_camera_matrices(&essential_matrix);
 
+		//Check sign of the determinant of the rotation matrix
+		
+		if(camera_matrices[0]->get_rotation_determinant()+1.0 < 1e-09) {
+			std::cerr << "Turn the sign of E" <<std::endl;
+			essential_matrix  = -essential_matrix;
+			camera_matrices = this->calculate_possible_camera_matrices(&essential_matrix);
+		}
+
 		// Find the best camera matrix.
 		CameraMatrix* best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
 
@@ -244,13 +252,13 @@ namespace Boxes {
 				best_matrix = &(*camera_matrix);
 				continue;
 			}
-
+/*
 			// Select the matrix with best reprojection error.
 			if (camera_matrix->reprojection_error < best_matrix->reprojection_error) {
 				best_matrix = &(*camera_matrix);
 				continue;
 			}
-		}
+*/		}
 
 		return best_matrix;
 	}

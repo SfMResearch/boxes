@@ -178,8 +178,8 @@ namespace Boxes {
 		camera_matrix.at<double>(2, 2) = 1.0;
 
 		// The center of the image.
-		camera_matrix.at<double>(0, 2) = 360*scale_factor;
-		camera_matrix.at<double>(1, 2) = 288*scale_factor;
+		camera_matrix.at<double>(0, 2) = image_size.width/2;
+		camera_matrix.at<double>(1, 2) = image_size.height/2;
 
 		return camera_matrix;
 	}
