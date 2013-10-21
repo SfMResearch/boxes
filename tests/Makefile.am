@@ -11,6 +11,8 @@ AUTOMAKE_OPTIONS = color-tests parallel-tests
 
 AM_CPPFLAGS = \
 	-I $(top_srcdir)/include \
+	-I $(top_srcdir)/include/third-party \
+	-I $(top_srcdir)/include/third-party/moges \
 	$(OUR_CPPFLAGS)
 
 AM_CXXFLAGS = $(OUR_CXXFLAGS) $(PCL_CFLAGS)
