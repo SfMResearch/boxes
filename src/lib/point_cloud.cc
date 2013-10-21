@@ -40,6 +40,22 @@ namespace Boxes {
 		return &this->points;
 	}
 
+	std::vector<CloudPoint>::iterator PointCloud::begin() {
+		return this->points.begin();
+	}
+
+	std::vector<CloudPoint>::const_iterator PointCloud::begin() const {
+		return this->points.begin();
+	}
+
+	std::vector<CloudPoint>::iterator PointCloud::end() {
+		return this->points.end();
+	}
+
+	std::vector<CloudPoint>::const_iterator PointCloud::end() const {
+		return this->points.end();
+	}
+
 	pcl::PolygonMesh PointCloud::triangulate(const Image* image) const {
 		pcl::PolygonMesh triangles;
 

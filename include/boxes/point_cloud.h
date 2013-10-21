@@ -25,6 +25,12 @@ namespace Boxes {
 			void add_point(CloudPoint point);
 			const std::vector<CloudPoint>* get_points() const;
 
+			// Iterator implementation
+			std::vector<CloudPoint>::iterator begin();
+			std::vector<CloudPoint>::const_iterator begin() const;
+			std::vector<CloudPoint>::iterator end();
+			std::vector<CloudPoint>::const_iterator end() const;
+
 			unsigned int size() const;
 
 			pcl::PolygonMesh triangulate(const Image* image) const;
