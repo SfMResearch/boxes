@@ -193,6 +193,10 @@ namespace Boxes {
 		return new Image(disparity_map);
 	}
 
+	bool Image::has_curve() const {
+		return (this->curve != NULL);
+	}
+
 	MoGES::NURBS::Curve* Image::read_curve(const std::string filename) const {
 		MoGES::NURBS::Curve* curve = new MoGES::NURBS::Curve();
 		curve->read(filename);
@@ -234,7 +238,7 @@ namespace Boxes {
 	std::vector<MoGES::IntPoint> Image::discretize_curve() const {
 		std::vector<MoGES::IntPoint> result;
 
-		if (this->curve) {
+		if (this->has_curve()) {
 			MoGES::NURBS::DiscreteCurvePtr discrete_curve = this->curve->discretize();
 
 			for (MoGES::NURBS::DiscreteCurve::iterator i = discrete_curve->begin(); i != discrete_curve->end(); i++) {
@@ -259,5 +263,25 @@ namespace Boxes {
 
 			this->mat.at<double>(row, column) = colour;
 		}
+	}
+
+	PointCloud Image::cut_out_curve(PointCloud* cloud) const {
+		PointCloud ret;
+
+		if (this->has_curve()) {
+			std::vector<MoGES::IntPoint> discrete_curve = this->discretize_curve();
+
+			/* Go through the existing point cloud point by point and
+			 * check if the point is within or on the contour of the curve. */
+			for (std::vector<CloudPoint>::const_iterator i = cloud->begin(); i != cloud->end(); i++) {
+				double distance = cv::pointPolygonTest(discrete_curve, i->keypoint.pt, false);
+
+				if (GREATER_OR_EQUAL_TO_ZERO(distance)) {
+					ret.add_point((*i));
+				}
+			}
+		}
+
+		return ret;
 	}
 };

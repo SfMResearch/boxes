@@ -147,24 +147,31 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	// Pointer for the point cloud.
-	const Boxes::PointCloud* point_cloud = &camera_matrix->point_cloud;
+	/* Strip all points from the point cloud, if they are not within the
+	 * NURBS curve (if that one is available).
+	 */
+	Boxes::PointCloud point_cloud;
+	if (image1->has_curve()) {
+		point_cloud = image1->cut_out_curve(&camera_matrix->point_cloud);
+	} else {
+		point_cloud = camera_matrix->point_cloud;
+	}
 
 	if (!output_mesh.empty()) {
 		std::cout << "Writing mesh to " << output_mesh << "..." << std::endl;
-		pcl::PolygonMesh mesh = point_cloud->triangulate(image1);
-		point_cloud->write_polygon_mesh(output_mesh, &mesh);
+		pcl::PolygonMesh mesh = point_cloud.triangulate(image1);
+		point_cloud.write_polygon_mesh(output_mesh, &mesh);
 	}
 
 	if (!output_hull.empty()) {
 		std::cout << "Writing convex hull to " << output_hull << "..." << std::endl;
 		pcl::PolygonMesh mesh;
-		point_cloud->generate_convex_hull(mesh);
-		point_cloud->write_polygon_mesh(output_hull, &mesh);
+		point_cloud.generate_convex_hull(mesh);
+		point_cloud.write_polygon_mesh(output_hull, &mesh);
 	}
 
 	if (visualize)
-		camera_matrix->point_cloud.visualize_point_cloud(image1);
+		point_cloud.visualize_point_cloud(image1);
 
 	std::cout << camera_matrix->matrix << std::endl;
 
