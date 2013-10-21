@@ -168,14 +168,7 @@ namespace Boxes {
 	cv::Mat FeatureMatcher::calculate_essential_matrix(cv::Mat* fundamental_matrix) {
 		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
 
-		cv::Mat essential_matrix = camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
-
-		double essential_determinant = cv::determinant(essential_matrix) - 1.0;
-		if (IS_ZERO(essential_determinant)) {
-			essential_matrix = -essential_matrix;
-		}
-
-		return essential_matrix;
+		return camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
 	}
 
 	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix) {
