@@ -38,14 +38,6 @@ namespace Boxes {
 		std::vector<CameraMatrix*> camera_matrices = \
 			this->calculate_possible_camera_matrices(&essential_matrix);
 
-		//Check sign of the determinant of the rotation matrix
-		
-		if(camera_matrices[0]->get_rotation_determinant()+1.0 < 1e-09) {
-			std::cerr << "Turn the sign of E" <<std::endl;
-			essential_matrix  = -essential_matrix;
-			camera_matrices = this->calculate_possible_camera_matrices(&essential_matrix);
-		}
-
 		// Find the best camera matrix.
 		CameraMatrix* best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
 
@@ -171,7 +163,7 @@ namespace Boxes {
 		return camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
 	}
 
-	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix) {
+	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix, bool check_coherency) {
 		// Perform SVD of the matrix.
 		cv::SVD svd = cv::SVD(*essential_matrix, cv::SVD::FULL_UV);
 
@@ -198,6 +190,16 @@ namespace Boxes {
 
 		cv::Mat_<double>* rotation = &rotation1;
 		cv::Mat_<double>* translation = &translation1;
+
+		// Check if the rotation matrix is coherent
+		if (check_coherency) {
+			double determinant = cv::determinant(rotation1);
+
+			if (IS_ZERO(determinant + 1.0)) {
+				cv::Mat essential_matrix_inv = -cv::Mat(*essential_matrix);
+				return this->calculate_possible_camera_matrices(&essential_matrix_inv, false);
+			}
+		}
 
 		cv::Matx34d matrix;
 		for (unsigned int i = 0; i < 2; i++) {
