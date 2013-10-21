@@ -86,6 +86,7 @@ pkginclude_HEADERS += \
 	include/boxes/boxes.h \
 	include/boxes/feature_matcher.h \
 	include/boxes/feature_matcher_optical_flow.h \
+	include/boxes/forward_declarations.h \
 	include/boxes/image.h \
 	include/boxes/point_cloud.h \
 	include/boxes/structs.h \
