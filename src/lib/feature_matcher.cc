@@ -247,13 +247,15 @@ namespace Boxes {
 				best_matrix = &(*camera_matrix);
 				continue;
 			}
-/*
+
+#ifdef FEATURE_MATCHER_REPROJECTION_ERROR
 			// Select the matrix with best reprojection error.
 			if (camera_matrix->reprojection_error < best_matrix->reprojection_error) {
 				best_matrix = &(*camera_matrix);
 				continue;
 			}
-*/		}
+#endif
+		}
 
 		return best_matrix;
 	}

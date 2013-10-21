@@ -49,6 +49,7 @@
 
 #include <boxes/converters.h>
 
+//#define FEATURE_MATCHER_REPROJECTION_ERROR
 #define REPROJECTION_ERROR_MAX         200.0
 
 #define MATCH_VALID_RATIO                0.8
