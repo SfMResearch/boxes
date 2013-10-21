@@ -23,7 +23,10 @@ namespace Boxes {
 #define DEG2RAD(x) (M_PI / (180 * x))
 #endif
 
-#define IS_ZERO(x) (fabsf(x) <= 10e-9)
+#define BOXES_EPSILON 10e-9
+
+#define IS_ZERO(x) (fabsf(x) <= BOXES_EPSILON)
+#define GREATER_OR_EQUAL_TO_ZERO(x) (x >= -BOXES_EPSILON)
 
 	// KeyPoints to Points
 	inline std::vector<cv::Point2f> convertKeyPoints(const std::vector<cv::KeyPoint>* keypoints) {
