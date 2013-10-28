@@ -235,14 +235,15 @@ namespace Boxes {
 		return result;
 	}
 
-	std::vector<MoGES::IntPoint> Image::discretize_curve() const {
-		std::vector<MoGES::IntPoint> result;
+	std::vector<cv::Point2f> Image::discretize_curve() const {
+		std::vector<cv::Point2f> result;
 
 		if (this->has_curve()) {
 			MoGES::NURBS::DiscreteCurvePtr discrete_curve = this->curve->discretize();
 
 			for (MoGES::NURBS::DiscreteCurve::iterator i = discrete_curve->begin(); i != discrete_curve->end(); i++) {
-				result.push_back(i->second);
+				cv::Point2f point = cv::Point2f(i->second[0] / 2.7, i->second[1]);
+				result.push_back(point);
 			}
 		}
 
@@ -250,18 +251,16 @@ namespace Boxes {
 	}
 
 	void Image::draw_curve(double colour) {
-		std::vector<MoGES::IntPoint> discrete_curve = this->discretize_curve();
+		std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
-		for (std::vector<MoGES::IntPoint>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
-			int column = (*i)[0];
-			if (column >= this->mat.cols)
+		for (std::vector<cv::Point2f>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
+			if (i->x < 0 || i->x > this->mat.cols)
 				continue;
 
-			int row = (*i)[1];
-			if (row >= this->mat.rows)
+			if (i->y < 0 || i->y > this->mat.rows)
 				continue;
 
-			this->mat.at<double>(row, column) = colour;
+			this->mat.at<double>(i->y, i->x) = colour;
 		}
 	}
 
@@ -269,7 +268,7 @@ namespace Boxes {
 		PointCloud ret;
 
 		if (this->has_curve()) {
-			std::vector<MoGES::IntPoint> discrete_curve = this->discretize_curve();
+			std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
 			/* Go through the existing point cloud point by point and
 			 * check if the point is within or on the contour of the curve. */

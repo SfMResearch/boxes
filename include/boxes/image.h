@@ -53,7 +53,7 @@ namespace Boxes {
 
 			// curve
 			bool has_curve() const;
-			std::vector<MoGES::IntPoint> discretize_curve() const;
+			std::vector<cv::Point2f> discretize_curve() const;
 			void draw_curve(double colour = 0xffffff);
 			PointCloud cut_out_curve(PointCloud* cloud) const;
 
