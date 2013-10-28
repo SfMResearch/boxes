@@ -140,7 +140,7 @@ namespace Boxes {
 		cv::minMaxIdx(match_points1, &val_min, &val_max);
 
 		// Snavely
-		double epipolar_distance = 0.006 * val_max;
+		double epipolar_distance = 0.001 * val_max;
 
 		std::vector<uchar> status(this->matches.size());
 		cv::Mat fund = cv::findFundamentalMat(match_points1, match_points2, status,
