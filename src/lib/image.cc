@@ -242,7 +242,7 @@ namespace Boxes {
 			MoGES::NURBS::DiscreteCurvePtr discrete_curve = this->curve->discretize();
 
 			for (MoGES::NURBS::DiscreteCurve::iterator i = discrete_curve->begin(); i != discrete_curve->end(); i++) {
-				cv::Point2f point = cv::Point2f(i->second[0] / 2.7, i->second[1]);
+				cv::Point2f point = cv::Point2f(i->second[0], i->second[1]);
 				result.push_back(point);
 			}
 		}
