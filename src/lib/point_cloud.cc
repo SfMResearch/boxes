@@ -126,7 +126,7 @@ namespace Boxes {
 		if (image)
 			mat = image->get_mat();
 
-		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
+		for (std::vector<CloudPoint>::const_iterator i = this->begin(); i != this->end(); ++i) {
 			pcl::PointXYZRGB cloud_point;
 			cloud_point.x = i->pt.x;
 			cloud_point.y = i->pt.y;
@@ -169,7 +169,7 @@ namespace Boxes {
 	void PointCloud::write_depths_map(std::string filename, Image* image) const {
 		double val_min, val_max;
 		std::vector<double> depths(this->points.size());
-		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
+		for (std::vector<CloudPoint>::const_iterator i = this->begin(); i != this->end(); ++i) {
 			depths.push_back(i->pt.z);
 		}
 		cv::minMaxLoc(depths, &val_min, &val_max);
@@ -177,7 +177,7 @@ namespace Boxes {
 		cv::Mat map;
 		cvtColor(*image->get_mat(), map, CV_BGR2HSV);
 
-		for (std::vector<CloudPoint>::const_iterator i = this->points.begin(); i != this->points.end(); ++i) {
+		for (std::vector<CloudPoint>::const_iterator i = this->begin(); i != this->end(); ++i) {
 			double d = MAX(MIN((i->pt.z - val_min) / (val_max - val_min), 1.0), 0.0);
 			cv::circle(map, i->keypoint.pt, 1, cv::Scalar(255.0 * (1.0 - d), 255, 255), CV_FILLED);
 		}
