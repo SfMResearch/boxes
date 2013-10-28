@@ -2,6 +2,7 @@
 #define MOGES_TYPES_H
 
 #include <cstddef>
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <memory>

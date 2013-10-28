@@ -6,7 +6,6 @@
 #include <exception>
 #include <functional>
 #include <map>
-#include <string>
 #include <vector>
 
 
@@ -21,11 +20,11 @@ namespace MoGES
     class InvalidCurve : public std::exception
     {
       public:
-        explicit InvalidCurve (const std::string& whatA) : whatE(whatA) {} 
+        explicit InvalidCurve (const String& whatA) : whatE(whatA) {} 
         virtual ~InvalidCurve () noexcept {}
         virtual const char* what () const noexcept { return whatE.c_str(); }
       private:
-        const std::string whatE;
+        const String whatE;
     };
 
     class Curve
@@ -62,7 +61,7 @@ namespace MoGES
           bool periodicA
         );
 
-        //! Very explicit constructor completely defining the NURBS curve
+        //! Very explicit constructor completely defining the NURBS curve;
         //! moving control points and knots (instead of copying).
         Curve
         (
@@ -138,6 +137,9 @@ namespace MoGES
         //! Reading access to number of explicitly stored control points.
         Size numberOfExplicitControlPoints () const;
 
+        //! Reading access to the number of knots.
+        Size numberOfKnots () const;
+
         //! Returns true, iff the NURBS curve is periodic (closed).
         bool periodic() const;
 
@@ -168,24 +170,31 @@ namespace MoGES
         //! Insert a new knot without changing the curves shape.
         void insertKnot (Real knotA);
 
+        //! Translates the curve.
+        void translate (const Point& offsetA);
+        //! Scales the curve.
+        void scale (Real factorA, const Point& centerA = {0, 0});
+        //! Rotates the curve.
+        void rotate (Real angleA, const Point& centerA = {0, 0});
+
 
       // -- Method -- output ----------------------------------------------- //
 
         //! Writes this NURBS curve to an output stream.
-        void write (std::basic_ostream<Character>& outStreamA) const;
+        void write (OutStream& outStreamA) const;
         //! Reads a NURBS curve from an input stream.
-        void read (std::basic_istream<Character>& inStreamA);
+        void read (InStream& inStreamA);
 
         //! Writes this NURBS curve to file.
-        void write (const std::string& filenameA) const;
+        void write (const String& filenameA) const;
         //! Reads this NURBS curve from file.
-        void read (const std::string& filenameA);
+        void read (const String& filenameA);
 
 
       // -- Method -- math base -------------------------------------------- //
 
         //! Maps curve parameter s to homogeneous coordinates (point on the curve).
-        Point value (Real sA) const;
+        //Point value (Real sA) const;
 
         Point homogeneous (Real sA) const;
 

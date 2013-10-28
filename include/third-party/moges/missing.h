@@ -3,8 +3,10 @@
 
 #include "Types.h"
 
+#include <cassert>
 #include <cmath>
 #include <ctime>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <random>
@@ -14,6 +16,19 @@
 
 namespace MoGES
 {
+  //! Finds the lowest index for which condition holds
+  template <class Size>
+  Size binarySearch (Size minimumA, Size maximumA, std::function<bool (Size)> conditionA)
+  {
+    while (minimumA < maximumA)
+    {
+      Size centerL = (minimumA + maximumA) / 2;
+      if (conditionA(centerL))  maximumA = centerL;
+      else  minimumA = centerL + 1;
+    }
+    return minimumA;
+  }
+
   template <class Container>
   Container&
   split
@@ -115,6 +130,8 @@ namespace MoGES
       Real angleA
     )
     {
+      //assert(vectorA.size() == 2);
+
       const Real sinL = std::sin(angleA);
       const Real cosL = std::cos(angleA);
 
@@ -125,6 +142,7 @@ namespace MoGES
 
       return vectorA;
     }
+
 
     Integer
     roundDown

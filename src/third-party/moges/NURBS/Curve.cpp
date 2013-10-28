@@ -2,8 +2,9 @@
 #include "missing.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
-#include <fstream>
+//#include <fstream>
 #include <sstream>
 #include <stdexcept>
 
@@ -143,7 +144,7 @@ MoGES::NURBS::Curve::throwIfInvalid
   if (numberOfControlPoints() <= degreeE)  throw InvalidCurve("The number of control points of a NURBS must exceed its degree");
 
   // Does the NURBS have the correct number of knots?
-  if (periodicE)
+  if (periodicE) //todo: don't make this distinction
   {
     if (knotsE.size() != (numberOfExplicitControlPoints() + 1))
     {
@@ -269,15 +270,9 @@ unitNormalVector
   Real sA
 ) const
 {
-  //std::cout << "---1---" << std::flush;
   Point unitNormalVectorL = (*this)(1, sA);
-  //std::cout << "---2---" << std::flush;
   normalize(unitNormalVectorL);
-  //std::cout << "---3---" << std::flush;
-  missing::rotate(unitNormalVectorL, PI / Real(-2.0));//todo: rotation by pi/2 is coordinate switching (and fixing signs)
-  //std::cout << "---4---" << std::flush;
-
-  return unitNormalVectorL;
+  return missing::rotate(unitNormalVectorL, PI / Real(-2.0));//todo: rotation by pi/2 is coordinate switching (and fixing signs)
 }
 
 
@@ -313,7 +308,8 @@ MoGES::NURBS::Curve::discretize
   Real sHalfL = (sMinA + sMaxA) / static_cast<Real>(2.0);
   IntPoint posHalfL = round((*this)(sHalfL));
   discretizeRecursively(curveL, sMinA, round((*this)(sMinA)), sHalfL, posHalfL);
-  discretizeRecursively(curveL, sHalfL, posHalfL, sMaxA, round((*this)(sMaxA)));
+  IntPoint posMaxL = round((*this)(sMaxA));
+  discretizeRecursively(curveL, sHalfL, posHalfL, sMaxA, posMaxL);
 
   return curveL;
 }
@@ -405,6 +401,16 @@ numberOfExplicitControlPoints
   return controlPointsE.size();
 }
 
+//! Reading access to the number of knots.
+MoGES::Size
+MoGES::NURBS::Curve
+::
+numberOfKnots
+() const
+{
+  return numberOfControlPoints() + degreeE + 1;
+}
+
 //! Returns true, iff the NURBS curve is periodic (closed).
 bool
 MoGES::NURBS::Curve
@@ -490,7 +496,11 @@ knot
       return knotsE.at(nL-degreeE) + knotsE.at(iA - nL);
     }
     // These knots are free parameters.
-    else  return knotsE.at(iA - degreeE);
+    else
+    {
+      Real knotL = knotsE.at(iA - degreeE);
+      return knotL;
+    }
   }
   else  return knotsE.at(iA);
 }
@@ -571,8 +581,6 @@ insertKnot
   Real knotA
 )
 {
-  throwIfNotInRange(knotA);
-
   // Find the correct index for the new knot.
   Size indexL = upperLimitIndex(knotA);
 
@@ -621,6 +629,63 @@ insertKnot
 }
 
 
+//! Translates the curve.
+void
+MoGES::NURBS::Curve
+::
+translate
+(
+  const Point& offsetA
+)
+{
+  // Ensure the offset's dimensionality is correct.
+  assert(offsetA.size() == 2);
+  // Displace all control points.
+  for (Size nL = 0; nL < numberOfExplicitControlPoints(); ++nL)
+  {
+    controlPoint(nL, controlPoint(nL) + offsetA);
+  }
+}
+
+//! Scales the curve.
+void
+MoGES::NURBS::Curve
+::
+scale
+(
+  Real factorA,
+  const Point& centerA
+)
+{
+  // Ensure the center's dimensionality is correct.
+  assert(centerA.size() == 2);
+  // Scale all control points.
+  for (Size nL = 0; nL < numberOfExplicitControlPoints(); ++nL)
+  {
+    controlPoint(nL, (controlPoint(nL) - centerA) * factorA);
+  }
+}
+
+//! Rotates the curve.
+void
+MoGES::NURBS::Curve
+::
+rotate
+(
+  Real angleA,
+  const Point& centerA
+)
+{
+  // Ensure the center's dimensionality is correct.
+  assert(centerA.size() == 2);
+  // Rotate all control points.
+  for (Size nL = 0; nL < numberOfExplicitControlPoints(); ++nL)
+  {
+    Point controlPointL = controlPoint(nL) - centerA;
+    controlPoint(nL, missing::rotate(controlPointL, angleA));
+  }
+}
+
 // -- Method -- output ----------------------------------------------------- //
 
 //#define NURBS_IO_NAME_TAG "MoGES::NURBS::CURVE"
@@ -640,7 +705,7 @@ MoGES::NURBS::Curve
 ::
 write
 (
-  std::basic_ostream<Character>& outStreamA
+  OutStream& outStreamA
 ) const
 {
   // Set the stream's precision to ensure consistency of the NURBS.
@@ -680,7 +745,7 @@ MoGES::NURBS::Curve
 ::
 read
 (
-  std::basic_istream<Character>& inStreamA
+  InStream& inStreamA
 )
 {
   // Read the name tag.
@@ -825,7 +890,7 @@ write
   const std::string& filenameA
 ) const
 {
-  std::basic_ofstream<Character> fileStreamL(filenameA);
+  OutFileStream fileStreamL(filenameA);
 
   if (fileStreamL.is_open())
   {
@@ -853,7 +918,7 @@ read
   const std::string& filenameA
 )
 {
-  std::basic_ifstream<Character> fileStreamL(filenameA);
+  InFileStream fileStreamL(filenameA);
 
   if (fileStreamL.is_open())
   {
@@ -871,6 +936,7 @@ read
 // -- Method -- math base -------------------------------------------------- //
 
 //! Maps curve parameter s to homogeneous coordinates (point on the curve).
+/*
 MoGES::Point
 MoGES::NURBS::Curve
 ::
@@ -898,6 +964,7 @@ value
 
   return valueL;
 }
+*/
 
 //! Maps curve parameter s to homogeneous coordinates (point on the curve).
 MoGES::Point
@@ -981,26 +1048,16 @@ basisFunctions
   std::vector<Real>& basisFunctionsA
 ) const
 {
-#ifndef MOGES_DISABLE_CHECKS
-  throwIfNotInRange(sA);
-#endif //ndef MOGES_DISABLE_CHECKS
-
   // Skip basis functions that must be zero.
   // Find the knot holding the upper limit corresponding to sA.
   Size maxL = upperLimitIndex(sA);
-  //todo: This border case doesn't occur for valid sA, I think.
+  //todo: This border case (maxL <= degreeE) doesn't occur for valid sA, I think.
   Size minL = (maxL > degreeE) ? maxL - degreeE - 1 : 0;
-  if (maxL > numberOfControlPoints())
+  //todo?: if (sA == endOfValidRange()) ++minL
+  if (maxL > numberOfControlPoints()) //todo: this should not occur anymore
   {
-    // This situation can occur because of the "paradox" definition of a NURBS
-    // curve. Though the upper limit of a knot span is exclusive when
-    // evaluating the basis functions, the curve is defined over the entire
-    // span including the upper limit.
-    // When evaluating the curve at s = endOfValidRange (assuming the curve is
-    // periodic or clamped), only degree number of control points are used.
-    // However, this is the case for any knot, because at the knot one control
-    // point is dropped and the next one activated (i.e.: both their basis
-    // functions are 0).
+    std::cout << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOh\n";
+    std::cout << "OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOh\n";
     maxL = numberOfControlPoints();
   }
 
@@ -1167,11 +1224,26 @@ upperLimitIndex
 ) const
 {
 #ifndef MOGES_DISABLE_CHECKS
- //todo: maybe have this here instead: throwIfNotInRange(sA);
+  throwIfNotInRange(sA);
 #endif //ndef MOGES_DISABLE_CHECKS
-//todo: maybe all non-periodic NURBS should be clamped -> alway start at degreeE
-  Size iL = periodicE  ?  degreeE  :  0;
-  while (sA >= knot(++iL)); // Yes, it's supposed to be like that. todo: speed this up by exploiting the fact that knotsE is sorted
+
+  // The definition of a NURBS curve is somewhat paradox. Though the upper
+  // limit of a knot span is exclusive when evaluating the basis functions,
+  // the curve is defined over the entire span including the upper limit.
+  if (sA == endOfValidRange())  return numberOfControlPoints();
+
+//todo: all non-periodic NURBS should be clamped -> always start at degreeE
+  Size iCheckL = periodicE  ?  degreeE  :  0;
+  while (sA >= knot(++iCheckL)); // Yes, it's supposed to be like that. todo: speed this up by exploiting the fact that knotsE is sorted
+
+  Size iL = binarySearch<Size>
+            ( degreeE,//todo: +1?
+              numberOfControlPoints(),
+              [&] (Size iA) { return sA < knot(iA); } //todo: search directly on knotE and add degreeE afterwards
+            );
+
+  if (iL != iCheckL) std::cout << "\nNooooo... binarySearch does not work!!!\n" << iL << " != " << iCheckL << "\n";
+
   return iL;
 }
 
@@ -1191,7 +1263,7 @@ discretizeRecursively
   const IntPoint& posMaxA
 ) const
 {
-  if ( (std::abs(posMaxA[0] - posMinA[0]) < 2) && (std::abs(posMaxA[1] - posMinA[1]) < 2) )
+  if ((std::abs(posMaxA[0] - posMinA[0]) < 2) && (std::abs(posMaxA[1] - posMinA[1]) < 2))
   {
     if (curveA->empty() || (squaredNorm<Integer>(posMinA - curveA->rbegin()->second) > 0))
     {
@@ -1214,9 +1286,10 @@ discretizeRecursively
   {
     // todo: check if the segment is a straight line (see legth calculation in hornDiss - use his condition here - it should be a straight line)
     Real distanceL = std::sqrt(squaredNorm<Integer>(posMaxA - posMinA));
-    std::cout << "There's a gap of about " << distanceL << " pixels in the curve!\n";
+    std::cout << "Between (" << posMinA[0] << ", " << posMinA[1] << ") and (" 
+      << posMaxA[0] << ", " << posMaxA[1] << ") is a gap of about " << distanceL
+      << " pixels in the curve!\n";
     // Okay, since we can't get a pixel precise discretization, just force end of recursion (and store both points).
-    //return;
     discretizeRecursively(curveA, sMinA, posMinA, sMinA, posMinA);
     discretizeRecursively(curveA, sMaxA, posMaxA, sMaxA, posMaxA);
 
