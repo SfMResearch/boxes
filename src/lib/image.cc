@@ -250,7 +250,7 @@ namespace Boxes {
 		return result;
 	}
 
-	void Image::draw_curve(double colour) {
+	void Image::draw_curve() {
 		std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
 		for (std::vector<cv::Point2f>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
@@ -260,7 +260,7 @@ namespace Boxes {
 			if (i->y < 0 || i->y > this->mat.rows)
 				continue;
 
-			this->mat.at<double>(i->y, i->x) = colour;
+			this->mat.at<cv::Vec3b>(i->y, i->x)[1] = 255;
 		}
 	}
 
