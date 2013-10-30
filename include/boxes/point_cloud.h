@@ -7,6 +7,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/PolygonMesh.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/point_types.h>
+#include <pcl/surface/convex_hull.h>
 INCLUDE_IGNORE_WARNINGS_END
 
 #include <string>
@@ -34,7 +35,7 @@ namespace Boxes {
 
 			unsigned int size() const;
 
-			pcl::PolygonMesh triangulate(const Image* image) const;
+			pcl::PolygonMesh* triangulate(const Image* image) const;
 			void write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const;
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const Image* image = NULL) const;
@@ -42,7 +43,7 @@ namespace Boxes {
 
 			void visualize_point_cloud(const Image* image = NULL);
 
-			double generate_convex_hull(pcl::PolygonMesh &mesh) const;
+			void generate_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>*, pcl::PolygonMesh* mesh) const;
 
 		private:
 			std::vector<CloudPoint> points;

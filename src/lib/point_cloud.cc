@@ -56,8 +56,8 @@ namespace Boxes {
 		return this->points.end();
 	}
 
-	pcl::PolygonMesh PointCloud::triangulate(const Image* image) const {
-		pcl::PolygonMesh triangles;
+	pcl::PolygonMesh* PointCloud::triangulate(const Image* image) const {
+		pcl::PolygonMesh* triangles = new pcl::PolygonMesh();
 
 		if (this->size() > 0) {
 			// Concert point cloud into PCL format.
@@ -92,7 +92,7 @@ namespace Boxes {
 			// Get result
 			pt.setInputCloud(cloud_with_normals);
 			pt.setSearchMethod(tree);
-			pt.reconstruct(triangles);
+			pt.reconstruct(*triangles);
 		}
 
 		return triangles;
@@ -197,17 +197,12 @@ namespace Boxes {
 		while (!viewer.wasStopped()) {}
 	}
 
-	double PointCloud::generate_convex_hull(pcl::PolygonMesh &mesh) const {
+	void PointCloud::generate_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull, pcl::PolygonMesh* mesh) const {
 		// Convert point cloud
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_point_cloud = generate_pcl_point_cloud();
 
 		// Create convex hull
-		pcl::ConvexHull<pcl::PointXYZRGB> convex_hull;
-		convex_hull.setInputCloud(pcl_point_cloud);
-
-		// Convert to mesh
-		convex_hull.reconstruct(mesh);
-
-		return convex_hull.getTotalVolume();
+		convex_hull->setInputCloud(pcl_point_cloud);
+		convex_hull->reconstruct(*mesh);
 	}
 }

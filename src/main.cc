@@ -157,17 +157,20 @@ int main(int argc, char **argv) {
 		point_cloud = camera_matrix->point_cloud;
 	}
 
+	// Calculate mesh
+	pcl::PolygonMesh* mesh = point_cloud.triangulate(image1);
+	pcl::PolygonMesh* mesh_hull = new pcl::PolygonMesh();
+	pcl::ConvexHull<pcl::PointXYZRGB>* hull = new pcl::ConvexHull<pcl::PointXYZRGB>();
+	point_cloud.generate_convex_hull(hull, mesh_hull);
+
 	if (!output_mesh.empty()) {
 		std::cout << "Writing mesh to " << output_mesh << "..." << std::endl;
-		pcl::PolygonMesh mesh = point_cloud.triangulate(image1);
-		point_cloud.write_polygon_mesh(output_mesh, &mesh);
+		point_cloud.write_polygon_mesh(output_mesh, mesh);
 	}
 
 	if (!output_hull.empty()) {
 		std::cout << "Writing convex hull to " << output_hull << "..." << std::endl;
-		pcl::PolygonMesh mesh;
-		point_cloud.generate_convex_hull(mesh);
-		point_cloud.write_polygon_mesh(output_hull, &mesh);
+		point_cloud.write_polygon_mesh(output_hull, mesh_hull);
 	}
 
 	if (visualize)
@@ -177,6 +180,15 @@ int main(int argc, char **argv) {
 
 	// Free memory.
 	delete camera_matrix;
+
+	if (mesh)
+		delete mesh;
+
+	if (mesh_hull)
+		delete mesh_hull;
+
+	if (hull)
+		delete hull;
 
 	exit(0);
 }
