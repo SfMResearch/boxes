@@ -173,6 +173,9 @@ int main(int argc, char **argv) {
 		point_cloud.write_polygon_mesh(output_hull, mesh_hull);
 	}
 
+	// Print estimated volume.
+	std::cout << "Estimated volume: " << hull->getTotalVolume() << std::endl;
+
 	if (visualize)
 		point_cloud.visualize_point_cloud(image1);
 
