@@ -20,8 +20,7 @@ namespace Boxes {
 			Image* img_get(unsigned int index);
 			unsigned int img_size() const;
 
-			FeatureMatcher* match(Image* image1, Image* image2);
-			FeatureMatcherOpticalFlow* match_optical_flow(Image* image1, Image* image2);
+			FeatureMatcher* match(Image* image1, Image* image2, bool optical_flow = false);
 
 			std::string version_string() const;
 

@@ -104,33 +104,37 @@ int main(int argc, char **argv) {
 		exit(2);
 	}
 
+	Boxes::CameraMatrix* camera_matrix = NULL;
+
+	for (std::pair<Boxes::Image*, Boxes::Image*> image_pair: boxes.make_pairs()) {
+		Boxes::Image* image1 = image_pair.first;
+		Boxes::Image* image2 = image_pair.second;
+
+		Boxes::FeatureMatcher* matcher = boxes.match(image1, image2, use_optical_flow);
+
+		// Run it.
+		camera_matrix = matcher->run();
+
+		if (!camera_matrix) {
+			std::cerr << "Could not find a suitable camera matrix. Exiting." << std::endl;
+			exit(1);
+		}
+
+		// First, write everything to file.
+		if (!output.empty()) {
+			std::cout << "Writing matched image to " << output << "..." << std::endl;
+			matcher->draw_matches(output);
+		}
+
+		// Delete the matcher, which is not needed any more.
+		delete matcher;
+	}
+
+	assert(camera_matrix);
+
+	// Get first pair of images again for compatibility...
 	Boxes::Image* image1 = boxes.img_get(0);
 	Boxes::Image* image2 = boxes.img_get(1);
-
-	Boxes::FeatureMatcher* matcher = NULL;
-	if (use_optical_flow) {
-		matcher = boxes.match_optical_flow(image1, image2);
-	} else {
-		matcher = boxes.match(image1, image2);
-	}
-	assert(matcher);
-
-	// Run it.
-	Boxes::CameraMatrix* camera_matrix = matcher->run();
-
-	if (!camera_matrix) {
-		std::cerr << "Could not find a suitable camera matrix. Exiting." << std::endl;
-		exit(1);
-	}
-
-	// First, write everything to file.
-	if (!output.empty()) {
-		std::cout << "Writing matched image to " << output << "..." << std::endl;
-		matcher->draw_matches(output);
-	}
-
-	// Delete the matcher, which is not needed any more.
-	delete matcher;
 
 	if (!output_depths_map.empty()) {
 		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
