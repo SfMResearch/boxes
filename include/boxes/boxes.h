@@ -31,6 +31,8 @@ namespace Boxes {
 			std::vector<Image*>::iterator end();
 			std::vector<Image*>::const_iterator end() const;
 
+			std::vector<std::pair<Image*, Image*>> make_pairs() const;
+
 		private:
 			std::vector<Image*> images;
 	};

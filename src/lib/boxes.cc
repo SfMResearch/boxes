@@ -104,4 +104,24 @@ namespace Boxes {
 	std::vector<Image*>::const_iterator Boxes::end() const {
 		return this->images.end();
 	}
+
+	std::vector<std::pair<Image*, Image*>> Boxes::make_pairs() const {
+		std::vector<std::pair<Image*, Image*>> ret;
+
+		Image* last_image = NULL;
+
+		for (std::vector<Image*>::const_iterator i = this->begin(); i != this->end(); i++) {
+			Image* image = *i;
+
+			if (last_image == NULL) {
+				last_image = image;
+				continue;
+			}
+
+			ret.push_back(std::make_pair(last_image, image));
+			last_image = image;
+		}
+
+		return ret;
+	}
 }
