@@ -43,7 +43,8 @@ boxes_CXXFLAGS = \
 
 boxes_LDADD = \
 	libboxes.la \
-	$(OPENCV_LIBS)
+	$(OPENCV_LIBS) \
+	$(PCL_LIBS)
 
 #- libboxes -------------------------------------------------------------------
 
