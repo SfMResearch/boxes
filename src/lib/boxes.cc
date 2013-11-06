@@ -87,4 +87,21 @@ namespace Boxes {
 
 		return str;
 	}
+
+	// Iterator
+	std::vector<Image*>::iterator Boxes::begin() {
+		return this->images.begin();
+	}
+
+	std::vector<Image*>::const_iterator Boxes::begin() const {
+		return this->images.begin();
+	}
+
+	std::vector<Image*>::iterator Boxes::end() {
+		return this->images.end();
+	}
+
+	std::vector<Image*>::const_iterator Boxes::end() const {
+		return this->images.end();
+	}
 }

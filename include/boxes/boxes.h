@@ -25,6 +25,12 @@ namespace Boxes {
 
 			std::string version_string() const;
 
+			// Iterator
+			std::vector<Image*>::iterator begin();
+			std::vector<Image*>::const_iterator begin() const;
+			std::vector<Image*>::iterator end();
+			std::vector<Image*>::const_iterator end() const;
+
 		private:
 			std::vector<Image*> images;
 	};
