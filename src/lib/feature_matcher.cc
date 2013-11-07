@@ -266,7 +266,7 @@ namespace Boxes {
 		return best_matrix;
 	}
 
-	double FeatureMatcher::triangulate_points(cv::Matx34d* p1, cv::Matx34d* p2, PointCloud* point_cloud) {
+	double FeatureMatcher::triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud) {
 		cv::Mat c1 = this->image1->guess_camera_matrix();
 		cv::Mat c1_inv = c1.inv();
 		cv::Mat c2 = this->image2->guess_camera_matrix();
