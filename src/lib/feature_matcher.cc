@@ -7,6 +7,7 @@
 
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
+#include <boxes/converters.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
@@ -206,11 +207,7 @@ namespace Boxes {
 			translation = &translation1;
 
 			for (unsigned int j = 0; j < 2; j++) {
-				cv::Matx34d matrix = cv::Matx34d(
-					rotation->at<double>(0, 0), rotation->at<double>(0, 1), rotation->at<double>(0, 2), translation->at<double>(0),
-					rotation->at<double>(1, 0), rotation->at<double>(1, 1), rotation->at<double>(1, 2), translation->at<double>(1),
-					rotation->at<double>(2, 0), rotation->at<double>(2, 1), rotation->at<double>(2, 2), translation->at<double>(2)
-				);
+				cv::Matx34d matrix = merge_rotation_and_translation_matrix(rotation, translation);
 
 				CameraMatrix* camera_matrix = new CameraMatrix(matrix);
 				matrices.push_back(camera_matrix);

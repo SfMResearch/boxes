@@ -50,6 +50,16 @@ namespace Boxes {
 
 		return cloud_out;
 	}
+
+	inline cv::Matx34d merge_rotation_and_translation_matrix(const cv::Mat_<double>* rotation, const cv::Mat_<double>* translation) {
+		cv::Matx34d matrix = cv::Matx34d(
+			rotation->at<double>(0, 0), rotation->at<double>(0, 1), rotation->at<double>(0, 2), translation->at<double>(0),
+			rotation->at<double>(1, 0), rotation->at<double>(1, 1), rotation->at<double>(1, 2), translation->at<double>(1),
+			rotation->at<double>(2, 0), rotation->at<double>(2, 1), rotation->at<double>(2, 2), translation->at<double>(2)
+		);
+
+		return matrix;
+	}
 #endif
 
 };
