@@ -10,6 +10,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/surface/convex_hull.h>
 INCLUDE_IGNORE_WARNINGS_END
 
+#include <boxes/cloud_point.h>
 #include <boxes/constants.h>
 #include <boxes/converters.h>
 #include <boxes/point_cloud.h>
@@ -133,15 +134,8 @@ namespace Boxes {
 			cloud_point.z = i->pt.z;
 
 			// Apply RGB value from image for this pixel.
-			if (mat) {
-				cv::Vec3b pixel = mat->at<cv::Vec3b>(i->keypoint.pt.y, i->keypoint.pt.x);
-				uint32_t rgb = ((uint32_t)pixel[2] << 16 | (uint32_t)pixel[1] << 8 | (uint32_t)pixel[0]);
-				cloud_point.rgb = *reinterpret_cast<float*>(&rgb);
-
 			// Otherwise set them in a bright colour.
-			} else {
-				cloud_point.rgb = 0xffffff;
-			}
+			cloud_point.rgb = i->get_colour(0xffffff);
 
 			cloud->push_back(cloud_point);
 		}

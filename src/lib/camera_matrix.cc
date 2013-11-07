@@ -3,7 +3,7 @@
 #include <vector>
 
 #include <boxes/camera_matrix.h>
-#include <boxes/structs.h>
+#include <boxes/cloud_point.h>
 
 namespace Boxes {
 	/*

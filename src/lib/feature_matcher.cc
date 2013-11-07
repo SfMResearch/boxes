@@ -316,6 +316,8 @@ namespace Boxes {
 			cloud_point.pt = cv::Point3d(X(0), X(1), X(2));
 			cloud_point.keypoint = *keypoint1;
 
+			cloud_point.set_colour_from_image(this->image1);
+
 			// Calculate the reprojection error.
 			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point1);
 

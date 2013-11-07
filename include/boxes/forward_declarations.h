@@ -3,6 +3,7 @@
 #define BOXES_FORWARD_DECLARATIONS_H
 
 namespace Boxes {
+	class CloudPoint;
 	class Image;
 	class PointCloud;
 };

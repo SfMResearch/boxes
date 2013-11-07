@@ -53,6 +53,7 @@ lib_LTLIBRARIES += \
 
 libboxes_la_SOURCES = \
 	src/lib/camera_matrix.cc \
+	src/lib/cloud_point.cc \
 	src/lib/boxes.cc \
 	src/lib/feature_matcher.cc \
 	src/lib/feature_matcher_optical_flow.cc \
@@ -82,6 +83,7 @@ libboxes_la_LIBADD = \
 
 pkginclude_HEADERS += \
 	include/boxes/camera_matrix.h \
+	include/boxes/cloud_point.h \
 	include/boxes/constants.h \
 	include/boxes/converters.h \
 	include/boxes/boxes.h \

@@ -13,6 +13,7 @@ INCLUDE_IGNORE_WARNINGS_END
 #include <string>
 #include <vector>
 
+#include <boxes/cloud_point.h>
 #include <boxes/forward_declarations.h>
 #include <boxes/image.h>
 #include <boxes/structs.h>
