@@ -272,7 +272,7 @@ namespace Boxes {
 		cv::Mat c2 = this->image2->guess_camera_matrix();
 		cv::Mat c2_inv = c2.inv();
 
-		cv::Mat_<double> KP1 = c1 * cv::Mat(*p1);
+		cv::Mat_<double> KP2 = c2 * cv::Mat(*p2);
 
 		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
 		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
@@ -308,18 +308,19 @@ namespace Boxes {
 			cv::Mat_<double> X = this->triangulate_one_point(&match_point_3d1, p1, &match_point_3d2, p2);
 
 			// Reproject X.
-			cv::Mat_<double> X_reproj = KP1 * X;
+			cv::Mat_<double> X_reproj = KP2 * X;
 			cv::Point2f X_reproj_point = cv::Point2f(X_reproj(0) / X_reproj(2), X_reproj(1) / X_reproj(2));
 
 			// Create CloudPoint object.
 			CloudPoint cloud_point;
 			cloud_point.pt = cv::Point3d(X(0), X(1), X(2));
-			cloud_point.keypoint = *keypoint1;
+			cloud_point.keypoint = *keypoint2;
+			cloud_point.keypoint_index = match.trainIdx;
 
-			cloud_point.set_colour_from_image(this->image1);
+			cloud_point.set_colour_from_image(this->image2);
 
 			// Calculate the reprojection error.
-			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point1);
+			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point2);
 
 			#pragma omp critical
 			{
