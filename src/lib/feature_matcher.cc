@@ -54,8 +54,11 @@ namespace Boxes {
 	}
 
 	void FeatureMatcher::match() {
-		const cv::Mat* descriptors1 = this->image1->get_descriptors(this->keypoints1);
-		const cv::Mat* descriptors2 = this->image2->get_descriptors(this->keypoints2);
+		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
+		const cv::Mat* descriptors1 = this->image1->get_descriptors(keypoints1);
+		const cv::Mat* descriptors2 = this->image2->get_descriptors(keypoints2);
 
 		this->_match(descriptors1, descriptors2);
 	}
@@ -124,17 +127,23 @@ namespace Boxes {
 		const cv::Mat* image1 = this->image1->get_mat();
 		const cv::Mat* image2 = this->image2->get_mat();
 
-		cv::drawMatches(*image1, *this->keypoints1, *image2, *this->keypoints2, this->matches, img_matches);
+		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
+		cv::drawMatches(*image1, *keypoints1, *image2, *keypoints2, this->matches, img_matches);
 
 		Image image = Image(img_matches);
 		image.write(filename);
 	}
 
 	cv::Mat FeatureMatcher::calculate_fundamental_matrix() {
+		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
 		std::vector<cv::Point2f> match_points1, match_points2;
 		for (std::vector<cv::DMatch>::iterator i = this->matches.begin(); i != this->matches.end(); i++) {
-			match_points1.push_back(this->keypoints1->at(i->queryIdx).pt);
-			match_points2.push_back(this->keypoints2->at(i->trainIdx).pt);
+			match_points1.push_back(keypoints1->at(i->queryIdx).pt);
+			match_points2.push_back(keypoints2->at(i->trainIdx).pt);
 		}
 
 		double val_min = 0.0, val_max = 0.0;
@@ -265,15 +274,18 @@ namespace Boxes {
 
 		cv::Mat_<double> KP1 = c1 * cv::Mat(*p1);
 
-		assert(this->keypoints1->size() >= this->matches.size());
-		assert(this->keypoints2->size() >= this->matches.size());
+		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
+		assert(keypoints1->size() >= this->matches.size());
+		assert(keypoints2->size() >= this->matches.size());
 
 		#pragma omp parallel for
 		for (unsigned int i = 0; i < this->matches.size(); i++) {
 			cv::DMatch match = this->matches[i];
 
-			const cv::KeyPoint* keypoint1 = &this->keypoints1->at(match.queryIdx);
-			const cv::KeyPoint* keypoint2 = &this->keypoints2->at(match.trainIdx);
+			const cv::KeyPoint* keypoint1 = &keypoints1->at(match.queryIdx);
+			const cv::KeyPoint* keypoint2 = &keypoints2->at(match.trainIdx);
 
 			const cv::Point2f* match_point1 = &keypoint1->pt;
 			const cv::Point2f* match_point2 = &keypoint2->pt;

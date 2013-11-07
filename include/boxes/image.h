@@ -3,6 +3,7 @@
 #define BOXES_IMAGE_H
 
 #include <opencv2/opencv.hpp>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -36,7 +37,7 @@ namespace Boxes {
 				const std::string detector_type = DEFAULT_FEATURE_DETECTOR_EXTRACTOR) const;
 
 			// keypoints
-			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR) const;
+			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR);
 
 			// (good) features
 			std::vector<cv::Point2f> get_good_features_to_track(int max_corners = 1500, double quality_level = 0.05,
@@ -68,6 +69,10 @@ namespace Boxes {
 
 			// distance
 			unsigned int distance = 0;
+
+			// keypoint cache
+			std::map<std::string, std::vector<cv::KeyPoint>*> keypoints;
+			std::vector<cv::KeyPoint>* compute_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR) const;
 	};
 };
 

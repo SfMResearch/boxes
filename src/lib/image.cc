@@ -38,6 +38,12 @@ namespace Boxes {
 	Image::~Image() {
 		if (this->curve)
 			delete this->curve;
+
+		// Delete all cached keypoints.
+		for (std::map<const std::string, std::vector<cv::KeyPoint>*>::iterator i = this->keypoints.begin();
+				i != this->keypoints.end(); i++) {
+			delete i->second;
+		}
 	}
 
 	void Image::decode_jfif_data(std::string filename) {
@@ -130,7 +136,23 @@ namespace Boxes {
 		return this->mat.size();
 	}
 
-	std::vector<cv::KeyPoint>* Image::get_keypoints(const std::string detector_type) const {
+	std::vector<cv::KeyPoint>* Image::get_keypoints(const std::string detector_type) {
+		std::vector<cv::KeyPoint>* keypoints;
+
+		#pragma omp critical
+		{
+			keypoints = this->keypoints[detector_type];
+
+			if (!keypoints) {
+				keypoints = this->compute_keypoints(detector_type);
+				this->keypoints[detector_type] = keypoints;
+			}
+		}
+
+		return keypoints;
+	}
+
+	std::vector<cv::KeyPoint>* Image::compute_keypoints(const std::string detector_type) const {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
 		cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create(detector_type);

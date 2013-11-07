@@ -15,8 +15,11 @@ namespace Boxes {
 		std::vector<cv::Point2f> points1 = this->image1->get_good_features_to_track();
 		std::vector<cv::Point2f> points2 = this->image2->get_good_features_to_track();
 #else
-		std::vector<cv::Point2f> points1 = convertKeyPoints(this->keypoints1);
-		std::vector<cv::Point2f> points2 = convertKeyPoints(this->keypoints2);
+		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
+		std::vector<cv::Point2f> points1 = convertKeyPoints(keypoints1);
+		std::vector<cv::Point2f> points2 = convertKeyPoints(keypoints2);
 #endif
 		std::vector<cv::Point2f> points2x(points1.size());
 
