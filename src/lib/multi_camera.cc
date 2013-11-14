@@ -30,7 +30,7 @@ namespace Boxes {
 	}
 
 	std::pair<Image*, Image*> MultiCamera::get_image_pair(unsigned int pair_index) const {
-		if (pair_index < this->image_pairs.size())
+		if (pair_index >= this->image_pairs.size())
 			throw new std::exception();
 
 		return this->image_pairs[pair_index];
@@ -153,12 +153,17 @@ namespace Boxes {
 		return this->point_cloud;
 	}
 
-	void MultiCamera::write_disparity_map(unsigned int pair_index, std::string filename) const {
+	void MultiCamera::write_disparity_map_all(const std::string* filename) const {
+		for (unsigned int i = 0; i < this->image_pairs.size(); i++)
+			this->write_disparity_map_one(filename, i);
+	}
+
+	void MultiCamera::write_disparity_map_one(const std::string* filename, unsigned int pair_index) const {
 		std::pair<Image*, Image*> pair = this->get_image_pair(pair_index);
 
 		Boxes::Image* disparity_map = pair.first->get_disparity_map(pair.second);
 		if (disparity_map) {
-			disparity_map->write(filename);
+			disparity_map->write(filename_implant_counter(filename, pair_index));
 			delete disparity_map;
 		}
 	}

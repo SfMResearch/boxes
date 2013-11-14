@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
 	std::string output_depths_map;
-	std::string output_disparity_map;
+	std::string output_disparity_maps;
 	std::string output_matches;
 	std::string output_hull;
 
@@ -20,13 +20,13 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		static struct option long_options[] = {
-			{"depths-map",    required_argument,  0, 'd'},
-			{"disparity-map", required_argument,  0, 'D'},
-			{"matches",       required_argument,  0, 'm'},
-			{"convex-hull",   required_argument,  0, 'c'},
-			{"optical-flow",  no_argument,        0, 'O'},
-			{"version",       no_argument,        0, 'V'},
-			{"visualize",     no_argument,        0, 'v'},
+			{"depths-map",     required_argument,  0, 'd'},
+			{"disparity-maps", required_argument,  0, 'D'},
+			{"matches",        required_argument,  0, 'm'},
+			{"convex-hull",    required_argument,  0, 'c'},
+			{"optical-flow",   no_argument,        0, 'O'},
+			{"version",        no_argument,        0, 'V'},
+			{"visualize",      no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'D':
-				output_disparity_map.assign(optarg);
+				output_disparity_maps.assign(optarg);
 				break;
 
 			case 'd':
@@ -110,6 +110,11 @@ int main(int argc, char **argv) {
 	if (!output_matches.empty()) {
 		std::cout << "Writing matches..." << std::endl;
 		multi_camera.write_matches_all(&output_matches);
+	}
+
+	if (!output_disparity_maps.empty()) {
+		std::cout << "Writing disparity maps..." << std::endl;
+		multi_camera.write_disparity_map_all(&output_disparity_maps);
 	}
 
 	Boxes::PointCloud* point_cloud = multi_camera.get_point_cloud();

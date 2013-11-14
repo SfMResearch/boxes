@@ -22,8 +22,6 @@ namespace Boxes {
 			stream << "-" << counter;
 		}
 
-		std::cout << stream.str() << std::endl;
-
 		return stream.str();
 	}
 }
