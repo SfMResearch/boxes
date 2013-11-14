@@ -2,9 +2,13 @@
 /boxes
 /build-aux
 /libtool
+/*.pcd
+/*.jpg
+/*.png
 /*.tar.bz2
 /*.tar.gz
 /*.tar.xz
+/*.vtk
 *.log
 *.a
 *.cache
