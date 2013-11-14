@@ -56,7 +56,7 @@ namespace Boxes {
 			bool has_curve() const;
 			std::vector<cv::Point2f> discretize_curve() const;
 			void draw_curve();
-			PointCloud cut_out_curve(PointCloud* cloud) const;
+			void cut_out_curve(PointCloud* point_cloud) const;
 
 		private:
 			cv::Mat mat;

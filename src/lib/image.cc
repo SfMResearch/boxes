@@ -285,23 +285,19 @@ namespace Boxes {
 		}
 	}
 
-	PointCloud Image::cut_out_curve(PointCloud* cloud) const {
-		PointCloud ret;
-
+	void Image::cut_out_curve(PointCloud* point_cloud) const {
 		if (this->has_curve()) {
 			std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
 			/* Go through the existing point cloud point by point and
 			 * check if the point is within or on the contour of the curve. */
-			for (std::vector<CloudPoint>::const_iterator i = cloud->begin(); i != cloud->end(); i++) {
+			for (std::vector<CloudPoint>::const_iterator i = point_cloud->begin(); i != point_cloud->end(); i++) {
 				double distance = cv::pointPolygonTest(discrete_curve, i->keypoint.pt, false);
 
-				if (GREATER_OR_EQUAL_TO_ZERO(distance)) {
-					ret.add_point((*i));
+				if (!GREATER_OR_EQUAL_TO_ZERO(distance)) {
+					point_cloud->remove_point(&(*i));
 				}
 			}
 		}
-
-		return ret;
 	}
 };
