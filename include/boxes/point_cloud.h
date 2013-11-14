@@ -24,6 +24,7 @@ namespace Boxes {
 	class PointCloud {
 		public:
 			PointCloud();
+			~PointCloud();
 
 			void add_point(CloudPoint point);
 			void remove_point(const CloudPoint* point);
@@ -49,12 +50,24 @@ namespace Boxes {
 
 			void show() const;
 
-			void generate_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>*, pcl::PolygonMesh* mesh) const;
+			// Convex hull
+			const pcl::ConvexHull<pcl::PointXYZRGB>* get_convex_hull();
+			const pcl::PolygonMesh* get_convex_hull_mesh();
+			void write_convex_hull(const std::string filename);
+
+			// Volume
+			double get_volume();
 
 		private:
 			std::vector<CloudPoint> points;
 
 			pcl::PointCloud<pcl::Normal>::Ptr estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const;
+
+			// Convex hull
+			pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull = NULL;
+			pcl::PolygonMesh* convex_hull_mesh = NULL;
+			void compute_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull, pcl::PolygonMesh* convex_hull_mesh) const;
+			void reset_convex_hull();
 	};
 };
 

@@ -30,6 +30,10 @@ namespace Boxes {
 	PointCloud::PointCloud() {
 	}
 
+	PointCloud::~PointCloud() {
+		this->reset_convex_hull();
+	}
+
 	unsigned int PointCloud::size() const {
 		return this->points.size();
 	}
@@ -213,12 +217,60 @@ namespace Boxes {
 		while (!viewer.wasStopped()) {}
 	}
 
-	void PointCloud::generate_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull, pcl::PolygonMesh* mesh) const {
-		// Convert point cloud
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_point_cloud = generate_pcl_point_cloud();
+	const pcl::ConvexHull<pcl::PointXYZRGB>* PointCloud::get_convex_hull() {
+		#pragma omp critical
+		{
+			if (!this->convex_hull) {
+				this->convex_hull = new pcl::ConvexHull<pcl::PointXYZRGB>();
+				this->convex_hull_mesh = new pcl::PolygonMesh();
+
+				this->compute_convex_hull(this->convex_hull, this->convex_hull_mesh);
+			}
+		}
+
+		return this->convex_hull;
+	}
+
+	const pcl::PolygonMesh* PointCloud::get_convex_hull_mesh() {
+		// Calling this makes sure that there is some data to return.
+		this->get_convex_hull();
+
+		return this->convex_hull_mesh;
+	}
+
+	void PointCloud::compute_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull, pcl::PolygonMesh* convex_hull_mesh) const {
+		// Enable computation of area and volume.
+		convex_hull->setComputeAreaVolume(true);
+
+		// Make this a three-dimensional object
+		convex_hull->setDimension(3);
 
 		// Create convex hull
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr pcl_point_cloud = generate_pcl_point_cloud();
 		convex_hull->setInputCloud(pcl_point_cloud);
-		convex_hull->reconstruct(*mesh);
+		convex_hull->reconstruct(*convex_hull_mesh);
+	}
+
+	void PointCloud::reset_convex_hull() {
+		if (!this->convex_hull)
+			return;
+
+		#pragma omp critical
+		{
+			delete this->convex_hull;
+			this->convex_hull = NULL;
+		}
+	}
+
+	void PointCloud::write_convex_hull(const std::string filename) {
+		const pcl::PolygonMesh* convex_hull_mesh = this->get_convex_hull_mesh();
+
+		pcl::io::saveVTKFile(filename, *convex_hull_mesh);
+	}
+
+	double PointCloud::get_volume() {
+		const pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull = this->get_convex_hull();
+
+		return convex_hull->getTotalVolume();
 	}
 }
