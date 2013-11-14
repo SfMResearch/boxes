@@ -2,6 +2,7 @@
 #include <boxes/suppress_warnings.h>
 INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/features/normal_3d.h>
+#include <pcl/io/pcd_io.h>
 #include <pcl/io/vtk_io.h>
 #include <pcl/point_types.h>
 #include <pcl/surface/gp3.h>
@@ -70,12 +71,24 @@ namespace Boxes {
 		return this->points.end();
 	}
 
-	pcl::PolygonMesh* PointCloud::triangulate(const Image* image) const {
+	void PointCloud::merge(const PointCloud* other) {
+		for (std::vector<CloudPoint>::const_iterator i = other->begin(); i != other->end(); i++) {
+			this->add_point(*i);
+		}
+	}
+
+	void PointCloud::write(const std::string filename) const {
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud = this->generate_pcl_point_cloud();
+
+		pcl::io::savePCDFileASCII(filename, *point_cloud);
+	}
+
+	pcl::PolygonMesh* PointCloud::triangulate() const {
 		pcl::PolygonMesh* triangles = new pcl::PolygonMesh();
 
 		if (this->size() > 0) {
 			// Concert point cloud into PCL format.
-			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud(image);
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud();
 			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = convertPointCloud(cloud_rgb);
 
 			// Normal estimation
@@ -133,12 +146,8 @@ namespace Boxes {
 		return normals;
 	}
 
-	pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloud::generate_pcl_point_cloud(const Image* image) const {
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloud::generate_pcl_point_cloud() const {
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-		const cv::Mat* mat = NULL;
-		if (image)
-			mat = image->get_mat();
 
 		for (std::vector<CloudPoint>::const_iterator i = this->begin(); i != this->end(); ++i) {
 			pcl::PointXYZRGB cloud_point;
@@ -194,8 +203,8 @@ namespace Boxes {
 		image_map.write(filename);
 	}
 
-	void PointCloud::visualize_point_cloud(const Image* image) {
-		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud(image);
+	void PointCloud::show() const {
+		pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = this->generate_pcl_point_cloud();
 
 		// Visualize.
 		pcl::visualization::CloudViewer viewer("3D Point Cloud");

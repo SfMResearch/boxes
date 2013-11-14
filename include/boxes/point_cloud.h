@@ -35,15 +35,19 @@ namespace Boxes {
 			std::vector<CloudPoint>::iterator end();
 			std::vector<CloudPoint>::const_iterator end() const;
 
+			void merge(const PointCloud* other);
+
+			void write(const std::string filename) const;
+
 			unsigned int size() const;
 
-			pcl::PolygonMesh* triangulate(const Image* image) const;
+			pcl::PolygonMesh* triangulate() const;
 			void write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const;
 
-			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const Image* image = NULL) const;
+			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud() const;
 			void write_depths_map(std::string filename, Image* image) const;
 
-			void visualize_point_cloud(const Image* image = NULL);
+			void show() const;
 
 			void generate_convex_hull(pcl::ConvexHull<pcl::PointXYZRGB>*, pcl::PolygonMesh* mesh) const;
 
