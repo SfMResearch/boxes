@@ -11,6 +11,10 @@ SUBDIRS = . tests
 # keep intermediate files
 .SECONDARY:
 
+LIBBOXES_CURRENT=0
+LIBBOXES_REVISION=0
+LIBBOXES_AGE=0
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include \
@@ -75,6 +79,10 @@ libboxes_la_CXXFLAGS = \
 	$(OPENMP_CFLAGS) \
 	$(OPENCV_CXXCFLAGS) \
 	$(PCL_CFLAGS)
+
+libboxes_la_LDFLAGS = \
+	$(AM_LDFLAGS) \
+	-version-info $(LIBBOXES_CURRENT):$(LIBBOXES_REVISION):$(LIBBOXES_AGE)
 
 libboxes_la_LIBADD = \
 	$(BOOST_REGEX_LIBS) \
