@@ -130,7 +130,7 @@ namespace Boxes {
 
 		std::vector<uchar> status(this->matches.size());
 
-		#pragma omp critical
+		#pragma omp critical(fundamental_matrix)
 		{
 			this->fundamental_matrix = cv::findFundamentalMat(match_points1, match_points2, status,
 				cv::FM_RANSAC, epipolar_distance, 0.99);
