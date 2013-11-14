@@ -58,6 +58,7 @@ libboxes_la_SOURCES = \
 	src/lib/feature_matcher.cc \
 	src/lib/feature_matcher_optical_flow.cc \
 	src/lib/image.cc \
+	src/lib/multi_camera.cc \
 	src/lib/point_cloud.cc \
 	\
 	src/third-party/moges/NURBS/Curve.cpp \
@@ -91,6 +92,7 @@ pkginclude_HEADERS += \
 	include/boxes/feature_matcher_optical_flow.h \
 	include/boxes/forward_declarations.h \
 	include/boxes/image.h \
+	include/boxes/multi_camera.h \
 	include/boxes/point_cloud.h \
 	include/boxes/structs.h \
 	include/boxes/suppress_warnings.h

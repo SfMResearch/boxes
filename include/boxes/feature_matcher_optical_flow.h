@@ -12,7 +12,6 @@ namespace Boxes {
 				FeatureMatcher(image1, image2) {};
 			~FeatureMatcherOpticalFlow() {};
 
-		private:
 			void match();
 	};
 };

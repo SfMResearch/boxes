@@ -104,98 +104,27 @@ int main(int argc, char **argv) {
 		exit(2);
 	}
 
-	Boxes::CameraMatrix* camera_matrix = NULL;
+	Boxes::MultiCamera multi_camera;
 
+	// Add all images to the multi camera environment
 	for (std::pair<Boxes::Image*, Boxes::Image*> image_pair: boxes.make_pairs()) {
-		Boxes::Image* image1 = image_pair.first;
-		Boxes::Image* image2 = image_pair.second;
-
-		Boxes::FeatureMatcher* matcher = boxes.match(image1, image2, use_optical_flow);
-
-		// Run it.
-		camera_matrix = matcher->run();
-
-		if (!camera_matrix) {
-			std::cerr << "Could not find a suitable camera matrix. Exiting." << std::endl;
-			exit(1);
-		}
-
-		// First, write everything to file.
-		if (!output.empty()) {
-			std::cout << "Writing matched image to " << output << "..." << std::endl;
-			matcher->draw_matches(output);
-		}
-
-		// Delete the matcher, which is not needed any more.
-		delete matcher;
+		multi_camera.add_images(image_pair.first, image_pair.second);
 	}
 
-	assert(camera_matrix);
+	multi_camera.run(use_optical_flow);
 
-	// Get first pair of images again for compatibility...
-	Boxes::Image* image1 = boxes.img_get(0);
-	Boxes::Image* image2 = boxes.img_get(1);
-
-	if (!output_depths_map.empty()) {
-		std::cout << "Writing best depths map to " << output_depths_map << "..." << std::endl;
-		camera_matrix->point_cloud.write_depths_map(output_depths_map, image1);
-	}
-
-	if (!output_disparity_map.empty()) {
-		std::cout << "Writing disparity map to " << output_disparity_map << "..." << std::endl;
-
-		Boxes::Image* disparity_map = image1->get_disparity_map(image2);
-		if (disparity_map) {
-			disparity_map->write(output_disparity_map);
-			delete disparity_map;
-		}
-	}
-
-	/* Strip all points from the point cloud, if they are not within the
-	 * NURBS curve (if that one is available).
-	 */
-	Boxes::PointCloud point_cloud;
-	if (image1->has_curve()) {
-		point_cloud = image1->cut_out_curve(&camera_matrix->point_cloud);
-	} else {
-		point_cloud = camera_matrix->point_cloud;
-	}
-
-	// Calculate mesh
-	pcl::PolygonMesh* mesh = point_cloud.triangulate(image1);
-	pcl::PolygonMesh* mesh_hull = new pcl::PolygonMesh();
-	pcl::ConvexHull<pcl::PointXYZRGB>* hull = new pcl::ConvexHull<pcl::PointXYZRGB>();
-	point_cloud.generate_convex_hull(hull, mesh_hull);
-
-	if (!output_mesh.empty()) {
-		std::cout << "Writing mesh to " << output_mesh << "..." << std::endl;
-		point_cloud.write_polygon_mesh(output_mesh, mesh);
-	}
+	Boxes::PointCloud* point_cloud = multi_camera.get_point_cloud();
 
 	if (!output_hull.empty()) {
 		std::cout << "Writing convex hull to " << output_hull << "..." << std::endl;
-		point_cloud.write_polygon_mesh(output_hull, mesh_hull);
+		point_cloud->write_convex_hull(output_hull);
 	}
 
 	// Print estimated volume.
-	std::cout << "Estimated volume: " << hull->getTotalVolume() << std::endl;
+	std::cout << "Estimated volume: " << point_cloud->get_volume() << std::endl;
 
 	if (visualize)
-		point_cloud.visualize_point_cloud(image1);
-
-	std::cout << camera_matrix->matrix << std::endl;
-
-	// Free memory.
-	delete camera_matrix;
-
-	if (mesh)
-		delete mesh;
-
-	if (mesh_hull)
-		delete mesh_hull;
-
-	if (hull)
-		delete hull;
+		point_cloud->show();
 
 	exit(0);
 }

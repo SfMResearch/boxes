@@ -6,8 +6,6 @@
 #include <string>
 #include <vector>
 
-#include <boxes/feature_matcher.h>
-#include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/image.h>
 
 namespace Boxes {
@@ -19,8 +17,6 @@ namespace Boxes {
 			unsigned int img_read(const std::string filename);
 			Image* img_get(unsigned int index);
 			unsigned int img_size() const;
-
-			FeatureMatcher* match(Image* image1, Image* image2, bool optical_flow = false);
 
 			std::string version_string() const;
 

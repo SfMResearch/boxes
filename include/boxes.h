@@ -9,6 +9,7 @@
 #include <boxes/feature_matcher.h>
 #include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/image.h>
+#include <boxes/multi_camera.h>
 #include <boxes/point_cloud.h>
 
 #endif

@@ -36,17 +36,6 @@ namespace Boxes {
 		return this->images.size();
 	}
 
-	FeatureMatcher* Boxes::match(Image* image1, Image* image2, bool optical_flow) {
-		FeatureMatcher* feature_matcher;
-
-		if (optical_flow)
-			feature_matcher = new FeatureMatcherOpticalFlow(image1, image2);
-		else
-			feature_matcher = new FeatureMatcher(image1, image2);
-
-		return feature_matcher;
-	}
-
 	/*
 	 *
 	 */

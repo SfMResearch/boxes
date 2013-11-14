@@ -19,38 +19,6 @@ namespace Boxes {
 	FeatureMatcher::FeatureMatcher(Image* image1, Image* image2) {
 		this->image1 = image1;
 		this->image2 = image2;
-
-		// Cache keypoint pointers.
-		this->keypoints1 = this->image1->get_keypoints();
-		this->keypoints2 = this->image2->get_keypoints();
-	}
-
-	CameraMatrix* FeatureMatcher::run() {
-		// Match the two given images.
-		this->match();
-
-		// Calculate the fundamental matrix.
-		cv::Mat fundamental_matrix = this->calculate_fundamental_matrix();
-
-		// Calculate the essential matrix.
-		cv::Mat essential_matrix = this->calculate_essential_matrix(&fundamental_matrix);
-
-		// Calculate all possible camera matrices.
-		std::vector<CameraMatrix*> camera_matrices = \
-			this->calculate_possible_camera_matrices(&essential_matrix);
-
-		// Find the best camera matrix.
-		CameraMatrix* best_camera_matrix = this->find_best_camera_matrix(&camera_matrices);
-
-		// Clear all camera matrices, we do not want to use.
-		for (std::vector<CameraMatrix*>::iterator i = camera_matrices.begin(); i != camera_matrices.end(); ++i) {
-			if (*i == best_camera_matrix)
-				continue;
-
-			delete *i;
-		}
-
-		return best_camera_matrix;
 	}
 
 	void FeatureMatcher::match() {
@@ -119,6 +87,10 @@ namespace Boxes {
 		}
 
 		assert(this->matches.size() > 0);
+
+		// Prepare the fundamental matrix.
+		// This will also modify the match, hence it needs to be done here.
+		this->calculate_fundamental_matrix();
 	}
 
 	void FeatureMatcher::draw_matches(const std::string filename) {
@@ -136,9 +108,13 @@ namespace Boxes {
 		image.write(filename);
 	}
 
-	cv::Mat FeatureMatcher::calculate_fundamental_matrix() {
-		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
-		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+	const cv::Mat* FeatureMatcher::get_fundamental_matrix() const {
+		return &this->fundamental_matrix;
+	}
+
+	void FeatureMatcher::calculate_fundamental_matrix() {
+		const std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		const std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
 
 		std::vector<cv::Point2f> match_points1, match_points2;
 		for (std::vector<cv::DMatch>::iterator i = this->matches.begin(); i != this->matches.end(); i++) {
@@ -153,8 +129,12 @@ namespace Boxes {
 		double epipolar_distance = 0.001 * val_max;
 
 		std::vector<uchar> status(this->matches.size());
-		cv::Mat fund = cv::findFundamentalMat(match_points1, match_points2, status,
-			cv::FM_RANSAC, epipolar_distance, 0.99);
+
+		#pragma omp critical
+		{
+			this->fundamental_matrix = cv::findFundamentalMat(match_points1, match_points2, status,
+				cv::FM_RANSAC, epipolar_distance, 0.99);
+		}
 
 		// Sort out bad matches.
 		std::vector<cv::DMatch> best_matches;
@@ -163,14 +143,12 @@ namespace Boxes {
 				best_matches.push_back(this->matches[i]);
 		}
 		this->matches = best_matches;
-
-		return fund;
 	}
 
-	cv::Mat FeatureMatcher::calculate_essential_matrix(cv::Mat* fundamental_matrix) {
+	cv::Mat FeatureMatcher::calculate_essential_matrix() {
 		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
 
-		return camera_matrix.t() * (*fundamental_matrix) * camera_matrix;
+		return camera_matrix.t() * this->fundamental_matrix * camera_matrix;
 	}
 
 	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix, bool check_coherency) {
@@ -230,11 +208,18 @@ namespace Boxes {
 		return matrices;
 	}
 
-	CameraMatrix* FeatureMatcher::find_best_camera_matrix(std::vector<CameraMatrix*>* camera_matrices) {
+	CameraMatrix* FeatureMatcher::calculate_camera_matrix() {
+		// Calculate the essential matrix.
+		cv::Mat essential_matrix = this->calculate_essential_matrix();
+
+		// Calculate all possible camera matrices.
+		std::vector<CameraMatrix*> camera_matrices = \
+			this->calculate_possible_camera_matrices(&essential_matrix);
+
 		cv::Matx34d P0 = cv::Matx34d::eye();
 
 		CameraMatrix* best_matrix = NULL;
-		for (std::vector<CameraMatrix*>::iterator i = camera_matrices->begin(); i != camera_matrices->end(); ++i) {
+		for (std::vector<CameraMatrix*>::iterator i = camera_matrices.begin(); i != camera_matrices.end(); ++i) {
 			CameraMatrix* camera_matrix = *i;
 
 			// Check for coherency of the rotation matrix.
@@ -261,6 +246,14 @@ namespace Boxes {
 				continue;
 			}
 #endif
+		}
+
+		// Clear all camera matrices, we do not want to use.
+		for (std::vector<CameraMatrix*>::iterator i = camera_matrices.begin(); i != camera_matrices.end(); ++i) {
+			if (*i == best_matrix)
+				continue;
+
+			delete *i;
 		}
 
 		return best_matrix;
@@ -395,5 +388,14 @@ namespace Boxes {
 		Y(3) = 1.0;
 
 		return Y;
+	}
+
+	int FeatureMatcher::find_corresponding_keypoint(int keypoint_index) const {
+		for (cv::DMatch match: this->matches) {
+			if (match.queryIdx == keypoint_index)
+				return match.trainIdx;
+		}
+
+		return -1;
 	}
 }
