@@ -1,13 +1,10 @@
 
 #include <boxes/suppress_warnings.h>
 INCLUDE_IGNORE_WARNINGS_BEGIN
-#include <pcl/features/normal_3d.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/vtk_io.h>
 #include <pcl/point_types.h>
-#include <pcl/surface/gp3.h>
 #include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/surface/convex_hull.h>
 INCLUDE_IGNORE_WARNINGS_END
 
@@ -85,69 +82,6 @@ namespace Boxes {
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud = this->generate_pcl_point_cloud();
 
 		pcl::io::savePCDFileASCII(filename, *point_cloud);
-	}
-
-	pcl::PolygonMesh* PointCloud::triangulate() const {
-		pcl::PolygonMesh* triangles = new pcl::PolygonMesh();
-
-		if (this->size() > 0) {
-			// Concert point cloud into PCL format.
-			pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_rgb = this->generate_pcl_point_cloud();
-			pcl::PointCloud<pcl::PointXYZ>::Ptr cloud = convertPointCloud(cloud_rgb);
-
-			// Normal estimation
-			pcl::PointCloud<pcl::Normal>::Ptr normals = this->estimate_normals(cloud);
-
-			// Concatenate points and normal fields.
-			pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals(new pcl::PointCloud<pcl::PointNormal>);
-			pcl::concatenateFields(*cloud, *normals, *cloud_with_normals);
-
-			// Create search tree
-			pcl::search::KdTree<pcl::PointNormal>::Ptr tree(new pcl::search::KdTree<pcl::PointNormal>);
-			tree->setInputCloud(cloud_with_normals);
-
-			// Initialize triangulation
-			pcl::GreedyProjectionTriangulation<pcl::PointNormal> pt = pcl::GreedyProjectionTriangulation<pcl::PointNormal>();
-
-			// Set the maximum distance between connected points (maximum edge length)
-			pt.setSearchRadius(POINT_CLOUD_TRIANGULATION_SEARCH_RADIUS);
-
-			// Set typical values for the parameters
-			pt.setMu(POINT_CLOUD_TRIANGULATION_MULTIPLIER);
-			pt.setMaximumNearestNeighbors(POINT_CLOUD_TRIANGULATION_MAX_NEAREST_NEIGHBOUR);
-			pt.setMaximumSurfaceAngle(POINT_CLOUD_TRIANGULATION_MAX_SURFACE_ANGLE);
-			pt.setMinimumAngle(POINT_CLOUD_TRIANGULATION_MIN_ANGLE);
-			pt.setMaximumAngle(POINT_CLOUD_TRIANGULATION_MAX_ANGLE);
-			pt.setNormalConsistency(false);
-
-			// Get result
-			pt.setInputCloud(cloud_with_normals);
-			pt.setSearchMethod(tree);
-			pt.reconstruct(*triangles);
-		}
-
-		return triangles;
-	}
-
-	void PointCloud::write_polygon_mesh(std::string filename, pcl::PolygonMesh* mesh) const {
-		pcl::io::saveVTKFile(filename, *mesh);
-	}
-
-	pcl::PointCloud<pcl::Normal>::Ptr PointCloud::estimate_normals(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud) const {
-		pcl::PointCloud<pcl::Normal>::Ptr normals(new pcl::PointCloud<pcl::Normal>);
-
-		if (cloud->size() > 0) {
-			pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
-			tree->setInputCloud(cloud);
-
-			pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> normal_estimation;
-			normal_estimation.setInputCloud(cloud);
-			normal_estimation.setSearchMethod(tree);
-			normal_estimation.setKSearch(20);
-			normal_estimation.compute(*normals);
-		}
-
-		return normals;
 	}
 
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr PointCloud::generate_pcl_point_cloud() const {
