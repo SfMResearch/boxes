@@ -18,6 +18,8 @@ namespace Boxes {
 			void add_images(Image* first, Image* second);
 			std::pair<Image*, Image*> get_image_pair(unsigned int pair_index) const;
 
+			FeatureMatcher* get_feature_matcher(unsigned int index) const;
+
 			void run(bool use_optical_flow);
 
 			void write_disparity_map(unsigned int pair_index, std::string filename) const;
@@ -25,6 +27,8 @@ namespace Boxes {
 			PointCloud* get_point_cloud() const;
 
 		protected:
+			std::vector<FeatureMatcher*> feature_matchers;
+
 			std::vector<std::pair<Image*, Image*>> image_pairs;
 			PointCloud* point_cloud;
 

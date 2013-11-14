@@ -16,6 +16,9 @@ namespace Boxes {
 	}
 
 	MultiCamera::~MultiCamera() {
+		for (FeatureMatcher* feature_matcher: this->feature_matchers)
+			delete feature_matcher;
+
 		delete this->point_cloud;
 	}
 
@@ -32,9 +35,14 @@ namespace Boxes {
 		return this->image_pairs[pair_index];
 	}
 
-	void MultiCamera::run(bool use_optical_flow) {
-		std::vector<FeatureMatcher*> feature_matchers;
+	FeatureMatcher* MultiCamera::get_feature_matcher(unsigned int index) const {
+		if (index >= this->feature_matchers.size())
+			throw new std::exception();
 
+		return this->feature_matchers[index];
+	}
+
+	void MultiCamera::run(bool use_optical_flow) {
 		// Create feature matchers for each image pair.
 		for (std::pair<Image*, Image*> image_pair: this->image_pairs) {
 			Image* image1 = image_pair.first;
@@ -42,12 +50,12 @@ namespace Boxes {
 
 			// Match the two images.
 			FeatureMatcher* matcher = this->match(image1, image2, use_optical_flow);
-			feature_matchers.push_back(matcher);
+			this->feature_matchers.push_back(matcher);
 		}
 
 		// Calculate matches in parallel.
 		#pragma omp parallel for
-		for (unsigned int i = 0; i < feature_matchers.size(); i++) {
+		for (unsigned int i = 0; i < this->feature_matchers.size(); i++) {
 			FeatureMatcher* matcher = feature_matchers[i];
 
 			matcher->match();
@@ -56,7 +64,7 @@ namespace Boxes {
 
 		CameraMatrix* camera_matrix = NULL;
 
-		for (FeatureMatcher* matcher: feature_matchers) {
+		for (FeatureMatcher* matcher: this->feature_matchers) {
 			Image* image1 = matcher->image1;
 			Image* image2 = matcher->image2;
 
@@ -124,9 +132,6 @@ namespace Boxes {
 		std::cout << this->point_cloud->size() << std::endl;
 
 		this->point_cloud->write("point_cloud.pcd");
-
-		for (FeatureMatcher* feature_matcher: feature_matchers)
-			delete feature_matcher;
 
 		if (camera_matrix)
 			delete camera_matrix;
