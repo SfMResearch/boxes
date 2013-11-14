@@ -37,6 +37,19 @@ namespace Boxes {
 		this->points.push_back(point);
 	}
 
+	void PointCloud::remove_point(const CloudPoint* point) {
+		int i = 0;
+
+		for (CloudPoint cp: this->points) {
+			if (&cp == point) {
+				this->points.erase(this->points.begin() + i);
+				break;
+			}
+
+			i++;
+		}
+	}
+
 	const std::vector<CloudPoint>* PointCloud::get_points() const {
 		return &this->points;
 	}

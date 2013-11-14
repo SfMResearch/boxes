@@ -26,6 +26,7 @@ namespace Boxes {
 			PointCloud();
 
 			void add_point(CloudPoint point);
+			void remove_point(const CloudPoint* point);
 			const std::vector<CloudPoint>* get_points() const;
 
 			// Iterator implementation
