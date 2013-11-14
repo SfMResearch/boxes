@@ -6,6 +6,7 @@
 #include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/multi_camera.h>
 #include <boxes/image.h>
+#include <boxes/util.h>
 
 namespace Boxes {
 	/*
@@ -160,5 +161,16 @@ namespace Boxes {
 			disparity_map->write(filename);
 			delete disparity_map;
 		}
+	}
+
+	void MultiCamera::write_matches_all(const std::string* filename) const {
+		for (unsigned int i = 0; i < this->feature_matchers.size(); i++)
+			this->write_matches_one(filename, i);
+	}
+
+	void MultiCamera::write_matches_one(const std::string* filename, unsigned int pair_index) const {
+		FeatureMatcher* matcher = this->get_feature_matcher(pair_index);
+
+		matcher->draw_matches(filename_implant_counter(filename, pair_index));
 	}
 }

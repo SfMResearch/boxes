@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 	std::string output;
 	std::string output_depths_map;
 	std::string output_disparity_map;
-	std::string output_mesh;
+	std::string output_matches;
 	std::string output_hull;
 
 	bool use_optical_flow = false;
@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
 		static struct option long_options[] = {
 			{"depths-map",    required_argument,  0, 'd'},
 			{"disparity-map", required_argument,  0, 'D'},
-			{"mesh",          required_argument,  0, 'm'},
+			{"matches",       required_argument,  0, 'm'},
 			{"convex-hull",   required_argument,  0, 'c'},
 			{"optical-flow",  no_argument,        0, 'O'},
 			{"output",        required_argument,  0, 'o'},
@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'm':
-				output_mesh.assign(optarg);
+				output_matches.assign(optarg);
 				break;
 
 			case 'c':
@@ -112,6 +112,11 @@ int main(int argc, char **argv) {
 	}
 
 	multi_camera.run(use_optical_flow);
+
+	if (!output_matches.empty()) {
+		std::cout << "Writing matches..." << std::endl;
+		multi_camera.write_matches_all(&output_matches);
+	}
 
 	Boxes::PointCloud* point_cloud = multi_camera.get_point_cloud();
 

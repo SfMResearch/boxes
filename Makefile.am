@@ -64,6 +64,7 @@ libboxes_la_SOURCES = \
 	src/lib/image.cc \
 	src/lib/multi_camera.cc \
 	src/lib/point_cloud.cc \
+	src/lib/util.cc \
 	\
 	src/third-party/moges/NURBS/Curve.cpp \
 	src/third-party/moges/NURBS/Factories.cpp \
@@ -103,4 +104,5 @@ pkginclude_HEADERS += \
 	include/boxes/multi_camera.h \
 	include/boxes/point_cloud.h \
 	include/boxes/structs.h \
-	include/boxes/suppress_warnings.h
+	include/boxes/suppress_warnings.h \
+	include/boxes/util.h
