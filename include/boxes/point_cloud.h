@@ -15,7 +15,6 @@ INCLUDE_IGNORE_WARNINGS_END
 #include <boxes/cloud_point.h>
 #include <boxes/forward_declarations.h>
 #include <boxes/image.h>
-#include <boxes/structs.h>
 
 #define POINT_CLOUD_USE_STATISTICAL_OUTLIER_REMOVAL
 
