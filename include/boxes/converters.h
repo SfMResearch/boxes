@@ -7,11 +7,6 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include <boxes/suppress_warnings.h>
-INCLUDE_IGNORE_WARNINGS_BEGIN
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
-INCLUDE_IGNORE_WARNINGS_END
 #endif
 
 namespace Boxes {
@@ -37,18 +32,6 @@ namespace Boxes {
 		}
 
 		return points;
-	}
-
-	// PointCloud<PointXYZRGB> to PointCloud<PointXYZ>
-	inline pcl::PointCloud<pcl::PointXYZ>::Ptr convertPointCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_in) {
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
-
-		for (pcl::PointCloud<pcl::PointXYZRGB>::const_iterator i = cloud_in->begin(); i != cloud_in->end(); ++i) {
-			pcl::PointXYZ point = pcl::PointXYZ(i->x, i->y, i->z);
-			cloud_out->push_back(point);
-		}
-
-		return cloud_out;
 	}
 
 	inline cv::Matx34d merge_rotation_and_translation_matrix(const cv::Mat_<double>* rotation, const cv::Mat_<double>* translation) {
