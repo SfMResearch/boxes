@@ -10,7 +10,6 @@
 int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
-	std::string output;
 	std::string output_depths_map;
 	std::string output_disparity_map;
 	std::string output_matches;
@@ -26,14 +25,13 @@ int main(int argc, char **argv) {
 			{"matches",       required_argument,  0, 'm'},
 			{"convex-hull",   required_argument,  0, 'c'},
 			{"optical-flow",  no_argument,        0, 'O'},
-			{"output",        required_argument,  0, 'o'},
 			{"version",       no_argument,        0, 'V'},
 			{"visualize",     no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:D:d:m:Oo:Vv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:D:d:m:OVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -67,10 +65,6 @@ int main(int argc, char **argv) {
 
 			case 'O':
 				use_optical_flow = true;
-				break;
-
-			case 'o':
-				output.assign(optarg);
 				break;
 
 			case 'V':
