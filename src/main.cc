@@ -10,7 +10,7 @@
 int main(int argc, char **argv) {
 	Boxes::Boxes boxes;
 
-	std::string output_depths_map;
+	std::string output_depths_maps;
 	std::string output_disparity_maps;
 	std::string output_matches;
 	std::string output_hull;
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		static struct option long_options[] = {
-			{"depths-map",     required_argument,  0, 'd'},
+			{"depths-maps",    required_argument,  0, 'd'},
 			{"disparity-maps", required_argument,  0, 'D'},
 			{"matches",        required_argument,  0, 'm'},
 			{"convex-hull",    required_argument,  0, 'c'},
@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
 				break;
 
 			case 'd':
-				output_depths_map.assign(optarg);
+				output_depths_maps.assign(optarg);
 				break;
 
 			case 'm':
@@ -110,6 +110,11 @@ int main(int argc, char **argv) {
 	if (!output_matches.empty()) {
 		std::cout << "Writing matches..." << std::endl;
 		multi_camera.write_matches_all(&output_matches);
+	}
+
+	if (!output_depths_maps.empty()) {
+		std::cout << "Writing depths maps..." << std::endl;
+		multi_camera.write_depths_map_all(&output_depths_maps);
 	}
 
 	if (!output_disparity_maps.empty()) {

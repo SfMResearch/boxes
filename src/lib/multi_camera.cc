@@ -178,4 +178,22 @@ namespace Boxes {
 
 		matcher->draw_matches(filename_implant_counter(filename, pair_index));
 	}
+
+	void MultiCamera::write_depths_map_all(const std::string* filename) const {
+		for (unsigned int i = 0; i < this->feature_matchers.size(); i++)
+			this->write_depths_map_one(filename, i);
+	}
+
+	void MultiCamera::write_depths_map_one(const std::string* filename, unsigned int pair_index) const {
+		FeatureMatcher* matcher = this->get_feature_matcher(pair_index);
+
+		CameraMatrix* camera_matrix = matcher->calculate_camera_matrix();
+
+		if (camera_matrix) {
+			camera_matrix->point_cloud.write_depths_map(
+				filename_implant_counter(filename, pair_index), matcher->image2);
+
+			delete camera_matrix;
+		}
+	}
 }

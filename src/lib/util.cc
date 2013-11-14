@@ -1,11 +1,8 @@
 
-#include <vector>
+#include <sstream>
+#include <string>
 
-#include <boxes/converters.h>
-#include <boxes/feature_matcher.h>
-#include <boxes/feature_matcher_optical_flow.h>
-#include <boxes/multi_camera.h>
-#include <boxes/image.h>
+#include <boxes/util.h>
 
 namespace Boxes {
 	std::string filename_implant_counter(const std::string* filename, int counter) {
