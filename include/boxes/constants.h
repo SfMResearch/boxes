@@ -59,7 +59,7 @@
 // #define OPTICAL_FLOW_USE_GFTT
 #define OF_SEARCH_WINDOW_SIZE           50
 #define OF_MAX_PYRAMIDS                  5
-#define OF_MAX_VERROR                   5.0
+#define OF_MAX_VERROR                    5.0
 #define OF_RADIUS_MATCH                 (float)OF_SEARCH_WINDOW_SIZE
 
 // Triangulation
