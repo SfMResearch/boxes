@@ -15,6 +15,10 @@ LIBBOXES_CURRENT=0
 LIBBOXES_REVISION=0
 LIBBOXES_AGE=0
 
+pkgconfiglibdir=$(libdir)/pkgconfig
+CLEANFILES =
+EXTRA_DIST =
+
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I $(top_srcdir)/include \
@@ -106,3 +110,30 @@ pkginclude_HEADERS += \
 	include/boxes/structs.h \
 	include/boxes/suppress_warnings.h \
 	include/boxes/util.h
+
+pkgconfiglib_DATA = \
+	src/lib/boxes.pc
+
+CLEANFILES += \
+	src/lib/boxes.pc
+
+EXTRA_DIST += \
+	src/lib/boxes.pc.in
+
+#-------------------------------------------------------------------------------
+
+substitutions = \
+	'|PACKAGE_NAME=$(PACKAGE_NAME)|' \
+	'|PACKAGE_VERSION=$(PACKAGE_VERSION)|' \
+	'|PACKAGE_URL=$(PACKAGE_URL)|' \
+	'|prefix=$(prefix)|' \
+	'|exec_prefix=$(exec_prefix)|' \
+	'|libdir=$(libdir)|' \
+	'|includedir=$(includedir)|'
+
+SED_PROCESS = \
+	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && \
+	$(SED) $(subst '|,-e 's|@,$(subst =,\@|,$(subst |',|g',$(substitutions)))) < $< > $@
+
+%.pc: %.pc.in Makefile
+	$(SED_PROCESS)
