@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <boxes/forward_declarations.h>
+#include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/point_cloud.h>
 
@@ -57,6 +58,9 @@ namespace Boxes {
 			std::vector<cv::Point2f> discretize_curve() const;
 			void draw_curve();
 			void cut_out_curve(PointCloud* point_cloud) const;
+
+			CameraMatrix* camera_matrix = NULL;
+			void update_camera_matrix(CameraMatrix* camera_matrix);
 
 		private:
 			cv::Mat mat;

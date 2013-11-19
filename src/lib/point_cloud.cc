@@ -77,6 +77,10 @@ namespace Boxes {
 		}
 	}
 
+	void PointCloud::clear() {
+		this->points.clear();
+	}
+
 	void PointCloud::write(const std::string filename) const {
 		pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud = this->generate_pcl_point_cloud();
 
@@ -185,7 +189,7 @@ namespace Boxes {
 	}
 
 	void PointCloud::reset_convex_hull() {
-		if (!this->convex_hull)
+		if (this->convex_hull == NULL)
 			return;
 
 		#pragma omp critical

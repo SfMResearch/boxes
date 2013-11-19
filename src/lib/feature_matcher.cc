@@ -19,6 +19,12 @@ namespace Boxes {
 	FeatureMatcher::FeatureMatcher(Image* image1, Image* image2) {
 		this->image1 = image1;
 		this->image2 = image2;
+
+		this->point_cloud = new PointCloud();
+	}
+
+	FeatureMatcher::~FeatureMatcher() {
+		delete this->point_cloud;
 	}
 
 	void FeatureMatcher::match() {
@@ -256,7 +262,19 @@ namespace Boxes {
 			delete *i;
 		}
 
+		this->point_cloud->clear();
+		this->point_cloud->merge(&best_matrix->point_cloud);
+		this->image2->update_camera_matrix(best_matrix);
+
 		return best_matrix;
+	}
+
+	double FeatureMatcher::triangulate_points() {
+		return this->triangulate_points(
+			&this->image1->camera_matrix->matrix,
+			&this->image2->camera_matrix->matrix,
+			this->point_cloud
+		);
 	}
 
 	double FeatureMatcher::triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud) {

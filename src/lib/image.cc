@@ -15,9 +15,12 @@
 
 namespace Boxes {
 	Image::Image() {
+		this->camera_matrix = new CameraMatrix();
 	}
 
 	Image::Image(const std::string filename) {
+		Image();
+
 		this->mat = cv::imread(filename);
 		assert(!this->mat.empty());
 
@@ -44,6 +47,9 @@ namespace Boxes {
 				i != this->keypoints.end(); i++) {
 			delete i->second;
 		}
+
+		if (this->camera_matrix)
+			delete this->camera_matrix;
 	}
 
 	void Image::decode_jfif_data(std::string filename) {
@@ -299,5 +305,12 @@ namespace Boxes {
 				}
 			}
 		}
+	}
+
+	void Image::update_camera_matrix(CameraMatrix* camera_matrix) {
+		if (this->camera_matrix)
+			delete this->camera_matrix;
+
+		this->camera_matrix = camera_matrix;
 	}
 };

@@ -35,6 +35,7 @@ namespace Boxes {
 			std::vector<CloudPoint>::const_iterator end() const;
 
 			void merge(const PointCloud* other);
+			void clear();
 
 			void write(const std::string filename) const;
 

@@ -9,7 +9,21 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
+	CameraMatrix::CameraMatrix() {
+		cv::Matx34d matrix = cv::Matx34d(
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0
+		);
+
+		this->init(matrix);
+	}
+
 	CameraMatrix::CameraMatrix(cv::Matx34d matrix) {
+		this->init(matrix);
+	}
+
+	void CameraMatrix::init(cv::Matx34d matrix) {
 		this->matrix = matrix;
 	}
 

@@ -18,17 +18,19 @@ namespace Boxes {
 	class FeatureMatcher {
 		public:
 			FeatureMatcher(Image* image1, Image* image2);
-			virtual ~FeatureMatcher() {};
+			virtual ~FeatureMatcher();
 
 			Image* image1;
 			Image* image2;
+			PointCloud* point_cloud;
 
 			virtual void match();
 			CameraMatrix* calculate_camera_matrix();
 
 			void draw_matches(const std::string filename);
 
-			double triangulate_points(const cv::Matx34d* p0, const cv::Matx34d* p1, PointCloud* point_cloud);
+			double triangulate_points();
+			double triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud);
 			int find_corresponding_keypoint(int keypoint_index) const;
 
 		protected:

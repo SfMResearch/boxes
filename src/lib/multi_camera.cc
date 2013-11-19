@@ -64,6 +64,7 @@ namespace Boxes {
 		#pragma omp barrier
 
 		CameraMatrix* camera_matrix = NULL;
+		FeatureMatcher* last_matcher = NULL;
 
 		for (FeatureMatcher* matcher: this->feature_matchers) {
 			Image* image1 = matcher->image1;
@@ -75,27 +76,26 @@ namespace Boxes {
 				camera_matrix = matcher->calculate_camera_matrix();
 				std::cout << camera_matrix->matrix << std::endl;
 
-
 				/* Strip all points from the point cloud, if they are not within the
 				 * NURBS curve (if that one is available).
 				 */
 				if (image2->has_curve()) {
-					image2->cut_out_curve(&camera_matrix->point_cloud);
+					image2->cut_out_curve(matcher->point_cloud);
 				}
 
-				// Merge all points from the best camera matrix's point cloud.
-				this->point_cloud->merge(&camera_matrix->point_cloud);
-
+				last_matcher = matcher;
 				continue;
 			}
+
+			assert(last_matcher);
 
 			std::vector<cv::KeyPoint>* keypoints2 = image2->get_keypoints();
 
 			std::vector<cv::Point3f> local_point_cloud;
 			std::vector<cv::Point2f> image_points;
-			std::vector<int> point_cloud_status(this->point_cloud->size(), 0);
+			std::vector<int> point_cloud_status(last_matcher->point_cloud->size(), 0);
 
-			for (std::vector<CloudPoint>::iterator i = this->point_cloud->begin(); i != this->point_cloud->end(); i++) {
+			for (std::vector<CloudPoint>::iterator i = last_matcher->point_cloud->begin(); i != last_matcher->point_cloud->end(); i++) {
 				int keypoint2_index = matcher->find_corresponding_keypoint(i->keypoint_index);
 
 				if (keypoint2_index >= 0) {
@@ -104,8 +104,6 @@ namespace Boxes {
 					local_point_cloud.push_back(i->pt);
 					image_points.push_back(keypoint2.pt);
 				}
-
-				i->keypoint_index = keypoint2_index;
 			}
 
 			cv::Mat_<double> rvec;
@@ -121,11 +119,16 @@ namespace Boxes {
 
 			// Compose combined rotation and translation matrix.
 			cv::Matx34d matrix = merge_rotation_and_translation_matrix(&rotation, &translation);
+			CameraMatrix* camera_matrix = new CameraMatrix(matrix);
+			image2->update_camera_matrix(camera_matrix);
 
-			matcher->triangulate_points(&camera_matrix->matrix, &matrix, this->point_cloud);
-			camera_matrix->matrix = matrix;
+			matcher->triangulate_points();
 
-			std::cout << matrix << std::endl;
+			last_matcher = matcher;
+		}
+
+		for (FeatureMatcher* matcher: this->feature_matchers) {
+			this->point_cloud->merge(matcher->point_cloud);
 		}
 
 		std::cout << camera_matrix->matrix << std::endl;
