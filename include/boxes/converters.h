@@ -43,6 +43,13 @@ namespace Boxes {
 
 		return matrix;
 	}
+
+	inline cv::Mat normalize(cv::Mat input) {
+		cv::Mat output;
+		cv::normalize(input, output);
+
+		return output;
+	}
 #endif
 
 };

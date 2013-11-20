@@ -19,6 +19,10 @@ namespace Boxes {
 		this->init(matrix);
 	}
 
+	CameraMatrix::CameraMatrix(CameraMatrix* old) {
+		this->init(old->matrix);
+	}
+
 	CameraMatrix::CameraMatrix(cv::Matx34d matrix) {
 		this->init(matrix);
 	}
@@ -27,8 +31,16 @@ namespace Boxes {
 		this->matrix = matrix;
 	}
 
+	cv::Mat CameraMatrix::get_rotation_matrix() const {
+		return cv::Mat(this->matrix).colRange(0, 3);
+	}
+
+	cv::Mat CameraMatrix::get_translation_vector() const {
+		return cv::Mat(this->matrix).col(3);
+	}
+
 	double CameraMatrix::get_rotation_determinant() const {
-		cv::Mat rotation = cv::Mat(this->matrix).colRange(0, 3);
+		cv::Mat rotation = this->get_rotation_matrix();
 
 		return cv::determinant(rotation);
 	}

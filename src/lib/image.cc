@@ -15,11 +15,11 @@
 
 namespace Boxes {
 	Image::Image() {
-		this->camera_matrix = new CameraMatrix();
+		this->init();
 	}
 
 	Image::Image(const std::string filename) {
-		Image();
+		this->init();
 
 		this->mat = cv::imread(filename);
 		assert(!this->mat.empty());
@@ -35,7 +35,15 @@ namespace Boxes {
 	}
 
 	Image::Image(cv::Mat mat) {
+		this->init();
+
 		this->mat = mat;
+	}
+
+	void Image::init() {
+		CameraMatrix matrix;
+
+		this->update_camera_matrix(&matrix);
 	}
 
 	Image::~Image() {
@@ -308,9 +316,9 @@ namespace Boxes {
 	}
 
 	void Image::update_camera_matrix(CameraMatrix* camera_matrix) {
-		if (this->camera_matrix)
+		if (this->camera_matrix != NULL)
 			delete this->camera_matrix;
 
-		this->camera_matrix = camera_matrix;
+		this->camera_matrix = new CameraMatrix(camera_matrix);
 	}
 };

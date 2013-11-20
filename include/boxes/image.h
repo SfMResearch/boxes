@@ -21,6 +21,7 @@ namespace Boxes {
 			Image();
 			Image(const std::string filename);
 			Image(cv::Mat mat);
+			void init();
 			~Image();
 
 			// Basic methods.

@@ -14,6 +14,7 @@ namespace Boxes {
 	class CameraMatrix {
 		public:
 			CameraMatrix();
+			CameraMatrix(CameraMatrix* old);
 			CameraMatrix(cv::Matx34d matrix);
 
 			cv::Matx34d matrix;
@@ -21,6 +22,9 @@ namespace Boxes {
 			double reprojection_error;
 
 			// Methods
+			cv::Mat get_rotation_matrix() const;
+			cv::Mat get_translation_vector() const;
+
 			double get_rotation_determinant() const;
 			bool rotation_is_coherent() const;
 			double percentage_of_points_in_front_of_camera() const;

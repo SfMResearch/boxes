@@ -133,7 +133,7 @@ int main(int argc, char **argv) {
 	std::cout << "Estimated volume: " << point_cloud->get_volume() << std::endl;
 
 	if (visualize)
-		point_cloud->show();
+		multi_camera.show();
 
 	exit(0);
 }

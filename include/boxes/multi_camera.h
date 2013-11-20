@@ -15,6 +15,8 @@ namespace Boxes {
 			MultiCamera();
 			~MultiCamera();
 
+			void show() const;
+
 			void add_images(Image* first, Image* second);
 			std::pair<Image*, Image*> get_image_pair(unsigned int pair_index) const;
 
@@ -36,10 +38,16 @@ namespace Boxes {
 		protected:
 			std::vector<FeatureMatcher*> feature_matchers;
 
+			std::vector<Image*> images;
+			void add_image(Image* image);
+
 			std::vector<std::pair<Image*, Image*>> image_pairs;
 			PointCloud* point_cloud;
 
 			FeatureMatcher* match(Image* image1, Image* image2, bool optical_flow) const;
+
+			std::pair<pcl::PolygonMesh, std::pair<pcl::PointXYZ, pcl::PointXYZ>>
+				make_camera_polygon(Image* image, uint8_t r, uint8_t g, uint8_t b, double s) const;
 	};
 };
 
