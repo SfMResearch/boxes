@@ -143,10 +143,6 @@ namespace Boxes {
 		for (FeatureMatcher* matcher: this->feature_matchers) {
 			this->point_cloud->merge(matcher->point_cloud);
 		}
-
-		std::cout << this->point_cloud->size() << std::endl;
-
-		this->point_cloud->write("point_cloud.pcd");
 	}
 
 	FeatureMatcher* MultiCamera::match(Image* image1, Image* image2, bool optical_flow) const {
