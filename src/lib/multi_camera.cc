@@ -267,7 +267,7 @@ namespace Boxes {
 		return std::make_pair(camera_mesh, line);
 	}
 
-	void MultiCamera::show() const {
+	void MultiCamera::show(bool transparent) const {
 		// Visualize.
 		pcl::visualization::PCLVisualizer viewer("Point Cloud");
 
@@ -294,6 +294,14 @@ namespace Boxes {
 			viewer.addLine<pcl::PointXYZ, pcl::PointXYZ>(
 				camera_line.first, camera_line.second, 1.0, 1.0, 1.0, name.str());
 		}
+
+		// Add the convex hull
+		const pcl::PolygonMesh* convex_hull = this->point_cloud->get_convex_hull_mesh();
+
+		if (transparent)
+			viewer.addPolylineFromPolygonMesh(*convex_hull, "Convex Hull");
+		else
+			viewer.addPolygonMesh(*convex_hull, "Convex Hull");
 
 		while (!viewer.wasStopped()) {
 			viewer.spinOnce();

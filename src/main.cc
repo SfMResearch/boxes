@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
 
 	bool use_optical_flow = false;
 	bool visualize = false;
+	bool visualize_transparent = false;
 
 	while (1) {
 		static struct option long_options[] = {
@@ -25,13 +26,14 @@ int main(int argc, char **argv) {
 			{"matches",        required_argument,  0, 'm'},
 			{"convex-hull",    required_argument,  0, 'c'},
 			{"optical-flow",   no_argument,        0, 'O'},
+			{"transparent",    no_argument,        0, 't'},
 			{"version",        no_argument,        0, 'V'},
 			{"visualize",      no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:D:d:m:OVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "c:D:d:m:OtVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -65,6 +67,10 @@ int main(int argc, char **argv) {
 
 			case 'O':
 				use_optical_flow = true;
+				break;
+
+			case 't':
+				visualize_transparent = true;
 				break;
 
 			case 'V':
@@ -133,7 +139,7 @@ int main(int argc, char **argv) {
 	std::cout << "Estimated volume: " << point_cloud->get_volume() << std::endl;
 
 	if (visualize)
-		multi_camera.show();
+		multi_camera.show(visualize_transparent);
 
 	exit(0);
 }
