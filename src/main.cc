@@ -17,23 +17,25 @@ int main(int argc, char **argv) {
 
 	bool use_optical_flow = false;
 	bool visualize = false;
+	bool visualize_convex_hull = false;
 	bool visualize_transparent = false;
 
 	while (1) {
 		static struct option long_options[] = {
-			{"depths-maps",    required_argument,  0, 'd'},
-			{"disparity-maps", required_argument,  0, 'D'},
-			{"matches",        required_argument,  0, 'm'},
-			{"convex-hull",    required_argument,  0, 'c'},
-			{"optical-flow",   no_argument,        0, 'O'},
-			{"transparent",    no_argument,        0, 't'},
-			{"version",        no_argument,        0, 'V'},
-			{"visualize",      no_argument,        0, 'v'},
+			{"visualize-convex-hull", no_argument,        0, 'C'},
+			{"convex-hull",           required_argument,  0, 'c'},
+			{"depths-maps",           required_argument,  0, 'd'},
+			{"disparity-maps",        required_argument,  0, 'D'},
+			{"matches",               required_argument,  0, 'm'},
+			{"optical-flow",          no_argument,        0, 'O'},
+			{"transparent",           no_argument,        0, 't'},
+			{"version",               no_argument,        0, 'V'},
+			{"visualize",             no_argument,        0, 'v'},
 			{0, 0, 0, 0}
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "c:D:d:m:OtVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "Cc:D:d:m:OtVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -49,6 +51,14 @@ int main(int argc, char **argv) {
 				std::cerr << std::endl;
 				break;
 
+			case 'C':
+				visualize_convex_hull = true;
+				break;
+
+			case 'c':
+				output_hull.assign(optarg);
+				break;
+
 			case 'D':
 				output_disparity_maps.assign(optarg);
 				break;
@@ -59,10 +69,6 @@ int main(int argc, char **argv) {
 
 			case 'm':
 				output_matches.assign(optarg);
-				break;
-
-			case 'c':
-				output_hull.assign(optarg);
 				break;
 
 			case 'O':
@@ -139,7 +145,7 @@ int main(int argc, char **argv) {
 	std::cout << "Estimated volume: " << point_cloud->get_volume() << std::endl;
 
 	if (visualize)
-		multi_camera.show(visualize_transparent);
+		multi_camera.show(visualize_convex_hull, visualize_transparent);
 
 	exit(0);
 }

@@ -15,7 +15,7 @@ namespace Boxes {
 			MultiCamera();
 			~MultiCamera();
 
-			void show(bool transparent = true) const;
+			void show(bool show_convex_hull = false, bool transparent = true) const;
 
 			void add_images(Image* first, Image* second);
 			std::pair<Image*, Image*> get_image_pair(unsigned int pair_index) const;
