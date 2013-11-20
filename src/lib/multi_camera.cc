@@ -250,7 +250,12 @@ namespace Boxes {
 				camera_mesh.polygons[i].vertices.push_back(polygon[i * 3 + j]);
 			}
 		}
+
+#if PCL_MAJOR_VERSION == 1 && PCL_MINOR_VERSION >= 7
+		pcl::toPCLPointCloud2(camera_points, camera_mesh.cloud);
+#else
 		pcl::toROSMsg(camera_points, camera_mesh.cloud);
+#endif
 
 		pcl::PointXYZ line_start;
 		line_start.x = position.at<double>(0);
