@@ -170,6 +170,7 @@ AC_SUBST(PCL_LIBS)
 
 # Workaround because PCL requires headers from VTK.
 PCL_CFLAGS+="-I/usr/include/vtk -I/usr/include/vtk-5.8"
+PCL_LIBS+="-L/usr/lib64/vtk -lvtkCommon -lvtkFiltering -lvtkRendering"
 
 AC_CONFIG_FILES([
 	Makefile
