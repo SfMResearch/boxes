@@ -209,8 +209,7 @@ namespace Boxes {
 		cv::Mat rotation = image->camera_matrix->get_rotation_matrix();
 		cv::Mat translation = image->camera_matrix->get_translation_vector();
 
-		cv::Mat position = -(rotation * translation).t();
-		//cv::Mat position = translation.t();
+		cv::Mat position = -(rotation.t() * translation).t();
 
 		cv::Mat v_x =  normalize(rotation.row(0)) * s;
 		cv::Mat v_y = -normalize(rotation.row(1)) * s;
