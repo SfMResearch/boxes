@@ -138,11 +138,8 @@ namespace Boxes {
 
 		std::vector<uchar> status(this->matches.size());
 
-		#pragma omp critical(fundamental_matrix)
-		{
-			this->fundamental_matrix = cv::findFundamentalMat(match_points1, match_points2, status,
-				cv::FM_RANSAC, epipolar_distance, 0.99);
-		}
+		this->fundamental_matrix = cv::findFundamentalMat(match_points1, match_points2, status,
+			cv::FM_RANSAC, epipolar_distance, 0.99);
 
 		// Sort out bad matches.
 		std::vector<cv::DMatch> best_matches;
@@ -150,6 +147,7 @@ namespace Boxes {
 			if (status[i] == 1)
 				best_matches.push_back(this->matches[i]);
 		}
+
 		this->matches = best_matches;
 	}
 
