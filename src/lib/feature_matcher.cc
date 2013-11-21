@@ -95,8 +95,6 @@ namespace Boxes {
 			this->matches.push_back(*match1);
 		}
 
-		assert(this->matches.size() > 0);
-
 		// Prepare the fundamental matrix.
 		// This will also modify the match, hence it needs to be done here.
 		this->calculate_fundamental_matrix();
