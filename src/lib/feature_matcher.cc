@@ -152,9 +152,9 @@ namespace Boxes {
 	}
 
 	cv::Mat FeatureMatcher::calculate_essential_matrix() {
-		cv::Mat camera_matrix = this->image1->guess_camera_matrix();
+		cv::Mat camera = this->image1->get_camera();
 
-		return camera_matrix.t() * this->fundamental_matrix * camera_matrix;
+		return camera.t() * this->fundamental_matrix * camera;
 	}
 
 	std::vector<CameraMatrix*> FeatureMatcher::calculate_possible_camera_matrices(const cv::Mat* essential_matrix, bool check_coherency) {
@@ -278,9 +278,9 @@ namespace Boxes {
 	}
 
 	double FeatureMatcher::triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud) {
-		cv::Mat c1 = this->image1->guess_camera_matrix();
+		cv::Mat c1 = this->image1->get_camera();
 		cv::Mat c1_inv = c1.inv();
-		cv::Mat c2 = this->image2->guess_camera_matrix();
+		cv::Mat c2 = this->image2->get_camera();
 		cv::Mat c2_inv = c2.inv();
 
 		cv::Mat_<double> KP2 = c2 * cv::Mat(*p2);

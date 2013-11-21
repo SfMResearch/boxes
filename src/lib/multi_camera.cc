@@ -122,7 +122,7 @@ namespace Boxes {
 				std::vector<double> distortion_coeff;
 				std::vector<int> inliers;
 
-				cv::solvePnPRansac(local_point_cloud, image_points, image1->guess_camera_matrix(),
+				cv::solvePnPRansac(local_point_cloud, image_points, image1->get_camera(),
 					distortion_coeff, rvec, translation, false, 100, 8.0, 100, inliers);
 
 				cv::Mat_<double> rotation;

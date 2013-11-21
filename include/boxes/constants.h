@@ -40,6 +40,7 @@
 # define DEFAULT_FEATURE_DETECTOR_EXTRACTOR       "ORB"
 #endif
 
+#define CAMERA_EXTENSION                          "camera"
 #define NURBS_CURVE_EXTENSION                     "nurbs"
 
 /*

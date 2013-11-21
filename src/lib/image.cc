@@ -19,19 +19,15 @@ namespace Boxes {
 	}
 
 	Image::Image(const std::string filename) {
-		this->init();
+		this->filename = filename;
 
-		this->mat = cv::imread(filename);
+		this->mat = cv::imread(this->filename);
 		assert(!this->mat.empty());
 
-		// Read available JFIF data.
-		this->decode_jfif_data(filename);
+		this->init();
 
-		// Try to find a curve and read it.
-		std::string filename_curve = this->find_curve_file(filename);
-		if (!filename_curve.empty()) {
-			this->curve = this->read_curve(filename_curve);
-		}
+		// Read available JFIF data.
+		this->decode_jfif_data(this->filename);
 	}
 
 	Image::Image(cv::Mat mat) {
@@ -41,9 +37,21 @@ namespace Boxes {
 	}
 
 	void Image::init() {
+		// Initialize camera matrix
 		CameraMatrix matrix;
-
 		this->update_camera_matrix(&matrix);
+
+		// Try to find a camera matrix and read it in.
+		std::string filename_camera = this->find_camera_file();
+		if (filename_camera.empty())
+			this->camera = this->guess_camera();
+		else
+			this->camera = this->read_camera(filename_camera);
+
+		// Try to find a curve and read it.
+		std::string filename_curve = this->find_curve_file();
+		if (!filename_curve.empty())
+			this->curve = this->read_curve(filename_curve);
 	}
 
 	Image::~Image() {
@@ -204,7 +212,11 @@ namespace Boxes {
 		this->distance = distance;
 	}
 
-	cv::Mat Image::guess_camera_matrix() const {
+	cv::Mat Image::get_camera() const {
+		return this->camera;
+	}
+
+	cv::Mat Image::guess_camera() const {
 		cv::Size image_size = this->size();
 
 		cv::Mat camera_matrix = cv::Mat::zeros(3, 3, CV_64F);
@@ -217,6 +229,36 @@ namespace Boxes {
 		camera_matrix.at<double>(1, 2) = image_size.height / 2;
 
 		return camera_matrix;
+	}
+
+	cv::Mat Image::read_camera(const std::string filename) const {
+		cv::Mat_<double> camera(3, 3);
+
+		// Check if the file can be opened for reading.
+		std::ifstream file(filename, std::ios::in);
+		if (file.is_open()) {
+			std::string element;
+
+			for (int x = 0; x < 3; x++) {
+				for (int y = 0; y < 3; y++) {
+					// Read the next element from file.
+					file >> element;
+
+					// Convert to double.
+					std::istringstream _element(element);
+					_element >> camera.at<double>(x, y);
+				}
+			}
+
+			// File exists.
+			file.close();
+		}
+
+		return camera;
+	}
+
+	std::string Image::find_camera_file() const {
+		return this->find_file_with_extension(this->filename, CAMERA_EXTENSION);
 	}
 
 	Image* Image::get_disparity_map(Image *other_img) {
@@ -239,18 +281,26 @@ namespace Boxes {
 		return curve;
 	}
 
-	std::string Image::find_curve_file(const std::string filename) const {
+	std::string Image::find_curve_file() const {
+		return this->find_file_with_extension(this->filename, NURBS_CURVE_EXTENSION);
+	}
+
+	std::string Image::find_file_with_extension(const std::string filename, const std::string extension) const {
 		std::string result;
+
+		// End here if the original filename is unknown.
+		if (filename.empty())
+			return result;
 
 		// Build a vector of candidate filenames.
 		std::vector<std::string> filenames;
-		filenames.push_back(filename + "." + NURBS_CURVE_EXTENSION);
+		filenames.push_back(filename + "." + extension);
 
 		// Replace extension by nurbs file extension.
 		std::size_t pos = filename.find_last_of(".");
 		if (pos != std::string::npos) {
 			std::string basename = std::string(filename.substr(0, pos));
-			filenames.push_back(basename + "." + NURBS_CURVE_EXTENSION);
+			filenames.push_back(basename + "." + extension);
 		}
 
 		// Check for all filenames in the vector if they exist

@@ -29,6 +29,8 @@ namespace Boxes {
 			void write(const std::string filename);
 			cv::Size size() const;
 
+			std::string filename;
+
 			// mat
 			const cv::Mat* get_mat() const;
 			const cv::Mat* get_mat(int code) const;
@@ -49,7 +51,8 @@ namespace Boxes {
 			void set_distance(unsigned int distance);
 
 			// camera matrix
-			cv::Mat guess_camera_matrix() const;
+			cv::Mat get_camera() const;
+			std::string find_camera_file() const;
 
 			// disparity map
 			Image* get_disparity_map(Image *other_img);
@@ -67,10 +70,17 @@ namespace Boxes {
 			cv::Mat mat;
 			void decode_jfif_data(std::string filename);
 
+			std::string find_file_with_extension(const std::string filename, const std::string extension) const;
+
+			// camera matrix
+			cv::Mat camera;
+			cv::Mat read_camera(const std::string filename) const;
+			cv::Mat guess_camera() const;
+
 			// curve
 			MoGES::NURBS::Curve* curve = NULL;
 			MoGES::NURBS::Curve* read_curve(const std::string filename) const;
-			std::string find_curve_file(const std::string filename) const;
+			std::string find_curve_file() const;
 
 			// distance
 			unsigned int distance = 0;
