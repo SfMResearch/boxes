@@ -123,8 +123,9 @@ namespace Boxes {
 		const std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
 		const std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
 
-		std::vector<cv::Point2f> match_points1, match_points2;
-		for (std::vector<cv::DMatch>::iterator i = this->matches.begin(); i != this->matches.end(); i++) {
+		std::vector<cv::Point2f> match_points1;
+		std::vector<cv::Point2f> match_points2;
+		for (std::vector<cv::DMatch>::const_iterator i = this->matches.begin(); i != this->matches.end(); i++) {
 			match_points1.push_back(keypoints1->at(i->queryIdx).pt);
 			match_points2.push_back(keypoints2->at(i->trainIdx).pt);
 		}
