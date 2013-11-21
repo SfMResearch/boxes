@@ -31,10 +31,13 @@ namespace Boxes {
 		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
 		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
 
-		const cv::Mat* descriptors1 = this->image1->get_descriptors(keypoints1);
-		const cv::Mat* descriptors2 = this->image2->get_descriptors(keypoints2);
+		cv::Mat* descriptors1 = this->image1->get_descriptors(keypoints1);
+		cv::Mat* descriptors2 = this->image2->get_descriptors(keypoints2);
 
 		this->_match(descriptors1, descriptors2);
+
+		delete descriptors1;
+		delete descriptors2;
 	}
 
 	void FeatureMatcher::_match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points, int match_type, int norm_type) {
