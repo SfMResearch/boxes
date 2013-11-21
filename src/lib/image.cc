@@ -186,9 +186,12 @@ namespace Boxes {
 	cv::Mat* Image::get_descriptors(std::vector<cv::KeyPoint>* keypoints, const std::string detector_type) const {
 		cv::Mat* descriptors = new cv::Mat();
 
-		// Extract descriptors.
-		cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create(detector_type);
-		extractor->compute(this->mat, *keypoints, *descriptors);
+		#pragma omp critical
+		{
+			// Extract descriptors.
+			cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create(detector_type);
+			extractor->compute(this->mat, *keypoints, *descriptors);
+		}
 
 		return descriptors;
 	}
