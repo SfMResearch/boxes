@@ -79,7 +79,6 @@ namespace Boxes {
 
 			matcher->match();
 		}
-		#pragma omp barrier
 
 		FeatureMatcher* last_matcher = NULL;
 
