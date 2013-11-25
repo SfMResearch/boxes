@@ -53,8 +53,10 @@ namespace Boxes {
 
 			// Volume
 			double get_volume();
+			void set_scale(double scale);
 
 		private:
+			double scale = 1;
 			std::vector<CloudPoint> points;
 
 			// Convex hull

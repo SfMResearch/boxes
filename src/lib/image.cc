@@ -215,6 +215,12 @@ namespace Boxes {
 		this->distance = distance;
 	}
 
+	
+	unsigned int Image::get_distance()
+	{
+		return this->distance;
+	}
+
 	cv::Mat Image::get_camera() const {
 		return this->camera;
 	}

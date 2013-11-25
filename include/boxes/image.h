@@ -49,6 +49,7 @@ namespace Boxes {
 
 			// distance
 			void set_distance(unsigned int distance);
+			unsigned int get_distance();
 
 			// camera matrix
 			cv::Mat get_camera() const;

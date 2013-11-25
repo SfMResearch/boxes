@@ -142,6 +142,17 @@ namespace Boxes {
 		for (FeatureMatcher* matcher: this->feature_matchers) {
 			this->point_cloud->merge(matcher->point_cloud);
 		}
+		
+		//calculate scaling only if a distance in the images was found
+		if(this->images[0]->get_distance() != 0){
+			double min = 1000000;
+			for(std::vector<CloudPoint>::iterator i=this->point_cloud->begin();i != this->point_cloud->end();i++){
+				if(i->pt.z < min){
+					min = i->pt.z;					
+				}
+			}
+			this->point_cloud->set_scale(this->images[0]->get_distance() / min);
+		}
 	}
 
 	FeatureMatcher* MultiCamera::match(Image* image1, Image* image2, bool optical_flow) const {

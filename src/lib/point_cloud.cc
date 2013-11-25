@@ -208,6 +208,11 @@ namespace Boxes {
 	double PointCloud::get_volume() {
 		const pcl::ConvexHull<pcl::PointXYZRGB>* convex_hull = this->get_convex_hull();
 
-		return convex_hull->getTotalVolume();
+		return convex_hull->getTotalVolume() * scale * scale * scale;
+	}
+	
+	void PointCloud::set_scale(double scale)
+	{
+		this->scale = scale;	
 	}
 }
