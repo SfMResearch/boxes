@@ -16,11 +16,13 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	FeatureMatcher::FeatureMatcher(Image* image1, Image* image2) {
+	FeatureMatcher::FeatureMatcher(Boxes* boxes, Image* image1, Image* image2) {
+		this->boxes = boxes;
+
 		this->image1 = image1;
 		this->image2 = image2;
 
-		this->point_cloud = new PointCloud();
+		this->point_cloud = new PointCloud(this->boxes);
 	}
 
 	FeatureMatcher::~FeatureMatcher() {
@@ -111,7 +113,7 @@ namespace Boxes {
 
 		cv::drawMatches(*image1, *keypoints1, *image2, *keypoints2, this->matches, img_matches);
 
-		Image image = Image(img_matches);
+		Image image = Image(this->boxes, img_matches);
 		image.write(filename);
 	}
 
@@ -202,7 +204,7 @@ namespace Boxes {
 			for (unsigned int j = 0; j < 2; j++) {
 				cv::Matx34d matrix = merge_rotation_and_translation_matrix(rotation, translation);
 
-				CameraMatrix* camera_matrix = new CameraMatrix(matrix);
+				CameraMatrix* camera_matrix = new CameraMatrix(this->boxes, matrix);
 				matrices.push_back(camera_matrix);
 
 				translation = &translation2;
@@ -237,7 +239,7 @@ namespace Boxes {
 				best_matrix = &(*camera_matrix);
 
 			// Triangulate.
-			camera_matrix->reprojection_error = this->triangulate_points(&P0, &(camera_matrix->matrix), &camera_matrix->point_cloud);
+			camera_matrix->reprojection_error = this->triangulate_points(&P0, &(camera_matrix->matrix), camera_matrix->point_cloud);
 
 			// Count all points that are "in front of the camera".
 			if (camera_matrix->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
@@ -263,7 +265,7 @@ namespace Boxes {
 		}
 
 		this->point_cloud->clear();
-		this->point_cloud->merge(&best_matrix->point_cloud);
+		this->point_cloud->merge(best_matrix->point_cloud);
 		this->image2->update_camera_matrix(best_matrix);
 
 		return best_matrix;

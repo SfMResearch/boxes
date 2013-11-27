@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
 		exit(2);
 	}
 
-	Boxes::MultiCamera multi_camera;
+	Boxes::MultiCamera multi_camera(&boxes);
 
 	// Add all images to the multi camera environment
 	for (std::pair<Boxes::Image*, Boxes::Image*> image_pair: boxes.make_pairs()) {

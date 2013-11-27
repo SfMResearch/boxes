@@ -12,6 +12,7 @@ INCLUDE_IGNORE_WARNINGS_END
 #include <string>
 #include <vector>
 
+#include <boxes/boxes.h>
 #include <boxes/cloud_point.h>
 #include <boxes/forward_declarations.h>
 #include <boxes/image.h>
@@ -21,7 +22,7 @@ INCLUDE_IGNORE_WARNINGS_END
 namespace Boxes {
 	class PointCloud {
 		public:
-			PointCloud();
+			PointCloud(Boxes* boxes);
 			~PointCloud();
 
 			void add_point(CloudPoint point);
@@ -56,6 +57,8 @@ namespace Boxes {
 			void set_scale(double scale);
 
 		private:
+			Boxes* boxes = NULL;
+
 			double scale = 1;
 			std::vector<CloudPoint> points;
 

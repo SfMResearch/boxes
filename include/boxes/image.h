@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <boxes/forward_declarations.h>
+#include <boxes/boxes.h>
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/point_cloud.h>
@@ -18,10 +19,10 @@
 namespace Boxes {
 	class Image {
 		public:
-			Image();
-			Image(const std::string filename);
-			Image(cv::Mat mat);
-			void init();
+			Image(Boxes* boxes);
+			Image(Boxes* boxes, const std::string filename);
+			Image(Boxes* boxes, cv::Mat mat);
+			void init(Boxes* boxes);
 			~Image();
 
 			// Basic methods.
@@ -68,6 +69,8 @@ namespace Boxes {
 			void update_camera_matrix(CameraMatrix* camera_matrix);
 
 		private:
+			Boxes* boxes = NULL;
+
 			cv::Mat mat;
 			void decode_jfif_data(std::string filename);
 

@@ -8,6 +8,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/visualization/pcl_visualizer.h>
 INCLUDE_IGNORE_WARNINGS_END
 
+#include <boxes/boxes.h>
 #include <boxes/converters.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/feature_matcher_optical_flow.h>
@@ -19,8 +20,10 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	MultiCamera::MultiCamera() {
-		this->point_cloud = new PointCloud();
+	MultiCamera::MultiCamera(Boxes* boxes) {
+		this->boxes = boxes;
+
+		this->point_cloud = new PointCloud(this->boxes);
 	}
 
 	MultiCamera::~MultiCamera() {
@@ -130,7 +133,7 @@ namespace Boxes {
 				// Compose combined rotation and translation matrix.
 				cv::Matx34d matrix = merge_rotation_and_translation_matrix(&rotation, &translation);
 
-				CameraMatrix camera_matrix = CameraMatrix(matrix);
+				CameraMatrix camera_matrix = CameraMatrix(this->boxes, matrix);
 				image2->update_camera_matrix(&camera_matrix);
 
 				matcher->triangulate_points();
@@ -159,9 +162,9 @@ namespace Boxes {
 		FeatureMatcher* feature_matcher;
 
 		if (optical_flow)
-			feature_matcher = new FeatureMatcherOpticalFlow(image1, image2);
+			feature_matcher = new FeatureMatcherOpticalFlow(this->boxes, image1, image2);
 		else
-			feature_matcher = new FeatureMatcher(image1, image2);
+			feature_matcher = new FeatureMatcher(this->boxes, image1, image2);
 
 		return feature_matcher;
 	}
@@ -207,7 +210,7 @@ namespace Boxes {
 		CameraMatrix* camera_matrix = matcher->calculate_camera_matrix();
 
 		if (camera_matrix) {
-			camera_matrix->point_cloud.write_depths_map(
+			camera_matrix->point_cloud->write_depths_map(
 				filename_implant_counter(filename, pair_index), matcher->image2);
 
 			delete camera_matrix;

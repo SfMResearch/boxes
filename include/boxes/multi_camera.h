@@ -12,7 +12,7 @@
 namespace Boxes {
 	class MultiCamera {
 		public:
-			MultiCamera();
+			MultiCamera(Boxes* boxes);
 			~MultiCamera();
 
 			void show(bool show_convex_hull = false, bool transparent = true) const;
@@ -36,6 +36,8 @@ namespace Boxes {
 			PointCloud* get_point_cloud() const;
 
 		protected:
+			Boxes* boxes = NULL;
+
 			std::vector<FeatureMatcher*> feature_matchers;
 
 			std::vector<Image*> images;

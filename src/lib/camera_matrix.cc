@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include <boxes/boxes.h>
 #include <boxes/camera_matrix.h>
 #include <boxes/cloud_point.h>
 
@@ -9,26 +10,34 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	CameraMatrix::CameraMatrix() {
+	CameraMatrix::CameraMatrix(Boxes* boxes) {
 		cv::Matx34d matrix = cv::Matx34d(
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0
 		);
 
-		this->init(matrix);
+		this->init(boxes, matrix);
 	}
 
-	CameraMatrix::CameraMatrix(CameraMatrix* old) {
-		this->init(old->matrix);
+	CameraMatrix::CameraMatrix(Boxes* boxes, CameraMatrix* old) {
+		this->init(boxes, old->matrix);
 	}
 
-	CameraMatrix::CameraMatrix(cv::Matx34d matrix) {
-		this->init(matrix);
+	CameraMatrix::CameraMatrix(Boxes* boxes, cv::Matx34d matrix) {
+		this->init(boxes, matrix);
 	}
 
-	void CameraMatrix::init(cv::Matx34d matrix) {
+	CameraMatrix::~CameraMatrix() {
+		delete this->point_cloud;
+	}
+
+	void CameraMatrix::init(Boxes* boxes, cv::Matx34d matrix) {
+		this->boxes = boxes;
+
 		this->matrix = matrix;
+
+		this->point_cloud = new PointCloud(this->boxes);
 	}
 
 	cv::Mat CameraMatrix::get_rotation_matrix() const {
@@ -63,7 +72,7 @@ namespace Boxes {
 		 * If not, we return right here, because cv::perspectiveTransform
 		 * will raise an exception when called with an empty array of points.
 		 */
-		if (this->point_cloud.size() == 0) {
+		if (this->point_cloud->size() == 0) {
 			return 0.0;
 		}
 
@@ -77,7 +86,7 @@ namespace Boxes {
 		std::vector<cv::Point3d> points;
 		std::vector<cv::Point3d> points_transformed;
 
-		const std::vector<CloudPoint>* p = this->point_cloud.get_points();
+		const std::vector<CloudPoint>* p = this->point_cloud->get_points();
 		for (std::vector<CloudPoint>::const_iterator cp = p->begin(); cp != p->end(); ++cp) {
 			points.push_back(cp->pt);
 		}

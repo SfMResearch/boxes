@@ -14,31 +14,33 @@
 #include <moges/NURBS/Curve.h>
 
 namespace Boxes {
-	Image::Image() {
-		this->init();
+	Image::Image(Boxes* boxes) {
+		this->init(boxes);
 	}
 
-	Image::Image(const std::string filename) {
+	Image::Image(Boxes* boxes, const std::string filename) {
 		this->filename = filename;
 
 		this->mat = cv::imread(this->filename);
 		assert(!this->mat.empty());
 
-		this->init();
+		this->init(boxes);
 
 		// Read available JFIF data.
 		this->decode_jfif_data(this->filename);
 	}
 
-	Image::Image(cv::Mat mat) {
-		this->init();
+	Image::Image(Boxes* boxes, cv::Mat mat) {
+		this->init(boxes);
 
 		this->mat = mat;
 	}
 
-	void Image::init() {
+	void Image::init(Boxes* boxes) {
+		this->boxes = boxes;
+
 		// Initialize camera matrix
-		CameraMatrix matrix;
+		CameraMatrix matrix(this->boxes);
 		this->update_camera_matrix(&matrix);
 
 		// Try to find a camera matrix and read it in.
@@ -276,7 +278,7 @@ namespace Boxes {
 		cv::StereoBM stereoBM;
 		stereoBM(*this->get_greyscale_mat(), *other_img->get_greyscale_mat(), disparity_map);
 
-		return new Image(disparity_map);
+		return new Image(this->boxes, disparity_map);
 	}
 
 	bool Image::has_curve() const {
@@ -378,6 +380,6 @@ namespace Boxes {
 		if (this->camera_matrix != NULL)
 			delete this->camera_matrix;
 
-		this->camera_matrix = new CameraMatrix(camera_matrix);
+		this->camera_matrix = new CameraMatrix(this->boxes, camera_matrix);
 	}
 };

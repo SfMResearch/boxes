@@ -19,7 +19,7 @@ namespace Boxes {
 	}
 
 	unsigned int Boxes::img_read(const std::string filename) {
-		Image *image = new Image(filename);
+		Image *image = new Image((Boxes *)this, filename);
 		this->images.push_back(image);
 
 		return this->img_size() - 1;

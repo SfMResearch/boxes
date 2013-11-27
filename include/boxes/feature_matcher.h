@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include <boxes/boxes.h>
 #include <boxes/camera_matrix.h>
 #include <boxes/constants.h>
 #include <boxes/image.h>
@@ -17,7 +18,7 @@
 namespace Boxes {
 	class FeatureMatcher {
 		public:
-			FeatureMatcher(Image* image1, Image* image2);
+			FeatureMatcher(Boxes* boxes, Image* image1, Image* image2);
 			virtual ~FeatureMatcher();
 
 			Image* image1;
@@ -51,6 +52,9 @@ namespace Boxes {
 			cv::Mat_<double> _triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2, double weight1 = 1.0, double weight2 = 1.0);
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud);
+
+		private:
+			Boxes* boxes = NULL;
 	};
 };
 

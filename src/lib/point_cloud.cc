@@ -8,6 +8,7 @@ INCLUDE_IGNORE_WARNINGS_BEGIN
 #include <pcl/surface/convex_hull.h>
 INCLUDE_IGNORE_WARNINGS_END
 
+#include <boxes/boxes.h>
 #include <boxes/cloud_point.h>
 #include <boxes/constants.h>
 #include <boxes/converters.h>
@@ -23,7 +24,8 @@ namespace Boxes {
 	/*
 	 * Contructor.
 	 */
-	PointCloud::PointCloud() {
+	PointCloud::PointCloud(Boxes* boxes) {
+		this->boxes = boxes;
 	}
 
 	PointCloud::~PointCloud() {
@@ -140,7 +142,7 @@ namespace Boxes {
 		}
 		cvtColor(map, map, CV_HSV2BGR);
 
-		Image image_map = Image(map);
+		Image image_map = Image(this->boxes, map);
 		image_map.write(filename);
 	}
 
