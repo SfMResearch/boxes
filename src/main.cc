@@ -97,6 +97,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	// Dump the configuration.
+	boxes.config->dump();
+
 	while (optind < argc) {
 		std::string filename = argv[optind++];
 

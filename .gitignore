@@ -1,4 +1,6 @@
 /Makefile
+/config.h
+/config.h.in
 /boxes
 /build-aux
 /libtool
@@ -23,8 +25,6 @@
 .libs
 Makefile.in
 aclocal.m4
-config.h
-config.h.in
 config.log
 config.status
 configure

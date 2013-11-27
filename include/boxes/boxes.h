@@ -6,12 +6,16 @@
 #include <string>
 #include <vector>
 
+#include <boxes/config.h>
 #include <boxes/image.h>
 
 namespace Boxes {
 	class Boxes {
 		public:
 			Boxes();
+			~Boxes();
+
+			Config* config = NULL;
 
 			// Image operations
 			unsigned int img_read(const std::string filename);

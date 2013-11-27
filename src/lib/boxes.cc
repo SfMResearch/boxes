@@ -6,6 +6,7 @@
 #include <vector>
 
 #include <boxes/boxes.h>
+#include <boxes/config.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/image.h>
@@ -16,6 +17,11 @@ namespace Boxes {
 	 * Contructor.
 	 */
 	Boxes::Boxes() {
+		this->config = new Config();
+	}
+
+	Boxes::~Boxes() {
+		delete this->config;
 	}
 
 	unsigned int Boxes::img_read(const std::string filename) {
