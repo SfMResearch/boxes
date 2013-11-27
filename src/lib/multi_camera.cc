@@ -178,7 +178,7 @@ namespace Boxes {
 	void MultiCamera::write_disparity_map_one(const std::string* filename, unsigned int pair_index) const {
 		std::pair<Image*, Image*> pair = this->get_image_pair(pair_index);
 
-		Boxes::Image* disparity_map = pair.first->get_disparity_map(pair.second);
+		Image* disparity_map = pair.first->get_disparity_map(pair.second);
 		if (disparity_map) {
 			disparity_map->write(filename_implant_counter(filename, pair_index));
 			delete disparity_map;
