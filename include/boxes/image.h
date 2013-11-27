@@ -38,11 +38,12 @@ namespace Boxes {
 			const cv::Mat* get_greyscale_mat() const;
 
 			// descriptors
-			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints,
-				const std::string detector_type = DEFAULT_FEATURE_DETECTOR_EXTRACTOR) const;
+			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints) const;
+			cv::Mat* get_descriptors(std::vector<cv::KeyPoint>* keypoints, const std::string detector_type) const;
 
 			// keypoints
-			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type = DEFAULT_FEATURE_DETECTOR);
+			std::vector<cv::KeyPoint>* get_keypoints();
+			std::vector<cv::KeyPoint>* get_keypoints(const std::string detector_type);
 
 			// (good) features
 			std::vector<cv::Point2f> get_good_features_to_track(int max_corners = 1500, double quality_level = 0.05,

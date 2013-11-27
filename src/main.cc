@@ -22,6 +22,7 @@ int main(int argc, char **argv) {
 
 	while (1) {
 		static struct option long_options[] = {
+			{"algorithms",            required_argument,  0, 'a'},
 			{"visualize-convex-hull", no_argument,        0, 'C'},
 			{"convex-hull",           required_argument,  0, 'c'},
 			{"depths-maps",           required_argument,  0, 'd'},
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "Cc:D:d:m:OtVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:m:OtVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -49,6 +50,10 @@ int main(int argc, char **argv) {
 				if (optarg)
 					std::cerr << " with argument " << optarg;
 				std::cerr << std::endl;
+				break;
+
+			case 'a':
+				boxes.set_algorithms(optarg);
 				break;
 
 			case 'C':

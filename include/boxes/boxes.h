@@ -22,6 +22,8 @@ namespace Boxes {
 			Image* img_get(unsigned int index);
 			unsigned int img_size() const;
 
+			void set_algorithms(const std::string algorithm);
+
 			std::string version_string() const;
 
 			// Iterator

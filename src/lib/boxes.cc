@@ -42,6 +42,20 @@ namespace Boxes {
 		return this->images.size();
 	}
 
+	void Boxes::set_algorithms(const std::string algorithms) {
+		std::size_t pos = algorithms.find_last_of("-");
+
+		if (pos != std::string::npos) {
+			std::string detector = algorithms.substr(0, pos);
+			this->config->set("FEATURE_DETECTOR", detector);
+
+			std::string extractor = algorithms.substr(pos + 1, algorithms.size());
+			this->config->set("FEATURE_DETECTOR_EXTRACTOR", extractor);
+		} else {
+			this->config->set("FEATURE_DETECTOR", algorithms);
+		}
+	}
+
 	/*
 	 *
 	 */

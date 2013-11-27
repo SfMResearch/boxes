@@ -6,6 +6,9 @@
 
 namespace Boxes {
 	Config::Config() {
+		// Initialize with default settings.
+		this->set("FEATURE_DETECTOR",           DEFAULT_FEATURE_DETECTOR);
+		this->set("FEATURE_DETECTOR_EXTRACTOR", DEFAULT_FEATURE_DETECTOR_EXTRACTOR);
 	}
 
 	void Config::dump() const {

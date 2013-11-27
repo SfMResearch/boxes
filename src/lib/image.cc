@@ -7,6 +7,11 @@
 #include <string>
 #include <vector>
 
+#ifdef BOXES_NONFREE
+# include <opencv2/nonfree/features2d.hpp>
+#endif
+
+#include <boxes/boxes.h>
 #include <boxes/constants.h>
 #include <boxes/image.h>
 
@@ -160,6 +165,12 @@ namespace Boxes {
 		return this->mat.size();
 	}
 
+	std::vector<cv::KeyPoint>* Image::get_keypoints() {
+		std::string detector_type = this->boxes->config->get("FEATURE_DETECTOR");
+
+		return this->get_keypoints(detector_type);
+	}
+
 	std::vector<cv::KeyPoint>* Image::get_keypoints(const std::string detector_type) {
 		std::vector<cv::KeyPoint>* keypoints;
 
@@ -179,10 +190,49 @@ namespace Boxes {
 	std::vector<cv::KeyPoint>* Image::compute_keypoints(const std::string detector_type) const {
 		std::vector<cv::KeyPoint>* output = new std::vector<cv::KeyPoint>();
 
-		cv::Ptr<cv::FeatureDetector> detector = cv::FeatureDetector::create(detector_type);
+		cv::FeatureDetector* detector = NULL;
+
+		// FAST
+		if (detector_type == FEATURE_DETECTOR_FAST) {
+			detector = new cv::FastFeatureDetector();
+
+		// GFTT
+		} else if (detector_type == FEATURE_DETECTOR_GFTT) {
+			detector = new cv::GoodFeaturesToTrackDetector();
+
+		// ORB
+		} else if (detector_type == FEATURE_DETECTOR_ORB) {
+			detector = new cv::OrbFeatureDetector();
+
+		// PyradmidFast
+		} else if (detector_type == FEATURE_DETECTOR_PYRAMID_FAST) {
+			cv::Ptr<cv::FeatureDetector> _detector = cv::Ptr<cv::FeatureDetector>(new cv::FastFeatureDetector());
+
+			detector = new cv::PyramidAdaptedFeatureDetector(_detector);
+
+#ifdef BOXES_NONFREE
+		// SIFT
+		} else if (detector_type == FEATURE_DETECTOR_SIFT) {
+			detector = new cv::SiftFeatureDetector();
+
+		// SURF
+		} else if (detector_type == FEATURE_DETECTOR_SURF) {
+			detector = new cv::SurfFeatureDetector(SURF_MIN_HESSIAN);
+#endif
+		}
+
+		assert(detector);
+
 		detector->detect(this->mat, *output);
+		delete detector;
 
 		return output;
+	}
+
+	cv::Mat* Image::get_descriptors(std::vector<cv::KeyPoint>* keypoints) const {
+		std::string detector_type = this->boxes->config->get("FEATURE_DETECTOR_EXTRACTOR");
+
+		return this->get_descriptors(keypoints, detector_type);
 	}
 
 	cv::Mat* Image::get_descriptors(std::vector<cv::KeyPoint>* keypoints, const std::string detector_type) const {
@@ -191,8 +241,23 @@ namespace Boxes {
 		#pragma omp critical
 		{
 			// Extract descriptors.
-			cv::Ptr<cv::DescriptorExtractor> extractor = cv::DescriptorExtractor::create(detector_type);
+			cv::DescriptorExtractor* extractor = NULL;
+
+			if (detector_type == FEATURE_DETECTOR_EXTRACTOR_ORB) {
+				extractor = new cv::OrbDescriptorExtractor();
+
+#ifdef BOXES_NONFREE
+			} else if (detector_type == FEATURE_DETECTOR_EXTRACTOR_SIFT) {
+				extractor = new cv::SiftDescriptorExtractor(48, 16, true);
+
+			} else if (detector_type == FEATURE_DETECTOR_EXTRACTOR_SURF) {
+				extractor = new cv::SurfDescriptorExtractor();
+#endif
+			}
+			assert(extractor);
+
 			extractor->compute(this->mat, *keypoints, *descriptors);
+			delete extractor;
 		}
 
 		return descriptors;
