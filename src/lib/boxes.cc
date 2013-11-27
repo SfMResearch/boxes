@@ -53,6 +53,7 @@ namespace Boxes {
 			this->config->set("FEATURE_DETECTOR_EXTRACTOR", extractor);
 		} else {
 			this->config->set("FEATURE_DETECTOR", algorithms);
+			this->config->set("FEATURE_DETECTOR_EXTRACTOR", algorithms);
 		}
 	}
 
