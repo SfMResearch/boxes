@@ -10,11 +10,8 @@
 /* Available feature detectors: FAST, STAR, ORB, BRISK, MSER, GFTT, HARRIS,
      Dense, SimpleBlob, Grid, Pyramid and (SIFT, SURF which are non-free) */
 
-#define FEATURE_DETECTOR_BRISK                    "BRISK"
 #define FEATURE_DETECTOR_FAST                     "FAST"
 #define FEATURE_DETECTOR_GFTT                     "GFTT"
-#define FEATURE_DETECTOR_HARRIS                   "HARRIS"
-#define FEATURE_DETECTOR_MSER                     "MSER"
 #define FEATURE_DETECTOR_ORB                      "ORB"
 #define FEATURE_DETECTOR_PYRAMID_FAST             "PyramidFAST"
 #ifdef BOXES_NONFREE
@@ -28,8 +25,6 @@
 
 /* Available feature extractors: ORB, BRISK, BRIEF
      (SIFT, SURF which are non-free) */
-#define FEATURE_DETECTOR_EXTRACTOR_BRIEF          "BRIEF"
-#define FEATURE_DETECTOR_EXTRACTOR_BRISK          "BRISK"
 #define FEATURE_DETECTOR_EXTRACTOR_ORB            "ORB"
 #ifdef BOXES_NONFREE
 # define FEATURE_DETECTOR_EXTRACTOR_SIFT          "SIFT"
