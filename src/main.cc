@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 			{"depths-maps",           required_argument,  0, 'd'},
 			{"disparity-maps",        required_argument,  0, 'D'},
 			{"environment",           required_argument,  0, 'E'},
+			{"environment-file",      required_argument,  0, 'e'},
 			{"matches",               required_argument,  0, 'm'},
 			{"optical-flow",          no_argument,        0, 'O'},
 			{"transparent",           no_argument,        0, 't'},
@@ -37,7 +38,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "a:Cc:D:d:E:m:OtVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:OtVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -75,6 +76,10 @@ int main(int argc, char **argv) {
 
 			case 'E':
 				boxes.config->parse_line(optarg);
+				break;
+
+			case 'e':
+				boxes.config->read(optarg);
 				break;
 
 			case 'm':

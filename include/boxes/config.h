@@ -19,6 +19,7 @@ namespace Boxes {
 
 			void set(std::string key, std::string value);
 
+			void read(const std::string filename);
 			void parse_line(const std::string line);
 
 		private:

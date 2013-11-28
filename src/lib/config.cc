@@ -1,4 +1,5 @@
 
+#include <fstream>
 #include <string>
 
 #include <boxes/config.h>
@@ -46,6 +47,20 @@ namespace Boxes {
 
 	void Config::set(std::string key, std::string value) {
 		this->map[key] = value;
+	}
+
+	void Config::read(const std::string filename) {
+		std::string line;
+
+		std::ifstream file(filename);
+		if (!file.is_open())
+			return;
+
+		while (std::getline(file, line)) {
+			this->parse_line(line);
+		}
+
+		file.close();
 	}
 
 	void Config::parse_line(const std::string line) {
