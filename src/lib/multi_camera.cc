@@ -145,16 +145,20 @@ namespace Boxes {
 		for (FeatureMatcher* matcher: this->feature_matchers) {
 			this->point_cloud->merge(matcher->point_cloud);
 		}
-		
-		//calculate scaling only if a distance in the images was found
-		if(this->images[0]->get_distance() != 0){
-			double min = 1000000;
-			for(std::vector<CloudPoint>::iterator i=this->point_cloud->begin();i != this->point_cloud->end();i++){
-				if(i->pt.z < min){
-					min = i->pt.z;					
+
+		// calculate scaling only if a distance in the images was found
+		Image* image = this->images[0];
+
+		if (image->get_distance() > 0) {
+			double min = DBL_MAX;
+
+			for (std::vector<CloudPoint>::iterator i = this->point_cloud->begin(); i != this->point_cloud->end(); i++) {
+				if (i->pt.z < min) {
+					min = i->pt.z;
 				}
 			}
-			this->point_cloud->set_scale(this->images[0]->get_distance() / min);
+
+			this->point_cloud->set_scale(image->get_distance() / min);
 		}
 	}
 
