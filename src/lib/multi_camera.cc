@@ -187,7 +187,7 @@ namespace Boxes {
 
 		Image* disparity_map = pair.first->get_disparity_map(pair.second);
 		if (disparity_map) {
-			disparity_map->write(filename_implant_counter(filename, pair_index));
+			disparity_map->write(filename_implant_counter(*filename, pair_index));
 			delete disparity_map;
 		}
 	}
@@ -200,7 +200,7 @@ namespace Boxes {
 	void MultiCamera::write_matches_one(const std::string* filename, unsigned int pair_index) const {
 		FeatureMatcher* matcher = this->get_feature_matcher(pair_index);
 
-		matcher->draw_matches(filename_implant_counter(filename, pair_index));
+		matcher->draw_matches(filename_implant_counter(*filename, pair_index));
 	}
 
 	void MultiCamera::write_depths_map_all(const std::string* filename) const {
@@ -215,7 +215,7 @@ namespace Boxes {
 
 		if (camera_matrix) {
 			camera_matrix->point_cloud->write_depths_map(
-				filename_implant_counter(filename, pair_index), matcher->image2);
+				filename_implant_counter(*filename, pair_index), matcher->image2);
 
 			delete camera_matrix;
 		}
