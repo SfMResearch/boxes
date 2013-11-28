@@ -21,4 +21,18 @@ namespace Boxes {
 
 		return stream.str();
 	}
+
+	std::pair<std::string, std::string> split_once(const std::string what, const std::string delimiter) {
+		std::size_t pos = what.find_last_of(delimiter);
+
+		// If the delimiter could not be found, just return the first argument.
+		if (pos == std::string::npos) {
+			return std::make_pair(what, "");
+		}
+
+		std::string string_a = what.substr(0, pos);
+		std::string string_b = what.substr(pos + 1, what.size());
+
+		return std::make_pair(string_a, string_b);
+	}
 }

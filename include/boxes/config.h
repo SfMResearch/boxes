@@ -19,6 +19,8 @@ namespace Boxes {
 
 			void set(std::string key, std::string value);
 
+			void parse_line(const std::string line);
+
 		private:
 			std::map<std::string, std::string> map;
 	};

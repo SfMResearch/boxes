@@ -27,6 +27,7 @@ int main(int argc, char **argv) {
 			{"convex-hull",           required_argument,  0, 'c'},
 			{"depths-maps",           required_argument,  0, 'd'},
 			{"disparity-maps",        required_argument,  0, 'D'},
+			{"environment",           required_argument,  0, 'E'},
 			{"matches",               required_argument,  0, 'm'},
 			{"optical-flow",          no_argument,        0, 'O'},
 			{"transparent",           no_argument,        0, 't'},
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "a:Cc:D:d:m:OtVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:E:m:OtVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -70,6 +71,10 @@ int main(int argc, char **argv) {
 
 			case 'd':
 				output_depths_maps.assign(optarg);
+				break;
+
+			case 'E':
+				boxes.config->parse_line(optarg);
 				break;
 
 			case 'm':

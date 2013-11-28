@@ -3,6 +3,7 @@
 
 #include <boxes/config.h>
 #include <boxes/constants.h>
+#include <boxes/util.h>
 
 namespace Boxes {
 	Config::Config() {
@@ -45,5 +46,17 @@ namespace Boxes {
 
 	void Config::set(std::string key, std::string value) {
 		this->map[key] = value;
+	}
+
+	void Config::parse_line(const std::string line) {
+		std::pair<std::string, std::string> args = split_once(line, "=");
+
+		std::string key = args.first;
+		std::string val = args.second;
+
+		assert(!key.empty());
+		assert(!val.empty());
+
+		this->set(key, val);
 	}
 }
