@@ -12,8 +12,9 @@ int main(int argc, char **argv) {
 
 	std::string output_depths_maps;
 	std::string output_disparity_maps;
-	std::string output_matches;
 	std::string output_hull;
+	std::string output_matches;
+	std::string output_point_cloud;
 
 	bool use_optical_flow = false;
 	bool visualize = false;
@@ -31,6 +32,7 @@ int main(int argc, char **argv) {
 			{"environment-file",      required_argument,  0, 'e'},
 			{"matches",               required_argument,  0, 'm'},
 			{"optical-flow",          no_argument,        0, 'O'},
+			{"point-cloud",           no_argument,        0, 'p'},
 			{"transparent",           no_argument,        0, 't'},
 			{"version",               no_argument,        0, 'V'},
 			{"visualize",             no_argument,        0, 'v'},
@@ -38,7 +40,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:OtVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:Op:tVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -88,6 +90,10 @@ int main(int argc, char **argv) {
 
 			case 'O':
 				use_optical_flow = true;
+				break;
+
+			case 'p':
+				output_point_cloud.assign(optarg);
 				break;
 
 			case 't':
@@ -153,6 +159,11 @@ int main(int argc, char **argv) {
 	}
 
 	Boxes::PointCloud* point_cloud = multi_camera.get_point_cloud();
+
+	if (!output_point_cloud.empty()) {
+		std::cout << "Writing point cloud to " << output_point_cloud << "..." << std::endl;
+		point_cloud->write(output_point_cloud);
+	}
 
 	if (!output_hull.empty()) {
 		std::cout << "Writing convex hull to " << output_hull << "..." << std::endl;
