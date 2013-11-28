@@ -16,6 +16,7 @@ namespace Boxes {
 			std::string get(std::string key);
 			int get_int(std::string key);
 			double get_double(std::string key);
+			bool get_bool(std::string key);
 
 			void set(std::string key, std::string value);
 

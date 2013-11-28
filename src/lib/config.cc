@@ -45,6 +45,18 @@ namespace Boxes {
 		return ret;
 	}
 
+	bool Config::get_bool(std::string key) {
+		std::string val = this->get(key);
+
+		// Convert to lowercase for easy comparison.
+		val = tolower(val);
+
+		if ((val == "true") || (val == "yes") || (val == "1"))
+			return true;
+
+		return false;
+	}
+
 	void Config::set(std::string key, std::string value) {
 		this->map[key] = value;
 	}

@@ -1,4 +1,5 @@
 
+#include <locale>
 #include <sstream>
 #include <string>
 
@@ -46,5 +47,16 @@ namespace Boxes {
 			s.erase(pos + 1);
 
 		return s;
+	}
+
+	std::string tolower(const std::string s) {
+		std::string result;
+
+		std::locale loc;
+		for (unsigned int i = 0; i < s.length(); i++) {
+			result += std::tolower(s.at(i), loc);
+		}
+
+		return result;
 	}
 }
