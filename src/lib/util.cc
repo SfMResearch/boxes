@@ -2,6 +2,7 @@
 #include <sstream>
 #include <string>
 
+#include <boxes/constants.h>
 #include <boxes/util.h>
 
 namespace Boxes {
@@ -34,5 +35,16 @@ namespace Boxes {
 		std::string string_b = what.substr(pos + 1, what.size());
 
 		return std::make_pair(string_a, string_b);
+	}
+
+	std::string strip(std::string s) {
+		size_t pos = s.find_first_not_of(WHITESPACE);
+		s.erase(0, pos);
+
+		pos = s.find_last_not_of(WHITESPACE);
+		if (std::string::npos != pos)
+			s.erase(pos + 1);
+
+		return s;
 	}
 }

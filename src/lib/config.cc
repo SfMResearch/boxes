@@ -66,8 +66,8 @@ namespace Boxes {
 	void Config::parse_line(const std::string line) {
 		std::pair<std::string, std::string> args = split_once(line, "=");
 
-		std::string key = args.first;
-		std::string val = args.second;
+		std::string key = strip(args.first);
+		std::string val = strip(args.second);
 
 		assert(!key.empty());
 		assert(!val.empty());

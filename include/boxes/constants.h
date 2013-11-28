@@ -38,6 +38,8 @@
 #define CAMERA_EXTENSION                          "camera"
 #define NURBS_CURVE_EXTENSION                     "nurbs"
 
+#define WHITESPACE                                " \t"
+
 /*
  * Private definitions that may only be used internally.
  */
