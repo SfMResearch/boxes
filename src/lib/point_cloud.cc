@@ -44,7 +44,7 @@ namespace Boxes {
 		int i = 0;
 
 		for (CloudPoint cp: this->points) {
-			if (&cp == point) {
+			if (cp == *point) {
 				this->points.erase(this->points.begin() + i);
 				break;
 			}
