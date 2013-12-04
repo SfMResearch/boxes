@@ -2,6 +2,8 @@
 #ifndef BOXES_FEATURE_MATCHER_OPTICAL_FLOW_H
 #define BOXES_FEATURE_MATCHER_OPTICAL_FLOW_H
 
+#include <string>
+
 #include <boxes/boxes.h>
 #include <boxes/feature_matcher.h>
 #include <boxes/image.h>
@@ -14,6 +16,7 @@ namespace Boxes {
 			~FeatureMatcherOpticalFlow() {};
 
 			void match();
+			void draw_matches(const std::string filename);
 	};
 };
 
