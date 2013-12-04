@@ -36,6 +36,8 @@ namespace Boxes {
 
 			PointCloud* get_point_cloud() const;
 
+			double mean_reprojection_error;
+
 		protected:
 			Boxes* boxes = NULL;
 

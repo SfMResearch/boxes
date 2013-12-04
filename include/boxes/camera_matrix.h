@@ -22,7 +22,6 @@ namespace Boxes {
 
 			cv::Matx34d matrix;
 			PointCloud* point_cloud;
-			double reprojection_error;
 
 			// Methods
 			cv::Mat get_rotation_matrix() const;

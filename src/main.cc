@@ -189,6 +189,8 @@ int main(int argc, char **argv) {
 	// Print estimated volume.
 	std::cout << "Estimated volume: " << point_cloud->get_volume() << std::endl;
 
+	std::cout << "Reprojection error: " <<multi_camera.mean_reprojection_error <<std::endl;
+
 	if (visualize)
 		multi_camera.show(visualize_convex_hull, visualize_transparent);
 

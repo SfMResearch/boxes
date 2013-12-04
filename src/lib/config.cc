@@ -11,6 +11,12 @@ namespace Boxes {
 		// Initialize with default settings.
 		this->set("FEATURE_DETECTOR",           DEFAULT_FEATURE_DETECTOR);
 		this->set("FEATURE_DETECTOR_EXTRACTOR", DEFAULT_FEATURE_DETECTOR_EXTRACTOR);
+		this->set("MATCH_VALID_RATIO",		DEFAULT_MATCH_VALID_RATIO);
+		this->set("EPIPOLAR_DISTANCE_FACTOR",   DEFAULT_EPIPOLAR_DISTANCE_FACTOR);
+
+#ifdef BOXES_NONFREE
+		this->set("SURF_MIN_HESSIAN",           DEFAULT_SURF_MIN_HESSIAN);
+#endif
 	}
 
 	void Config::dump() const {

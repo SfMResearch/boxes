@@ -48,9 +48,10 @@
 #include <boxes/converters.h>
 
 //#define FEATURE_MATCHER_REPROJECTION_ERROR
-#define REPROJECTION_ERROR_MAX         200.0
+#define REPROJECTION_ERROR_MAX		200.0
 
-#define MATCH_VALID_RATIO                0.8
+#define DEFAULT_MATCH_VALID_RATIO	"0.8"
+#define DEFAULT_EPIPOLAR_DISTANCE_FACTOR	"0.001"
 
 // Optical Flow constants
 #define OPTICAL_FLOW_USE_GREYSCALE_IMAGES
@@ -73,7 +74,7 @@
 #define POINT_CLOUD_TRIANGULATION_MAX_ANGLE                DEG2RAD(180)
 
 // SURF
-#define SURF_MIN_HESSIAN               300
+#define DEFAULT_SURF_MIN_HESSIAN       "300"
 
 #endif
 

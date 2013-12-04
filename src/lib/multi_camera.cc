@@ -142,10 +142,14 @@ namespace Boxes {
 			last_matcher = matcher;
 		}
 
+		this->mean_reprojection_error = 0;
 		for (FeatureMatcher* matcher: this->feature_matchers) {
 			this->point_cloud->merge(matcher->point_cloud);
-		}
 
+			//caluating mean reprojection errror
+			mean_reprojection_error += matcher->reprojection_error;			
+		}
+		mean_reprojection_error /= (double)this->feature_matchers.size();
 		// calculate scaling only if a distance in the images was found
 		Image* image = this->images[0];
 

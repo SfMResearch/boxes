@@ -33,6 +33,7 @@ namespace Boxes {
 			double triangulate_points();
 			double triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud);
 			int find_corresponding_keypoint(int keypoint_index) const;
+			double reprojection_error;
 
 		protected:
 			void _match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);

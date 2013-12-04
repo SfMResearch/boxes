@@ -83,8 +83,8 @@ namespace Boxes {
 				default:
 					match1 = &n->at(0);
 					match2 = &n->at(1);
-
-					if (match1->distance > match2->distance * MATCH_VALID_RATIO)
+					double match_ratio = this->boxes->config->get_double("MATCH_VALID_RATIO");
+					if (match1->distance > match2->distance * match_ratio)
 						continue;
 					break;
 #endif
@@ -135,8 +135,9 @@ namespace Boxes {
 		double val_min = 0.0, val_max = 0.0;
 		cv::minMaxIdx(match_points1, &val_min, &val_max);
 
+		double epipolar_distance_factor = this->boxes->config->get_double("EPIPOLAR_DISTANCE_FACTOR");
 		// Snavely
-		double epipolar_distance = 0.001 * val_max;
+		double epipolar_distance = epipolar_distance_factor * val_max;
 
 		std::vector<uchar> status(this->matches.size());
 
@@ -239,21 +240,13 @@ namespace Boxes {
 				best_matrix = &(*camera_matrix);
 
 			// Triangulate.
-			camera_matrix->reprojection_error = this->triangulate_points(&P0, &(camera_matrix->matrix), camera_matrix->point_cloud);
+			this->triangulate_points(&P0, &(camera_matrix->matrix), camera_matrix->point_cloud);
 
 			// Count all points that are "in front of the camera".
 			if (camera_matrix->percentage_of_points_in_front_of_camera() > best_matrix->percentage_of_points_in_front_of_camera()) {
 				best_matrix = &(*camera_matrix);
 				continue;
 			}
-
-#ifdef FEATURE_MATCHER_REPROJECTION_ERROR
-			// Select the matrix with best reprojection error.
-			if (camera_matrix->reprojection_error < best_matrix->reprojection_error) {
-				best_matrix = &(*camera_matrix);
-				continue;
-			}
-#endif
 		}
 
 		// Clear all camera matrices, we do not want to use.
@@ -351,6 +344,7 @@ namespace Boxes {
 		}
 
 		cv::Scalar mse = cv::mean(reproj_errors);
+		this->reprojection_error = mse[0];
 		return mse[0];
 	}
 
