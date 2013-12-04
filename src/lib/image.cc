@@ -29,18 +29,24 @@ namespace Boxes {
 		this->mat = cv::imread(this->filename);
 		assert(!this->mat.empty());
 
-		//Scale the image
-		if(width > 0){
-			cv::Size image_size = this->mat.size();
-			double scale = (double)width / (double)image_size.width;
-			this->scaling = scale;
-			int calc_height = scale * image_size.height;
-			if(calc_height != height){
-				std::cout << "resolution has not the same aspect ratio as the original image. Scaling to " << width << "x" << calc_height << std::endl;
-				height = calc_height;			
+		// Scale the image
+		if (width > 0) {
+			cv::Size image_size = this->size();
+
+			this->scaling = (double)width / (double)image_size.width;
+			int calc_height = this->scaling * image_size.height;
+
+			if ((height > 0) && (calc_height != height)) {
+				std::ostringstream message;
+				message << "The new resolution violates the original aspect ratio. Should be ";
+				message << width << "x" << calc_height << ".";
+
+				throw std::runtime_error(message.str());
+			} else {
+				height = calc_height;
 			}
-			cv::Size new_size(width,height);
-			cv::resize(this->mat,this->mat,new_size);
+
+			cv::resize(this->mat, this->mat, cv::Size(width, height));
 		}
 
 		this->init(boxes);
@@ -73,7 +79,9 @@ namespace Boxes {
 		std::string filename_curve = this->find_curve_file();
 		if (!filename_curve.empty()){
 			this->curve = this->read_curve(filename_curve);
-			this->curve->scale(this->scaling);	
+
+			if (this->scaling > 0)
+				this->curve->scale(this->scaling);
 		}
 	}
 
