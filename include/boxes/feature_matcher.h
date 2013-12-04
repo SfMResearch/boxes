@@ -28,16 +28,17 @@ namespace Boxes {
 			virtual void match();
 			CameraMatrix* calculate_camera_matrix();
 
-			void draw_matches(const std::string filename);
+			virtual void draw_matches(const std::string filename);
 
 			double triangulate_points();
 			double triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud);
-			int find_corresponding_keypoint(int keypoint_index) const;
 			double reprojection_error;
 
 		protected:
+			Boxes* boxes = NULL;
+
 			void _match(const cv::Mat* descriptors1, const cv::Mat* descriptors2, const std::vector<MatchPoint>* match_points = NULL, int match_type = MATCH_TYPE_NORMAL, int norm_type = cv::NORM_L2);
-			std::vector<cv::DMatch> matches;
+			std::vector<MatchPoint> matches;
 
 			// fundamental matrix
 			cv::Mat fundamental_matrix;
@@ -53,9 +54,6 @@ namespace Boxes {
 			cv::Mat_<double> _triangulate_one_point(const cv::Point3d* p1, const cv::Matx34d* c1, const cv::Point3d* p2, const cv::Matx34d* c2, double weight1 = 1.0, double weight2 = 1.0);
 
 			pcl::PointCloud<pcl::PointXYZRGB>::Ptr generate_pcl_point_cloud(const std::vector<CloudPoint> point_cloud);
-
-		private:
-			Boxes* boxes = NULL;
 	};
 };
 

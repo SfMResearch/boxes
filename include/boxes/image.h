@@ -76,9 +76,9 @@ namespace Boxes {
 			void decode_jfif_data(std::string filename);
 
 			std::string find_file_with_extension(const std::string filename, const std::string extension) const;
+
 			//scaling
-			
-			double scaling = 1;
+			double scaling = -1;
 
 			// camera matrix
 			cv::Mat camera;

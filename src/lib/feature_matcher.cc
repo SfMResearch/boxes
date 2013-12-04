@@ -46,6 +46,9 @@ namespace Boxes {
 		// Remove any stale matches that might be in here.
 		this->matches.clear();
 
+		const std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		const std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+
 		// Create matcher
 		std::vector<std::vector<cv::DMatch>> nearest_neighbours;
 		cv::BFMatcher matcher = cv::BFMatcher(norm_type);
@@ -90,11 +93,12 @@ namespace Boxes {
 #endif
 			}
 
-			if (match_points) {
-				match1->queryIdx = match_points->at(match1->queryIdx).query_index;
-			}
+			MatchPoint mp;
+			mp.pt1 = keypoints1->at(match1->queryIdx).pt;
+			mp.pt2 = keypoints2->at(match1->trainIdx).pt;
+			mp.distance = match1->distance;
 
-			this->matches.push_back(*match1);
+			this->matches.push_back(mp);
 		}
 
 		// Prepare the fundamental matrix.
@@ -108,10 +112,16 @@ namespace Boxes {
 		const cv::Mat* image1 = this->image1->get_mat();
 		const cv::Mat* image2 = this->image2->get_mat();
 
-		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
-		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
+		const std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
+		const std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
 
-		cv::drawMatches(*image1, *keypoints1, *image2, *keypoints2, this->matches, img_matches);
+		std::vector<cv::DMatch> matches;
+		for (MatchPoint mp: this->matches) {
+			cv::DMatch match = match_point_to_dmatch(&mp, keypoints1, keypoints2);
+			matches.push_back(match);
+		}
+
+		cv::drawMatches(*image1, *keypoints1, *image2, *keypoints2, matches, img_matches);
 
 		Image image = Image(this->boxes, img_matches);
 		image.write(filename);
@@ -122,14 +132,11 @@ namespace Boxes {
 	}
 
 	void FeatureMatcher::calculate_fundamental_matrix() {
-		const std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
-		const std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
-
 		std::vector<cv::Point2f> match_points1;
 		std::vector<cv::Point2f> match_points2;
-		for (std::vector<cv::DMatch>::const_iterator i = this->matches.begin(); i != this->matches.end(); i++) {
-			match_points1.push_back(keypoints1->at(i->queryIdx).pt);
-			match_points2.push_back(keypoints2->at(i->trainIdx).pt);
+		for (std::vector<MatchPoint>::const_iterator i = this->matches.begin(); i != this->matches.end(); i++) {
+			match_points1.push_back(i->pt1);
+			match_points2.push_back(i->pt2);
 		}
 
 		double val_min = 0.0, val_max = 0.0;
@@ -145,7 +152,7 @@ namespace Boxes {
 			cv::FM_RANSAC, epipolar_distance, 0.99);
 
 		// Sort out bad matches.
-		std::vector<cv::DMatch> best_matches;
+		std::vector<MatchPoint> best_matches;
 		for(unsigned int i = 0; i < status.size(); i++) {
 			if (status[i] == 1)
 				best_matches.push_back(this->matches[i]);
@@ -280,24 +287,17 @@ namespace Boxes {
 
 		cv::Mat_<double> KP2 = c2 * cv::Mat(*p2);
 
-		std::vector<cv::KeyPoint>* keypoints1 = this->image1->get_keypoints();
-		std::vector<cv::KeyPoint>* keypoints2 = this->image2->get_keypoints();
-
-		assert(keypoints1->size() >= this->matches.size());
-		assert(keypoints2->size() >= this->matches.size());
-
 		#pragma omp parallel for
 		for (unsigned int i = 0; i < this->matches.size(); i++) {
-			cv::DMatch match = this->matches[i];
+			const MatchPoint* match = &this->matches[i];
 
-			const cv::KeyPoint* keypoint1 = &keypoints1->at(match.queryIdx);
-			const cv::KeyPoint* keypoint2 = &keypoints2->at(match.trainIdx);
+			// Create CloudPoint object.
+			CloudPoint cloud_point;
+			cloud_point.pt1 = match->pt1;
+			cloud_point.pt2 = match->pt2;
 
-			const cv::Point2f* match_point1 = &keypoint1->pt;
-			const cv::Point2f* match_point2 = &keypoint2->pt;
-
-			cv::Point3d match_point_3d1(match_point1->x, match_point1->y, 1.0);
-			cv::Point3d match_point_3d2(match_point2->x, match_point2->y, 1.0);
+			cv::Point3d match_point_3d1(cloud_point.pt1.x, cloud_point.pt1.y, 1.0);
+			cv::Point3d match_point_3d2(cloud_point.pt2.x, cloud_point.pt2.y, 1.0);
 
 			cv::Mat_<double> match_point_3d1i = c1_inv * cv::Mat_<double>(match_point_3d1);
 			cv::Mat_<double> match_point_3d2i = c2_inv * cv::Mat_<double>(match_point_3d2);
@@ -317,16 +317,11 @@ namespace Boxes {
 			cv::Mat_<double> X_reproj = KP2 * X;
 			cv::Point2f X_reproj_point = cv::Point2f(X_reproj(0) / X_reproj(2), X_reproj(1) / X_reproj(2));
 
-			// Create CloudPoint object.
-			CloudPoint cloud_point;
 			cloud_point.pt = cv::Point3d(X(0), X(1), X(2));
-			cloud_point.keypoint = *keypoint2;
-			cloud_point.keypoint_index = match.trainIdx;
-
 			cloud_point.set_colour_from_image(this->image2);
 
 			// Calculate the reprojection error.
-			cloud_point.reprojection_error = cv::norm(X_reproj_point - *match_point2);
+			cloud_point.reprojection_error = cv::norm(X_reproj_point - cloud_point.pt2);
 
 			#pragma omp critical
 			{
@@ -402,14 +397,5 @@ namespace Boxes {
 		Y(3) = 1.0;
 
 		return Y;
-	}
-
-	int FeatureMatcher::find_corresponding_keypoint(int keypoint_index) const {
-		for (cv::DMatch match: this->matches) {
-			if (match.queryIdx == keypoint_index)
-				return match.trainIdx;
-		}
-
-		return -1;
 	}
 }

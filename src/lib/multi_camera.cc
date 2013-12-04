@@ -98,25 +98,17 @@ namespace Boxes {
 				 * NURBS curve (if that one is available).
 				 */
 				if (image2->has_curve()) {
+					std::cout << "CUT OUT NURBS" << std::endl;
 					image2->cut_out_curve(matcher->point_cloud);
 				}
-
 			} else {
-				std::vector<cv::KeyPoint>* keypoints2 = image2->get_keypoints();
-
 				std::vector<cv::Point3f> local_point_cloud;
 				std::vector<cv::Point2f> image_points;
 				std::vector<int> point_cloud_status(last_matcher->point_cloud->size(), 0);
 
 				for (std::vector<CloudPoint>::iterator i = last_matcher->point_cloud->begin(); i != last_matcher->point_cloud->end(); i++) {
-					int keypoint2_index = matcher->find_corresponding_keypoint(i->keypoint_index);
-
-					if (keypoint2_index >= 0) {
-						cv::KeyPoint keypoint2 = (*keypoints2)[keypoint2_index];
-
-						local_point_cloud.push_back(i->pt);
-						image_points.push_back(keypoint2.pt);
-					}
+					local_point_cloud.push_back(i->pt);
+					image_points.push_back(i->pt2);
 				}
 
 				cv::Mat_<double> rvec;

@@ -12,9 +12,10 @@ namespace Boxes {
 			CloudPoint();
 
 			cv::Point3d pt;
-			cv::KeyPoint keypoint;
-			int keypoint_index = -1;
 			double reprojection_error;
+
+			cv::Point2f pt1;
+			cv::Point2f pt2;
 
 			bool operator==(const CloudPoint& other) const;
 

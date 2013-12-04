@@ -10,6 +10,7 @@
 #include <boxes/feature_matcher.h>
 #include <boxes/feature_matcher_optical_flow.h>
 #include <boxes/image.h>
+#include <boxes/util.h>
 
 namespace Boxes {
 
@@ -25,26 +26,13 @@ namespace Boxes {
 	}
 
 	unsigned int Boxes::img_read(const std::string filename, const std::string resolution) {
-		//cast resolution
-		std::stringstream ss(resolution);
-		std::string number;
-		std::vector<std::string> numberList;
-		while(std::getline(ss, number, 'x'))
-		{
-		   numberList.push_back(number);
-		}
-
 		int width = -1;
 		int height = -1;
 
-		if (numberList.size() > 0)
-		{
-			width = atoi(numberList[0].c_str());
-			if (numberList.size() > 1)
-				height = atoi(numberList[1].c_str());
-			
-		}
-		
+		std::pair<std::string, std::string> res = split_once(resolution, "x");
+		std::stringstream(res.first) >> width;
+		if (!res.second.empty())
+			std::stringstream(res.second) >> height;
 
 		Image *image = new Image((Boxes *)this, filename, width, height);
 		this->images.push_back(image);
