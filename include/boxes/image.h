@@ -20,7 +20,7 @@ namespace Boxes {
 	class Image {
 		public:
 			Image(Boxes* boxes);
-			Image(Boxes* boxes, const std::string filename);
+			Image(Boxes* boxes, const std::string filename, int width = -1, int height = -1);
 			Image(Boxes* boxes, cv::Mat mat);
 			void init(Boxes* boxes);
 			~Image();
@@ -63,7 +63,7 @@ namespace Boxes {
 			// curve
 			bool has_curve() const;
 			std::vector<cv::Point2f> discretize_curve() const;
-			void draw_curve();
+			cv::Mat draw_curve();
 			void cut_out_curve(PointCloud* point_cloud) const;
 
 			CameraMatrix* camera_matrix = NULL;
@@ -76,6 +76,9 @@ namespace Boxes {
 			void decode_jfif_data(std::string filename);
 
 			std::string find_file_with_extension(const std::string filename, const std::string extension) const;
+			//scaling
+			
+			double scaling = 1;
 
 			// camera matrix
 			cv::Mat camera;

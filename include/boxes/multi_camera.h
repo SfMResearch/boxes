@@ -25,6 +25,7 @@ namespace Boxes {
 			void run(bool use_optical_flow);
 
 			void write_matches_all(const std::string* filename) const;
+			void write_nurbs_all(const std::string* filename) const;
 			void write_matches_one(const std::string* filename, unsigned int pair_index) const;
 
 			void write_disparity_map_all(const std::string* filename) const;

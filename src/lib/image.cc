@@ -23,11 +23,25 @@ namespace Boxes {
 		this->init(boxes);
 	}
 
-	Image::Image(Boxes* boxes, const std::string filename) {
+	Image::Image(Boxes* boxes, const std::string filename, int width, int height) {
 		this->filename = filename;
 
 		this->mat = cv::imread(this->filename);
 		assert(!this->mat.empty());
+
+		//Scale the image
+		if(width > 0){
+			cv::Size image_size = this->mat.size();
+			double scale = (double)width / (double)image_size.width;
+			this->scaling = scale;
+			int calc_height = scale * image_size.height;
+			if(calc_height != height){
+				std::cout << "resolution has not the same aspect ratio as the original image. Scaling to " << width << "x" << calc_height << std::endl;
+				height = calc_height;			
+			}
+			cv::Size new_size(width,height);
+			cv::resize(this->mat,this->mat,new_size);
+		}
 
 		this->init(boxes);
 
@@ -57,8 +71,10 @@ namespace Boxes {
 
 		// Try to find a curve and read it.
 		std::string filename_curve = this->find_curve_file();
-		if (!filename_curve.empty())
+		if (!filename_curve.empty()){
 			this->curve = this->read_curve(filename_curve);
+			this->curve->scale(this->scaling);	
+		}
 	}
 
 	Image::~Image() {
@@ -217,7 +233,9 @@ namespace Boxes {
 
 		// SURF
 		} else if (detector_type == FEATURE_DETECTOR_SURF) {
-			detector = new cv::SurfFeatureDetector(SURF_MIN_HESSIAN);
+			int min_hessian = this->boxes->config->get_int("SURF_MIN_HESSIAN");
+
+			detector = new cv::SurfFeatureDetector(min_hessian);
 #endif
 		}
 
@@ -411,7 +429,8 @@ namespace Boxes {
 		return result;
 	}
 
-	void Image::draw_curve() {
+	cv::Mat Image::draw_curve() {
+		cv::Mat ret(this->mat);
 		std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
 		for (std::vector<cv::Point2f>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
@@ -421,8 +440,9 @@ namespace Boxes {
 			if (i->y < 0 || i->y > this->mat.rows)
 				continue;
 
-			this->mat.at<cv::Vec3b>(i->y, i->x)[1] = 255;
+			ret.at<cv::Vec3b>(i->y, i->x)[1] = 255;
 		}
+		return ret;
 	}
 
 	void Image::cut_out_curve(PointCloud* point_cloud) const {

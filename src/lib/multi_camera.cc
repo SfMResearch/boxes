@@ -189,6 +189,12 @@ namespace Boxes {
 			this->write_matches_one(filename, i);
 	}
 
+	void MultiCamera::write_nurbs_all(const std::string* filename) const {
+		for (unsigned int i = 0; i < this->images.size(); i++){
+			cv::imwrite(filename_implant_counter(*filename, i), this->images[i]->draw_curve());
+		}
+	}
+
 	void MultiCamera::write_matches_one(const std::string* filename, unsigned int pair_index) const {
 		FeatureMatcher* matcher = this->get_feature_matcher(pair_index);
 

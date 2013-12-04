@@ -24,8 +24,29 @@ namespace Boxes {
 		delete this->config;
 	}
 
-	unsigned int Boxes::img_read(const std::string filename) {
-		Image *image = new Image((Boxes *)this, filename);
+	unsigned int Boxes::img_read(const std::string filename, const std::string resolution) {
+		//cast resolution
+		std::stringstream ss(resolution);
+		std::string number;
+		std::vector<std::string> numberList;
+		while(std::getline(ss, number, 'x'))
+		{
+		   numberList.push_back(number);
+		}
+
+		int width = -1;
+		int height = -1;
+
+		if (numberList.size() > 0)
+		{
+			width = atoi(numberList[0].c_str());
+			if (numberList.size() > 1)
+				height = atoi(numberList[1].c_str());
+			
+		}
+		
+
+		Image *image = new Image((Boxes *)this, filename, width, height);
 		this->images.push_back(image);
 
 		return this->img_size() - 1;
