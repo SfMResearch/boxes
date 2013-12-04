@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
 	std::string output_matches;
 	std::string output_nurbs;
 	std::string output_point_cloud;
+	std::string resolution;
 
 	bool use_optical_flow = false;
 	bool visualize = false;
@@ -35,6 +36,7 @@ int main(int argc, char **argv) {
 			{"nurbs",                 required_argument,  0, 'n'},
 			{"optical-flow",          no_argument,        0, 'O'},
 			{"point-cloud",           no_argument,        0, 'p'},
+			{"resolution",            required_argument,  0, 'r'},
 			{"transparent",           no_argument,        0, 't'},
 			{"version",               no_argument,        0, 'V'},
 			{"visualize",             no_argument,        0, 'v'},
@@ -42,7 +44,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:n:Op:tVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:n:Op:r:tVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -101,6 +103,10 @@ int main(int argc, char **argv) {
 				output_point_cloud.assign(optarg);
 				break;
 
+			case 'r':
+				resolution.assign(optarg);
+				break;
+
 			case 't':
 				visualize_transparent = true;
 				break;
@@ -130,7 +136,7 @@ int main(int argc, char **argv) {
 		std::string filename = argv[optind++];
 
 		std::cout << "Reading image file " << filename << "..." << std::endl;
-		boxes.img_read(filename);
+		boxes.img_read(filename, resolution);
 	}
 
 	// Warn if not enough images have been loaded.
