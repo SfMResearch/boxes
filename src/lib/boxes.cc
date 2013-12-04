@@ -29,11 +29,13 @@ namespace Boxes {
 		int width = -1;
 		int height = -1;
 
-		std::pair<std::string, std::string> res = split_once(resolution, "x");
-		std::stringstream(res.first) >> width;
-		if (!res.second.empty())
-			std::stringstream(res.second) >> height;
-
+		if(resolution != "")
+		{
+			std::pair<std::string, std::string> res = split_once(resolution, "x");
+			std::stringstream(res.first) >> width;
+			if (!res.second.empty())
+				std::stringstream(res.second) >> height;
+		}
 		Image *image = new Image((Boxes *)this, filename, width, height);
 		this->images.push_back(image);
 

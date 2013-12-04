@@ -18,7 +18,7 @@ namespace Boxes {
 			Config* config = NULL;
 
 			// Image operations
-			unsigned int img_read(const std::string filename, const std::string resolution);
+			unsigned int img_read(const std::string filename, const std::string resolution = "");
 			Image* img_get(unsigned int index);
 			unsigned int img_size() const;
 
