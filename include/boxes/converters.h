@@ -7,6 +7,8 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+#include <boxes/structs.h>
+
 #endif
 
 namespace Boxes {
@@ -49,6 +51,34 @@ namespace Boxes {
 		cv::normalize(input, output);
 
 		return output;
+	}
+
+	inline int search_matching_keypoint_index(cv::Point2f pt, const std::vector<cv::KeyPoint>* keypoints) {
+		int counter = 0;
+
+		for (std::vector<cv::KeyPoint>::const_iterator i = keypoints->begin(); i != keypoints->end(); i++) {
+			if (i->pt == pt)
+				return counter;
+
+			counter++;
+		}
+
+		return -1;
+	}
+
+	inline cv::DMatch match_point_to_dmatch(MatchPoint* mp, const std::vector<cv::KeyPoint>* keypoints1, const std::vector<cv::KeyPoint>* keypoints2) {
+		cv::DMatch match;
+
+		int keypoint1_idx = search_matching_keypoint_index(mp->pt1, keypoints1);
+		int keypoint2_idx = search_matching_keypoint_index(mp->pt2, keypoints2);
+
+		assert(keypoint1_idx >= 0 && keypoint2_idx >= 0);
+
+		match.queryIdx = keypoint1_idx;
+		match.trainIdx = keypoint2_idx;
+		match.distance = mp->distance;
+
+		return match;
 	}
 #endif
 

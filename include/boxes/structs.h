@@ -6,8 +6,10 @@
 
 namespace Boxes {
 	struct MatchPoint {
-		cv::Point2f pt;
-		int query_index = -1;
+		cv::Point2f pt1;
+		cv::Point2f pt2;
+
+		double distance = 0.0;
 	};
 };
 

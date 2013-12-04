@@ -138,7 +138,7 @@ namespace Boxes {
 
 		for (std::vector<CloudPoint>::const_iterator i = this->begin(); i != this->end(); ++i) {
 			double d = MAX(MIN((i->pt.z - val_min) / (val_max - val_min), 1.0), 0.0);
-			cv::circle(map, i->keypoint.pt, 1, cv::Scalar(255.0 * (1.0 - d), 255, 255), CV_FILLED);
+			cv::circle(map, i->pt2, 1, cv::Scalar(255.0 * (1.0 - d), 255, 255), CV_FILLED);
 		}
 		cvtColor(map, map, CV_HSV2BGR);
 

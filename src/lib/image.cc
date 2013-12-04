@@ -432,7 +432,7 @@ namespace Boxes {
 			/* Go through the existing point cloud point by point and
 			 * check if the point is within or on the contour of the curve. */
 			for (std::vector<CloudPoint>::const_iterator i = point_cloud->begin(); i != point_cloud->end(); i++) {
-				double distance = cv::pointPolygonTest(discrete_curve, i->keypoint.pt, false);
+				double distance = cv::pointPolygonTest(discrete_curve, i->pt2, false);
 
 				if (!GREATER_OR_EQUAL_TO_ZERO(distance)) {
 					point_cloud->remove_point(&(*i));

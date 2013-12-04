@@ -48,9 +48,8 @@ namespace Boxes {
 			// Save good points with a low error rate.
 			if (vstatus[i] && verror[i] < OF_MAX_VERROR) {
 				MatchPoint match_point;
-
-				match_point.pt = points2x[i];
-				match_point.query_index = i;
+				match_point.pt1 = points1[i];
+				match_point.pt2 = points2x[i];
 
 				match_points.push_back(match_point);
 			}
@@ -58,7 +57,7 @@ namespace Boxes {
 
 		std::vector<cv::Point2f> good_points1;
 		for (std::vector<MatchPoint>::const_iterator i = match_points.begin(); i != match_points.end(); ++i) {
-			good_points1.push_back(i->pt);
+			good_points1.push_back(i->pt1);
 		}
 
 		// Format appropriate data structures.
