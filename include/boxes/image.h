@@ -63,7 +63,7 @@ namespace Boxes {
 			// curve
 			bool has_curve() const;
 			std::vector<cv::Point2f> discretize_curve() const;
-			void draw_curve();
+			cv::Mat draw_curve();
 			void cut_out_curve(PointCloud* point_cloud) const;
 
 			CameraMatrix* camera_matrix = NULL;

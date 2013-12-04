@@ -217,7 +217,9 @@ namespace Boxes {
 
 		// SURF
 		} else if (detector_type == FEATURE_DETECTOR_SURF) {
-			detector = new cv::SurfFeatureDetector(SURF_MIN_HESSIAN);
+			int min_hessian = this->boxes->config->get_int("SURF_MIN_HESSIAN");
+
+			detector = new cv::SurfFeatureDetector(min_hessian);
 #endif
 		}
 
@@ -411,7 +413,8 @@ namespace Boxes {
 		return result;
 	}
 
-	void Image::draw_curve() {
+	cv::Mat Image::draw_curve() {
+		cv::Mat ret(this->mat);
 		std::vector<cv::Point2f> discrete_curve = this->discretize_curve();
 
 		for (std::vector<cv::Point2f>::iterator i = discrete_curve.begin(); i != discrete_curve.end(); i++) {
@@ -421,8 +424,9 @@ namespace Boxes {
 			if (i->y < 0 || i->y > this->mat.rows)
 				continue;
 
-			this->mat.at<cv::Vec3b>(i->y, i->x)[1] = 255;
+			ret.at<cv::Vec3b>(i->y, i->x)[1] = 255;
 		}
+		return ret;
 	}
 
 	void Image::cut_out_curve(PointCloud* point_cloud) const {

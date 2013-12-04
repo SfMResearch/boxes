@@ -14,6 +14,7 @@ int main(int argc, char **argv) {
 	std::string output_disparity_maps;
 	std::string output_hull;
 	std::string output_matches;
+	std::string output_nurbs;
 	std::string output_point_cloud;
 
 	bool use_optical_flow = false;
@@ -31,6 +32,7 @@ int main(int argc, char **argv) {
 			{"environment",           required_argument,  0, 'E'},
 			{"environment-file",      required_argument,  0, 'e'},
 			{"matches",               required_argument,  0, 'm'},
+			{"nurbs",                 required_argument,  0, 'n'},
 			{"optical-flow",          no_argument,        0, 'O'},
 			{"point-cloud",           no_argument,        0, 'p'},
 			{"transparent",           no_argument,        0, 't'},
@@ -40,7 +42,7 @@ int main(int argc, char **argv) {
 		};
 		int option_index = 0;
 
-		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:Op:tVv", long_options, &option_index);
+		int c = getopt_long(argc, argv, "a:Cc:D:d:E:e:m:n:Op:tVv", long_options, &option_index);
 
 		if (c == -1)
 			break;
@@ -86,6 +88,9 @@ int main(int argc, char **argv) {
 
 			case 'm':
 				output_matches.assign(optarg);
+				break;
+			case 'n':
+				output_nurbs.assign(optarg);
 				break;
 
 			case 'O':
@@ -146,6 +151,11 @@ int main(int argc, char **argv) {
 	if (!output_matches.empty()) {
 		std::cout << "Writing matches..." << std::endl;
 		multi_camera.write_matches_all(&output_matches);
+	}
+	
+	if (!output_nurbs.empty()) {
+		std::cout << "Writing NURBS..." << std::endl;
+		multi_camera.write_nurbs_all(&output_nurbs);
 	}
 
 	if (!output_depths_maps.empty()) {
