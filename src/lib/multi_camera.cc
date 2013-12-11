@@ -104,11 +104,16 @@ namespace Boxes {
 			} else {
 				std::vector<cv::Point3f> local_point_cloud;
 				std::vector<cv::Point2f> image_points;
-				std::vector<int> point_cloud_status(last_matcher->point_cloud->size(), 0);
 
 				for (std::vector<CloudPoint>::iterator i = last_matcher->point_cloud->begin(); i != last_matcher->point_cloud->end(); i++) {
-					local_point_cloud.push_back(i->pt);
-					image_points.push_back(i->pt2);
+					cv::Point2f* point = matcher->find_corresponding_keypoint_coordinates(&i->pt2);
+
+					if (point) {
+						local_point_cloud.push_back(i->pt);
+						image_points.push_back(*point);
+
+						delete point;
+					}
 				}
 
 				cv::Mat_<double> rvec;

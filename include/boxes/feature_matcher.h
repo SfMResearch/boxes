@@ -34,6 +34,8 @@ namespace Boxes {
 			double triangulate_points(const cv::Matx34d* p1, const cv::Matx34d* p2, PointCloud* point_cloud);
 			double reprojection_error;
 
+			cv::Point2f* find_corresponding_keypoint_coordinates(cv::Point2f* pt1) const;
+
 		protected:
 			Boxes* boxes = NULL;
 

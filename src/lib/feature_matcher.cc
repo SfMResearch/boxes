@@ -398,4 +398,13 @@ namespace Boxes {
 
 		return Y;
 	}
+
+	cv::Point2f* FeatureMatcher::find_corresponding_keypoint_coordinates(cv::Point2f* pt1) const {
+		for (MatchPoint match: this->matches) {
+			if (match.pt1 == *pt1)
+				return new cv::Point2f(match.pt2);
+		}
+
+		return NULL;
+	}
 }
