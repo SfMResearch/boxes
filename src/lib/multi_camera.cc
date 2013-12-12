@@ -151,15 +151,13 @@ namespace Boxes {
 		Image* image = this->images[0];
 
 		if (image->get_distance() > 0) {
-			double min = DBL_MAX;
-
+			double mean = 0;
 			for (std::vector<CloudPoint>::iterator i = this->point_cloud->begin(); i != this->point_cloud->end(); i++) {
-				if (i->pt.z < min) {
-					min = i->pt.z;
-				}
+				if(i->pt.z > 0)
+					mean += i->pt.z;
 			}
-
-			this->point_cloud->set_scale(image->get_distance() / min);
+			mean /= (double) this->point_cloud->size();
+			this->point_cloud->set_scale(image->get_distance() / mean);
 		}
 	}
 
