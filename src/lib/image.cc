@@ -100,6 +100,18 @@ namespace Boxes {
 	}
 
 	void Image::decode_jfif_data(std::string filename) {
+
+		// First check for distance file
+		std::string distanceFileName = this->find_file_with_extension(this->filename, "distance");
+		std::ifstream distanceFile(distanceFileName, std::ios::in);
+		int dist = 0;
+		if(distanceFile >> dist)
+		{
+			this->set_distance(dist);
+			return;
+		}	
+		// If there is no distance file watch jfif header
+
 		unsigned char header[2048];
 		unsigned int pos = 0;
 
