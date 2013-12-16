@@ -53,6 +53,25 @@ namespace Boxes {
 		}
 	}
 
+	void PointCloud::cut_curve(const Image* image) {
+		if (!image->has_curve())
+			return;
+
+		std::vector<cv::Point2f> discrete_curve = image->discretize_curve();
+
+		/* Go through the existing point cloud point by point and
+		 * check if the point is within or on the contour of the curve. */
+		for (std::vector<CloudPoint>::iterator i = this->begin(); i != this->end();) {
+			double distance = cv::pointPolygonTest(discrete_curve, i->pt2, false);
+
+			if (!GREATER_OR_EQUAL_TO_ZERO(distance)) {
+				i = this->points.erase(i);
+			} else {
+				++i;
+			}
+		}
+	}
+
 	const std::vector<CloudPoint>* PointCloud::get_points() const {
 		return &this->points;
 	}

@@ -27,6 +27,7 @@ namespace Boxes {
 
 			void add_point(CloudPoint point);
 			void remove_point(const CloudPoint* point);
+			void cut_curve(const Image* image);
 			const std::vector<CloudPoint>* get_points() const;
 
 			// Iterator implementation
