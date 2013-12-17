@@ -93,14 +93,6 @@ namespace Boxes {
 			// pair and initialize the point cloud.
 			if (last_matcher == NULL) {
 				matcher->calculate_camera_matrix();
-
-				/* Strip all points from the point cloud, if they are not within the
-				 * NURBS curve (if that one is available).
-				 */
-				if (image2->has_curve()) {
-					std::cout << "CUT OUT NURBS" << std::endl;
-					image2->cut_out_curve(matcher->point_cloud);
-				}
 			} else {
 				std::vector<cv::Point3f> local_point_cloud;
 				std::vector<cv::Point2f> image_points;
@@ -135,6 +127,12 @@ namespace Boxes {
 
 				matcher->triangulate_points();
 			}
+
+
+			/* Strip all points from the point cloud, if they are not within the
+			 * NURBS curve (if that one is available).
+			 */
+			matcher->point_cloud->cut_curve(image2);
 
 			last_matcher = matcher;
 		}
