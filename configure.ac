@@ -115,9 +115,8 @@ AS_IF([test "x${enable_nonfree}" = "xyes"], [
 ])
 
 # PCL
-PKG_CHECK_MODULES(PCL_APPS, [pcl_apps >= 1.6.0], [], [
-	PKG_CHECK_MODULES(PCL_APPS, [pcl_apps-1.7])
-])
+PKG_CHECK_MODULES(PCL_APPS, [pcl_apps >= 1.6.0], [], [true])
+
 PKG_CHECK_MODULES(PCL_COMMON, [pcl_common >= 1.6.0], [], [
 	PKG_CHECK_MODULES(PCL_COMMON, [pcl_common-1.7])
 ])
@@ -170,7 +169,14 @@ AC_SUBST(PCL_LIBS)
 
 # Workaround because PCL requires headers from VTK.
 PCL_CFLAGS+="-I/usr/include/vtk -I/usr/include/vtk-5.8"
-PCL_LIBS+="-L/usr/lib64/vtk -lvtkCommon -lvtkFiltering -lvtkRendering"
+#PCL_LIBS+="-L/usr/lib64/vtk -lvtkCommon -lvtkFiltering -lvtkRendering"
+PCL_LIBS+="\
+	-L/usr/lib64/vtk \
+	-lvtkCommonCore \
+	-lvtkCommonDataModel \
+	-lvtkCommonMath \
+	-lvtkRenderingCore \
+"
 
 AC_CONFIG_FILES([
 	Makefile
