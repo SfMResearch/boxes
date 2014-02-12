@@ -1,3 +1,9 @@
+#  This file is part of the boxes library.
+#
+#  boxes is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
 
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 AM_MAKEFLAGS = --no-print-directory
@@ -39,6 +45,11 @@ include_HEADERS = \
 	include/boxes.h
 
 pkginclude_HEADERS =
+
+dist_doc_DATA = \
+	README \
+	COPYING-GPL \
+	COPYING-LGPL
 
 #- boxes ----------------------------------------------------------------------
 

@@ -1,0 +1,24 @@
+boxes
+
+A simple, portable and extensible Structure from Motion library written in C++
+
+WEB HOME:
+	https://github.com/SfMResearch/boxes
+
+AUTHORS:
+	Christian Bodenstein <cbodenstein@gmx.de>
+	Michael Tremer <michael@tremer.info>
+
+LICENSE:
+	The authors licensed their work as free software.
+
+	libboxes is licensed under the terms of the
+		GNU LESSER GENERAL PUBLIC LICENSE v3.0+
+
+	The boxes tool is licensed under the terms of the
+		GNU GENERAL PUBLIC LICENSE v3.0+
+
+	Any included third-party code is licensed under its respective license.
+
+	Any content besides source code (images, etc.) is licensed under the terms
+	of the Creative Commons Attribution ShareAlike 3.0 Unported license.

@@ -1,4 +1,11 @@
 #!/bin/bash
+#  This file is part of the boxes library.
+#
+#  boxes is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
 for EDF in 0.0005 0.001 0.002 0.005
 do
 	for MVR in 0.5 0.6 0.7 0.8 0.9
